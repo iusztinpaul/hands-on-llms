@@ -9,7 +9,9 @@ from transformers import (
 )
 
 
-def build_qlora_model(model_id: str = "tiiuae/falcon-7b-instruct", peft_model_id: Optional[str] = None):
+def build_qlora_model(
+    model_id: str = "tiiuae/falcon-7b", peft_model_id: Optional[str] = None
+):
     """
     Function that builds a QLoRA LLM model based on the given HuggingFace name:
         1.   Create and prepare the bitsandbytes configuration for QLoRa's quantization
@@ -21,11 +23,11 @@ def build_qlora_model(model_id: str = "tiiuae/falcon-7b-instruct", peft_model_id
     # TODO: Double-check resources and improve this func.
 
     bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True,
-        )
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=True,
+    )
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         quantization_config=bnb_config,
@@ -34,7 +36,18 @@ def build_qlora_model(model_id: str = "tiiuae/falcon-7b-instruct", peft_model_id
         trust_remote_code=True,
     )
 
-    peft_config = LoraConfig(
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    tokenizer.pad_token = tokenizer.eos_token
+
+    if peft_model_id:
+        peft_config = LoraConfig.from_pretrained(peft_model_id)
+        assert (
+            peft_config.base_model_name_or_path == model_id
+        ), f"Lora Model trained on different base model than the one requested: {peft_config.base_model_name_or_path} != {model_id}"
+
+        model = PeftModel.from_pretrained(model, peft_model_id)
+    else:
+        peft_config = LoraConfig(
             lora_alpha=16,
             lora_dropout=0.1,
             r=64,
@@ -43,10 +56,19 @@ def build_qlora_model(model_id: str = "tiiuae/falcon-7b-instruct", peft_model_id
             target_modules=["query_key_value"],
         )
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
-    tokenizer.pad_token = tokenizer.eos_token
-    
-    if peft_model_id:
-        model = PeftModel.from_pretrained(model, peft_model_id)
-
     return model, tokenizer, peft_config
+
+
+def prompt(model, tokenizer, input_text: str, max_new_tokens: int = 40, device: str = "cuda:0"):
+    tokenizer.return_token_type_ids = False
+
+    inputs = tokenizer(input_text, return_tensors="pt").to(device)
+    # TODO: How can I get rid of token_type_ids in a cleaner way?
+    del inputs["token_type_ids"]
+
+    outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
+
+    output = outputs[0] # The input to the model is a batch of size 1, so the output is also a batch of size 1.
+    output = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    return output
