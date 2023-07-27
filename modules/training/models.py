@@ -1,7 +1,7 @@
 from typing import Optional
 import torch
 
-from peft import LoraConfig, PeftModel, PeftConfig
+from peft import LoraConfig, PeftModel, PeftConfig, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -40,14 +40,15 @@ def build_qlora_model(
     tokenizer.pad_token = tokenizer.eos_token
 
     if peft_model_id:
-        peft_config = LoraConfig.from_pretrained(peft_model_id)
+        lora_config = LoraConfig.from_pretrained(peft_model_id)
         assert (
-            peft_config.base_model_name_or_path == model_id
-        ), f"Lora Model trained on different base model than the one requested: {peft_config.base_model_name_or_path} != {model_id}"
+            lora_config.base_model_name_or_path == model_id
+        ), f"Lora Model trained on different base model than the one requested: {lora_config.base_model_name_or_path} != {model_id}"
 
+        # model = get_peft_model(model, lora_config)  # TODO: Why this is not working?
         model = PeftModel.from_pretrained(model, peft_model_id)
     else:
-        peft_config = LoraConfig(
+        lora_config = LoraConfig(
             lora_alpha=16,
             lora_dropout=0.1,
             r=64,
@@ -56,7 +57,7 @@ def build_qlora_model(
             target_modules=["query_key_value"],
         )
 
-    return model, tokenizer, peft_config
+    return model, tokenizer, lora_config
 
 
 def prompt(model, tokenizer, input_text: str, max_new_tokens: int = 40, device: str = "cuda:0"):

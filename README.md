@@ -19,3 +19,15 @@
     1. receives a question (e.g. "Is it a good time to invest in renewable energy?"),
     2. finds the most relevant documents in the VectorDB (aka context)
     3. sends a prompt with question and context to our fine-tuned Falcon and return response.
+
+## Usage
+
+### Run Notebooks Server
+First expose the virtual environment as a notebook kernel:
+```shell
+python -m ipykernel install --user --name hands-on-llms --display-name "hands-on-llms"
+```
+Now run the notebook server:
+```shell
+jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
+```
