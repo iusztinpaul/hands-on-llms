@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from datasets import Dataset
 
@@ -22,6 +22,17 @@ class FinQASample:
     program: str
 
 
+@dataclass
+class FinQATestingSample:
+    id: str
+
+    pre_text: List[str]
+    post_text: List[str]
+    table: List[List[str]]
+
+    question: str
+
+
 class FinQADataset:
     def __init__(self, data_path: Path, scope: Scope = Scope.TRAINING):
         self._data_path = data_path
@@ -34,20 +45,32 @@ class FinQADataset:
 
         return self.deserialize(data)
     
-    def deserialize(self, data: List[dict]) -> List[dict]:
-        return [
-            FinQASample(
-                id=sample["id"],
-                pre_text=sample["pre_text"],
-                post_text=sample["post_text"],
-                table=sample["table"],
-                question=sample["qa"]["question"],
-                answer=sample["qa"]["answer"],
-                steps=sample["qa"]["steps"],
-                program=sample["qa"]["program"],
-            )
-            for sample in data
-        ]
+    def deserialize(self, data: List[dict]) -> List[Union[FinQASample, FinQATestingSample]]:
+        if self._scope == Scope.TRAINING:
+            return [
+                FinQASample(
+                    id=sample["id"],
+                    pre_text=sample["pre_text"],
+                    post_text=sample["post_text"],
+                    table=sample["table"],
+                    question=sample["qa"]["question"],
+                    answer=sample["qa"]["answer"],
+                    steps=sample["qa"]["steps"],
+                    program=sample["qa"]["program"],
+                )
+                for sample in data
+            ]
+        else:
+            return [
+                FinQATestingSample(
+                    id=sample["id"],
+                    pre_text=sample["pre_text"],
+                    post_text=sample["post_text"],
+                    table=sample["table"],
+                    question=sample["qa"]["question"],
+                )
+                for sample in data
+            ]
 
     def to_huggingface(self) -> Dataset:
         data_as_dict = [asdict(sample) for sample in self._raw_data]
@@ -61,7 +84,7 @@ class FinQADataset:
         return dataset
 
     def to_training(self, sample: dict) -> str:
-        parse_sample = self._parse_sample(sample)
+        parse_sample = self._parse_sample_training(sample)
 
         prompt = self.to_prompt(sample)
 
@@ -81,7 +104,7 @@ class FinQADataset:
         }
 
     def to_prompt(self, sample: dict) -> str:
-        parsed_sample = self._parse_sample(sample)
+        parsed_sample = self._parse_sample_testing(sample)
         
         system_prompt = f"\
         ###System: You are a professional financial advisor. Your task is to read a financial report and answer the given question.\n \
@@ -128,7 +151,9 @@ class FinQADataset:
             "text": prompt,
         }
 
-    def _parse_sample(self, sample: Dict[str, Any]) -> Dict[str, str]:
+
+    def _parse_sample_testing(self, sample: Dict[str, Any]) -> Dict[str, str]:
+        # TODO: Refactor _parse_sample...() methods.
         pre_text = sample['pre_text']
         pre_text = "\n".join(pre_text)
 
@@ -142,6 +167,16 @@ class FinQADataset:
         post_text = sample['post_text']
         post_text = "\n".join(post_text)
 
+        return {
+            "pre_text": pre_text,
+            "table": table,
+            "post_text": post_text,
+            "question": sample['question'],
+        }
+
+    def _parse_sample_training(self, sample: Dict[str, Any]) -> Dict[str, str]:
+        parsed_sample = self._parse_sample_testing(sample)
+        
         formatted_steps = []
         for i, step in enumerate(sample['steps']):
             formatted_step = f"###STEP {i}: {step['arg1']} {step['op']} {step['arg2']} = {step['res']}"
@@ -149,10 +184,7 @@ class FinQADataset:
         formatted_steps = "\n".join(formatted_steps)
 
         return {
-            "pre_text": pre_text,
-            "table": table,
-            "post_text": post_text,
-            "question": sample['question'],
+            **parsed_sample,
             "answer": sample['answer'],
             "steps": formatted_steps,
             "program": sample['program'],
