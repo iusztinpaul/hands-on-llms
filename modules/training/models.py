@@ -62,7 +62,7 @@ def build_qlora_model(
 
 def prompt(model, tokenizer, input_text: str, max_new_tokens: int = 40, device: str = "cuda:0"):
     # TODO: Rewrite this function using the huggingface pipeline class.
-    # Example:
+    # Example: https://huggingface.co/tiiuae/falcon-40b#how-to-get-started-with-the-model
     # pipeline = pipeline(
     #     "text-generation",
     #     model=model_4bit,
