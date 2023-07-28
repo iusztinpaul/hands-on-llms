@@ -73,79 +73,56 @@ class FinQADataset:
             ]
 
     def to_huggingface(self) -> Dataset:
+        # TODO: should I add a "eos_token" at the end of the prompt,
+        #  as in the following example: sample["text"] = f"{format_dolly(sample)}{tokenizer.eos_token}" ?
+
         data_as_dict = [asdict(sample) for sample in self._raw_data]
         dataset = Dataset.from_list(data_as_dict)
         if self._scope == Scope.TRAINING:
-            mapping_func = self.to_training
+            mapping_func = self.to_training_prompt
         else:
-            mapping_func = self.to_prompt
+            mapping_func = self.to_testing_prompt
         dataset = dataset.map(mapping_func, remove_columns=dataset.column_names)
 
         return dataset
 
-    def to_training(self, sample: dict) -> str:
+    def to_training_prompt(self, sample: dict) -> str:
         parse_sample = self._parse_sample_training(sample)
 
-        prompt = self.to_prompt(sample)
+        prompt = self.to_testing_prompt(sample)
 
-        answer_prompt = f"\
-        ###Assistant:\n\
-        ###ANSWER: {parse_sample['answer']}\n\
-        Reasoning steps:\n \
+        answer_prompt = f"### ASSISTANT:\n\
+        ### ANSWER: {parse_sample['answer']}\n\
+        ### REASONING STEPS:\n \
         {parse_sample['steps']}\n \
-        Final program based on the reasoning steps:\n \
+        ### PROGRAM compiled from reasoning steps above:\n \
         {parse_sample['program']}\n \
         "
 
-        prompt = f"{prompt['text']}\n{answer_prompt}"
+        prompt = f"{prompt['text']}\n\n{answer_prompt}"
 
         return {
             "text": prompt,
         }
 
-    def to_prompt(self, sample: dict) -> str:
+    def to_testing_prompt(self, sample: dict) -> str:
         parsed_sample = self._parse_sample_testing(sample)
         
-        system_prompt = f"\
-        ###System: You are a professional financial advisor. Your task is to read a financial report and answer the given question.\n \
-        The financial report you will get will be in the following format:\n \
-        ###START_FINANCIAL_REPORT\n \
-        ###PRE_TEXT:\n \
-        <some text>\n \
-        ###TABLE:\n \
-        <table with the financial data>\n \
-        ###POST_TEXT:\n \
-        <some text>\n \
-        ###END_FINANCIAL_REPORT\n \
-        Your question from the human will be in the following format:\n \
-        ###Human:\n\
-        ###QUESTION: <question>\n \
-        Your answer as an assisant should be in the following format:\n \
-        ###Assistant:\n\
-        ###ANSWER: <answer>\n \
-        You should output all the reasoning steps in the following format:\n \
-        ###STEP 0: <arg1> <operation> <arg2> = <result #0> \n \
-        ###STEP 1: <arg1> <operation> <arg2> = <result #1>\n \
-        ...\
-        ###STEP N:<arg1> <operation> <arg2> = <result #N> \n \
-        You should also output the final program based on the previus steps as follows:\n \
-        ###PROGRAM: <program>\n \
-        "
+        system_prompt = f"### SYSTEM: You are a professional financial advisor. Your task is to read a financial report as text and numbers and do the proper math calculations to answer the given question."
 
-        human_prompt = f"\
-        ###Human:\n\
-        ###START_FINANCIAL_REPORT\n \
-        ###PRE_TEXT:\n \
+        human_prompt = f"### Human:\n \
+        ### START_FINANCIAL_REPORT\n \
+        ### PRE_TEXT:\n \
         {parsed_sample['pre_text']}\n \
-        ###TABLE:\n \
+        ### TABLE:\n \
         {parsed_sample['table']}\n \
-        ###POST_TEXT:\n \
+        ### POST_TEXT:\n \
         {parsed_sample['post_text']}\n \
-        ###END_FINANCIAL_REPORT\n \
-        ###QUESTION: {parsed_sample['question']} \
+        ### END_FINANCIAL_REPORT\n \
+        ### QUESTION: {parsed_sample['question']} \
         "
 
-        prompt = f"{system_prompt}\n{human_prompt}"
+        prompt = f"{system_prompt}\n\n{human_prompt}"
 
         return {
             "text": prompt,

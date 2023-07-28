@@ -10,7 +10,7 @@ from transformers import (
 
 
 def build_qlora_model(
-    model_id: str = "tiiuae/falcon-7b", peft_model_id: Optional[str] = None
+    model_id: str = "tiiuae/falcon-7b-instruct", peft_model_id: Optional[str] = None
 ):
     """
     Function that builds a QLoRA LLM model based on the given HuggingFace name:
@@ -76,6 +76,7 @@ def prompt(model, tokenizer, input_text: str, max_new_tokens: int = 40, device: 
     #     eos_token_id=tokenizer.eos_token_id,
     #     pad_token_id=tokenizer.eos_token_id,
     # )
+    # TODO: Should I add a pytorch with.inference_mode() context manager? when running the inference or is done by default by hugingface?
 
     tokenizer.return_token_type_ids = False
 
