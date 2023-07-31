@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Union
 
 from datasets import Dataset
 
-from common.constants import Scope
-from common.data.utils import load_json
+from training.constants import Scope
+from training.data.utils import load_json
 
 
 @dataclass

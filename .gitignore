@@ -65,7 +65,7 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 
-# Scrapy stuff:
+# Scrapy stuff:import comet_ml
 .scrapy
 
 # Sphinx documentation
