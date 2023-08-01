@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Optional, Tuple
 import torch
 
-from peft import LoraConfig, PeftModel, PeftConfig, get_peft_model
+from peft import LoraConfig, PeftModel, PeftConfig
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -11,7 +11,7 @@ from transformers import (
 
 def build_qlora_model(
     model_id: str = "tiiuae/falcon-7b-instruct", peft_model_id: Optional[str] = None
-):
+) -> Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
     """
     Function that builds a QLoRA LLM model based on the given HuggingFace name:
         1.   Create and prepare the bitsandbytes configuration for QLoRa's quantization
@@ -19,8 +19,6 @@ def build_qlora_model(
         3.   Create and prepare the LoRa configuration
         4.   Load and configuration Falcon-7B's tokenizer
     """
-
-    # TODO: Double-check resources and improve this func.
 
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
