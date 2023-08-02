@@ -4,7 +4,12 @@ import comet_ml
 
 from pathlib import Path
 from datasets import Dataset
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, EvalPrediction
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    TrainingArguments,
+    EvalPrediction,
+)
 from peft import PeftConfig
 from trl import SFTTrainer
 
@@ -17,14 +22,13 @@ logger = logging.getLogger(__name__)
 
 class FinQATrainingAPI:
     def __init__(
-            self,
-            root_dataset_dir: Path = constants.ROOT_DATASET_DIR_DEFAULT,
-            model_id: str = constants.MODEL_ID_DEFAULT,
-            training_arguments: TrainingArguments = constants.DEFAULT_TRAINING_ARGUMENTS,
-            max_seq_length: int = 1024,
-            debug: bool = False
-            ):
-        
+        self,
+        root_dataset_dir: Path = constants.ROOT_DATASET_DIR_DEFAULT,
+        model_id: str = constants.MODEL_ID_DEFAULT,
+        training_arguments: TrainingArguments = constants.DEFAULT_TRAINING_ARGUMENTS,
+        max_seq_length: int = 1024,
+        debug: bool = False,
+    ):
         self._root_dataset_dir = root_dataset_dir
         self._model_id = model_id
         self._training_arguments = training_arguments
@@ -37,10 +41,12 @@ class FinQATrainingAPI:
     def load_data(self) -> Tuple[Dataset, Dataset]:
         logger.info(f"Loading FinQA datasets from {self._root_dataset_dir=}")
         training_dataset = finqa.FinQADataset(
-            data_path=self._root_dataset_dir / "train.json", scope = constants.Scope.TRAINING
+            data_path=self._root_dataset_dir / "train.json",
+            scope=constants.Scope.TRAINING,
         ).to_huggingface()
         validation_dataset = finqa.FinQADataset(
-            data_path=self._root_dataset_dir / "test.json", scope=constants.Scope.TRAINING
+            data_path=self._root_dataset_dir / "test.json",
+            scope=constants.Scope.TRAINING,
         ).to_huggingface()
 
         if self._debug is True:
@@ -53,17 +59,15 @@ class FinQATrainingAPI:
 
     def load_model(self) -> Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
         logger.info(f"Loading model using {self._model_id=}")
-        model, tokenizer, peft_config = models.build_qlora_model(model_id=self._model_id)
-
-        return model, tokenizer, peft_config
-    
-    def train(self) -> SFTTrainer:
-        # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length 
-        # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
-        self._model.config.use_cache = (
-            False  # Gradient checkpointing is used by default but not compatible with caching
+        model, tokenizer, peft_config = models.build_qlora_model(
+            model_id=self._model_id, gradient_checkpointing=True
         )
 
+        return model, tokenizer, peft_config
+
+    def train(self) -> SFTTrainer:
+        # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
+        # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
         trainer = SFTTrainer(
             model=self._model,
             train_dataset=self._training_dataset,

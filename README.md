@@ -22,6 +22,17 @@
 
 ## Usage
 
+### Run Training on Beam
+```shell
+beam run tools/train_finqa.py:train
+```
+
+### Export Poetry Requirements to .txt
+This will export all the poetry requirements, except the `dev` group, into a `requirements.txt` file:
+```shell
+poetry export -f requirements.txt --output requirements.txt --without-hashes
+```
+
 ### Run Notebooks Server
 First expose the virtual environment as a notebook kernel:
 ```shell
@@ -31,3 +42,15 @@ Now run the notebook server:
 ```shell
 jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
 ```
+
+ ## Notes
+ ### SSH Poetry
+ When working through SSH, before using `poetry add ...` run the following command to unlock the keyring.
+ ```shell
+ export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+ ```
+
+ ### Fix Beam using Poetry 
+ ```shell
+  ln -s /usr/local/bin/beam /home/pauliusztin/.cache/pypoetry/virtualenvs/training-6xkSxa8Q-py3.11/bin/beam
+ ```

@@ -10,18 +10,20 @@ class Scope(Enum):
 
 
 # TODO: Use Hydra as a configuration management tool.
-ROOT_DATASET_DIR_DEFAULT = Path("../dataset")
+# TODO: Configure this path instead of hardcoding it.
+ROOT_DIR = Path("/home/pauliusztin/Documents/projects/hands-on-llms/modules/training")
+ROOT_DATASET_DIR_DEFAULT = ROOT_DIR / "dataset"
 MODEL_ID_DEFAULT = "tiiuae/falcon-7b-instruct"
 
-RESULT_DIR_DEFAULT = Path("../results")
-LOGGING_DIR_DEFAULT = Path("../logs")
+RESULT_DIR_DEFAULT = ROOT_DIR / "results"
+LOGGING_DIR_DEFAULT = ROOT_DIR / "logs"
 DEFAULT_TRAINING_ARGUMENTS = TrainingArguments(
         output_dir=str(RESULT_DIR_DEFAULT),
         logging_dir=str(LOGGING_DIR_DEFAULT),
         per_device_train_batch_size=1,  # increase this value if you have more VRAM
         gradient_accumulation_steps=3,
         per_device_eval_batch_size=1,  # increase this value if you have more VRAM
-        optim="paged_adamw_32bit",  # This parameter activate QLoRa's pagination
+        optim="paged_adamw_32bit",  # This parameter activate QLoRa's pagination # TODO: Should we use paged_adamw_8bit instead?
         save_steps=40,
         logging_steps=1,
         learning_rate=2e-4,

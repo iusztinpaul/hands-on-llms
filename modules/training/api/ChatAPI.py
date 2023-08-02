@@ -31,6 +31,7 @@ class ChatAPI:
         model, tokenizer, peft_config = models.build_qlora_model(
             model_id=self._model_id,
             peft_model_id=self._peft_model_id,
+            gradient_checkpointing=False
             )
         
         return model, tokenizer, peft_config

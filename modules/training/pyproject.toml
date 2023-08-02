@@ -2,12 +2,28 @@
 name = "training"
 version = "0.1.0"
 description = ""
-authors = ["Paul Iusztin <p.e.iusztin@gmail.com>", "Pau Labarta Bajo <plabartabajo@gmail.com>""]
+authors = ["Paul Iusztin <p.e.iusztin@gmail.com>", "Pau Labarta Bajo <plabartabajo@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.10,<3.11"
+torch = "^2.0.1"
+bitsandbytes = "^0.41.0"
+transformers = "^4.31.0"
+peft = "^0.4.0"
+accelerate = "^0.21.0"
+datasets = "^2.14.2"
+trl = "^0.4.7"
+comet-ml = "^3.33.7"
+python-dotenv = "^1.0.0"
+scipy = "^1.11.1"
+einops = "^0.6.1"
+beam-sdk = "^0.14.6"
 
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.25.0"
+notebook = "^7.0.1"
 
 [build-system]
 requires = ["poetry-core"]
