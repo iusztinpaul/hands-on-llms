@@ -350,14 +350,14 @@ files = [
 
 [[package]]
 name = "beam-sdk"
-version = "0.14.6"
+version = "0.14.7"
 description = ""
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "beam_sdk-0.14.6-py3-none-any.whl", hash = "sha256:3ca3f62bc0fd15585f70a71b380ee6dfd15cd96f2ecbba08f58946ded6d174c0"},
-    {file = "beam_sdk-0.14.6.tar.gz", hash = "sha256:dd93e932ea75808e6be0d20ac892c40f3fbcfb625b17e2fdfe4a1e3acee308ff"},
+    {file = "beam_sdk-0.14.7-py3-none-any.whl", hash = "sha256:8a706caeb99fd0a6b4ad3a530631b853bd62a486776a9431466577546cda3fe2"},
+    {file = "beam_sdk-0.14.7.tar.gz", hash = "sha256:bc7fbc0c78658c71da89cef6cbc2475b746d423f72dc95a4fabd3baba17d9f73"},
 ]
 
 [package.dependencies]
