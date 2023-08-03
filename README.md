@@ -23,7 +23,16 @@
 ## Usage
 
 ### Run Training on Beam
+Go to Beam and create a new Volume called `train_finqa_dataset`, pick `Persistent` as the type, and finally choose the `train_finqa` app (#TODO: Automate this step.)
+
+Upload dataset on a Beam volume:
 ```shell
+beam volume upload train_finqa_dataset dataset -a train_finqa
+```
+
+Start the training on Beam:
+```shell
+cd modules
 beam run tools/train_finqa.py:train
 ```
 
