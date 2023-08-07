@@ -1,5 +1,7 @@
 import logging
+
 from typing import Tuple
+
 import comet_ml
 
 from pathlib import Path
@@ -37,6 +39,10 @@ class FinQATrainingAPI:
 
         self._training_dataset, self._validation_dataset = self.load_data()
         self._model, self._tokenizer, self._peft_config = self.load_model()
+
+    @property
+    def name(self) -> str:
+        return f"FinQA/{self._model_id}"
 
     def load_data(self) -> Tuple[Dataset, Dataset]:
         logger.info(f"Loading FinQA datasets from {self._root_dataset_dir=}")
@@ -82,11 +88,26 @@ class FinQATrainingAPI:
         )
         trainer.train()
 
-        # In case the method is ran in a Jupyter Notebook, finish the Comet ML experiment.
-        experiment = comet_ml.get_global_experiment()
-        experiment.end()
+        best_model_checkpoint = trainer.state.best_model_checkpoint
+        has_best_model_checkpoint = best_model_checkpoint is not None
+        if has_best_model_checkpoint:
+            best_model_checkpoint = Path(best_model_checkpoint)
+            logger.info(f"Logging best model from {best_model_checkpoint} to the model registry...")
+
+            self.log_model(best_model_checkpoint)
+        else:
+            logger.warning("No best model checkpoint found. Skipping logging it to the model registry...")
 
         return trainer
+    
+    def log_model(self, checkpoint_dir: Path):
+        checkpoint_dir = checkpoint_dir.resolve()
+
+        assert checkpoint_dir.exists(), f"Checkpoint directory {checkpoint_dir} does not exist"
+        
+        experiment = comet_ml.Experiment()
+        experiment.log_model(self.name, str(checkpoint_dir)
+)
 
     def compute_metrics(self, eval_pred: EvalPrediction):
         return {"perplexity": metrics.compute_perplexity(eval_pred.predictions)}

@@ -33,7 +33,7 @@ beam volume upload train_finqa_dataset dataset -a train_finqa
 Start the training on Beam:
 ```shell
 cd modules
-beam run tools/train_finqa.py:train
+BEAM_IGNORE_IMPORTS_OFF=true beam run tools/train_finqa.py:train
 ```
 
 ### Export Poetry Requirements to .txt

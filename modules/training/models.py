@@ -28,6 +28,14 @@ def build_qlora_model(
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
+
+
+    from training import utils
+    print("#" * 100)
+    utils.print_available_gpu_memory()
+    utils.print_available_ram()
+    print("#" * 100)
+
     # TODO: For multi-GPU: max_memory = {i: '46000MB' for i in range(torch.cuda.device_count())}
     model = AutoModelForCausalLM.from_pretrained(
         model_id,

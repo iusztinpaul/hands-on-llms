@@ -18,29 +18,9 @@ def print_files_and_subdirs(directory_path):
         print(f"The directory '{directory_path}' does not exist")
 
 
-def print_available_gpu_memory():
-    import torch
-    import subprocess
-
-    if torch.cuda.is_available():
-        for i in range(torch.cuda.device_count()):
-            memory_info = subprocess.check_output(f'nvidia-smi -i {i} --query-gpu=memory.free --format=csv,nounits,noheader', shell=True)
-            memory_info = str(memory_info).split("\\")[0][2:]
-            print(f"GPU {i} memory available: {memory_info} MiB")
-    else:
-        print("No GPUs available")
-
-
-def print_available_ram():
-    import psutil
-
-    memory_info = psutil.virtual_memory()
-    print(f"Available RAM: {memory_info.available / (1024.0 ** 3)} GB")  # convert bytes to GB
-
-
-print("#" * 100)
-print_files_and_subdirs(os.getcwd())
-print("#" * 100)
+# print("#" * 100)
+# print_files_and_subdirs(os.getcwd())
+# print("#" * 100)
 
 
 def read_requirements(file_path):
@@ -58,13 +38,13 @@ training_app = App(
     runtime=Runtime(
         cpu=4,
         memory="32Gi",
-        gpu="A10G",
+        gpu="T4",
         # TODO: Install requirements using Poetry & custom commands.
         image=Image(python_version="python3.10", python_packages=requirements),
     ),
     volumes=[
-        Volume(name="train_finqa_dataset", path="dataset", volume_type=VolumeType.Persistent),
-        Volume(name="train_finqa_results", path="results")
+        Volume(path="dataset", name="train_finqa_dataset"),
+        Volume(path="results", name="train_finqa_results"),
         ],
 )
 
@@ -73,6 +53,7 @@ training_app = App(
 @training_app.run()
 def train():
     import torch
+    from training import utils
 
     if torch.cuda.is_available():
         device_count = torch.cuda.device_count()
@@ -86,14 +67,14 @@ def train():
         print("No GPUs available, using CPU.")
 
     print("#" * 100)
-    print_available_gpu_memory()
-    print_available_ram()
+    utils.print_available_gpu_memory()
+    utils.print_available_ram()
     print("#" * 100)
     print()
 
-    print("#" * 100)
-    print_files_and_subdirs("/workspace/dataset")
-    print("#" * 100)
+    # print("#" * 100)
+    # print_files_and_subdirs("/workspace/dataset")
+    # print("#" * 100)
 
     from training.api import FinQATrainingAPI
     training_api = FinQATrainingAPI(debug=True)
