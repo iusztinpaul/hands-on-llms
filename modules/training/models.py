@@ -44,6 +44,7 @@ def build_qlora_model(
         load_in_4bit=True,
         device_map="auto",
         trust_remote_code=True,
+        cache_dir="./model_cache"
     )
 
     # TODO: Should we also enable kbit training? Check out what it does.

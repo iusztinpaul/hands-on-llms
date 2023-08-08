@@ -13,7 +13,7 @@ class Scope(Enum):
 # TODO: Use Hydra as a configuration management tool.
 # TODO: Configure this path instead of hardcoding it.
 # ROOT_DIR = Path("/workspace")
-ROOT_DIR = Path("..")
+ROOT_DIR = Path("..") / ".."
 # TODO: Fix this /dataset/dataset nested directory.
 # ROOT_DATASET_DIR_DEFAULT = ROOT_DIR / "dataset" / "dataset"
 ROOT_DATASET_DIR_DEFAULT = ROOT_DIR / "dataset"

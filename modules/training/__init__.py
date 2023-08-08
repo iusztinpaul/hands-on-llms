@@ -5,10 +5,6 @@ import yaml
 
 from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
-from training import api, constants, metrics, models
-
-
-__all__ = ["api", "constants", "metrics", "models"]
 
 
 logger = logging.getLogger(__name__)
@@ -34,11 +30,14 @@ def initialize_logger(
     with open(config_path, "rt") as f:
         config = yaml.safe_load(f.read())
 
+    # Make sure that existing logger will still work.
+    config["disable_existing_loggers"] = False
+
     logging.config.dictConfig(config)
 
 
 @run_immediately_decorator
-def initialize(logging_config_path: str ="logging.yaml"):
+def initialize(logging_config_path: str = os.path.join("..", "logging.yaml")):
      # Initialize logger.
     try:
         initialize_logger(config_path=logging_config_path)
@@ -49,7 +48,18 @@ def initialize(logging_config_path: str ="logging.yaml"):
     logger.info("Initializing resources...")
 
     # Initialize environment variables.
-    load_dotenv(find_dotenv())
+    env_file_path = find_dotenv(raise_error_if_not_found=True, usecwd=False)
+    logger.info(f"Loading environment variables from {env_file_path}")
+    load_dotenv(env_file_path)
 
-    # Enable logging of model checkpoints
+    # Enable logging of model checkpoints.
     os.environ["COMET_LOG_ASSETS"] = "True"
+    # Set to OFFLINE to run an Offline Experiment or DISABLE to turn off logging
+    os.environ["COMET_MODE"] = "ONLINE"
+    # Find out more about Comet ML configuration here: https://www.comet.com/docs/v2/integrations/ml-frameworks/huggingface/#configure-comet-for-hugging-face
+
+
+# TODO: Find a better way to initialize the logger and env vars before importing the rest of the packages.
+from training import api, constants, metrics, models
+
+__all__ = ["api", "constants", "metrics", "models"]

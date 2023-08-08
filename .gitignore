@@ -175,3 +175,4 @@ cython_debug/
 
 # Training
 results/
+model_cache/

@@ -38,22 +38,39 @@ training_app = App(
     runtime=Runtime(
         cpu=4,
         memory="32Gi",
-        gpu="T4",
+        gpu="A10G",
         # TODO: Install requirements using Poetry & custom commands.
         image=Image(python_version="python3.10", python_packages=requirements),
     ),
     volumes=[
-        Volume(path="dataset", name="train_finqa_dataset"),
-        Volume(path="results", name="train_finqa_results"),
+        Volume(path="./dataset", name="train_finqa_dataset"),
+        Volume(path="./results", name="train_finqa_results"),
+        Volume(path="./model_cache", name="model_cache"),
         ],
 )
 
 
-
 @training_app.run()
 def train():
+    # from training import initialize
+
+    # print(f"COMET_API_KEY: {os.environ.get('COMET_API_KEY')}")
+    # print(f"COMET_PROJECT_NAME: {os.environ.get('COMET_PROJECT_NAME')}")
+    # print(f"COMET_WORKSPACE: {os.environ.get('COMET_WORKSPACE')}")
+
+    # initialize()
+
+    print(f"COMET_API_KEY: {os.environ.get('COMET_API_KEY')}")
+    print(f"COMET_PROJECT_NAME: {os.environ.get('COMET_PROJECT_NAME')}")
+    print(f"COMET_WORKSPACE: {os.environ.get('COMET_WORKSPACE')}")
+
     import torch
     from training import utils
+
+    print(f"COMET_API_KEY: {os.environ.get('COMET_API_KEY')}")
+    print(f"COMET_PROJECT_NAME: {os.environ.get('COMET_PROJECT_NAME')}")
+    print(f"COMET_WORKSPACE: {os.environ.get('COMET_WORKSPACE')}")
+
 
     if torch.cuda.is_available():
         device_count = torch.cuda.device_count()
