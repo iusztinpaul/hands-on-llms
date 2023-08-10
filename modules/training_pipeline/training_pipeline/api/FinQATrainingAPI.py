@@ -26,12 +26,12 @@ logger = logging.getLogger(__name__)
 class FinQATrainingAPI:
     def __init__(
         self,
-        root_dataset_dir: Path = constants.ROOT_DATASET_DIR_DEFAULT,
-        model_id: str = constants.MODEL_ID_DEFAULT,
-        training_arguments: TrainingArguments = constants.DEFAULT_TRAINING_ARGUMENTS,
+        root_dataset_dir: Path,
+        model_id: str,
+        training_arguments: TrainingArguments,
         max_seq_length: int = 1024,
         debug: bool = False,
-    ):
+    ):  
         self._root_dataset_dir = root_dataset_dir
         self._model_id = model_id
         self._training_arguments = training_arguments

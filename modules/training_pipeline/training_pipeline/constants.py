@@ -45,6 +45,37 @@ DEFAULT_TRAINING_ARGUMENTS = TrainingArguments(
     load_best_model_at_end=True, # By default it will use the 'loss' to find the best checkpoint. Leverage the 'metric_for_best_model' paramater if you want to use a different metric. 
 )
 
+
+def build_training_arguments(config: dict, output_dir: Path) -> TrainingArguments:
+    """
+    Build a TrainingArguments object from a configuration dictionary.
+    """
+
+    training_arguments = config["training"]
+
+    return TrainingArguments(
+        output_dir=str(output_dir),
+        logging_dir=str(output_dir / "logs"),
+        per_device_train_batch_size=training_arguments["per_device_train_batch_size"],
+        gradient_accumulation_steps=training_arguments["gradient_accumulation_steps"],
+        per_device_eval_batch_size=training_arguments["per_device_eval_batch_size"],
+        optim=training_arguments["optim"],
+        save_steps=training_arguments["save_steps"],
+        logging_steps=training_arguments["logging_steps"],
+        learning_rate=training_arguments["learning_rate"],
+        fp16=training_arguments["fp16"],
+        max_grad_norm=training_arguments["max_grad_norm"],
+        num_train_epochs=training_arguments["num_train_epochs"],
+        warmup_ratio=training_arguments["warmup_ratio"],
+        lr_scheduler_type=training_arguments["lr_scheduler_type"],
+        evaluation_strategy=training_arguments["evaluation_strategy"],
+        eval_steps=training_arguments["eval_steps"],
+        report_to=training_arguments["report_to"],
+        seed=training_arguments["seed"],
+        load_best_model_at_end=training_arguments["load_best_model_at_end"],
+    )
+
+
 def load_config(config_path: Path) -> dict:
     """
     Load a configuration file from the given path.
@@ -52,8 +83,5 @@ def load_config(config_path: Path) -> dict:
 
     with config_path.open("r") as f:
         config = yaml.safe_load(f)
-
-
-    training_arguments = TrainingArguments(**config["training_arguments"])
 
     return config

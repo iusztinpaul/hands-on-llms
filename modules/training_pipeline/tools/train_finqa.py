@@ -1,6 +1,7 @@
+from pathlib import Path
 from training_pipeline import utils
 
-from beam import App, Runtime, Image, Output, Volume, VolumeType
+from beam import App, Runtime, Image, Volume
 
 
 requirements = utils.read_requirements("requirements.txt")
@@ -22,7 +23,7 @@ training_app = App(
 
 
 @training_app.run()
-def train():
+def train(config_file: str, output_dir: str, dataset_dir: str):
     import logging
 
     from training_pipeline import initialize
@@ -30,7 +31,7 @@ def train():
     # Be sure to initialize the environment variables before importing any other modules.
     initialize(env_file_path="env")
 
-    from training_pipeline import utils
+    from training_pipeline import utils, constants
     from training_pipeline.api import FinQATrainingAPI
 
     logger = logging.getLogger(__name__)
@@ -40,7 +41,20 @@ def train():
     utils.log_available_ram()
     logger.info("#" * 100)
 
-    training_api = FinQATrainingAPI(debug=True)
+    config_file = Path(config_file)
+    output_dir = Path(output_dir)
+    root_dataset_dir = Path(dataset_dir)
+
+    config = constants.load_config(config_file)
+    training_arguments = constants.build_training_arguments(config=config, output_dir=output_dir)
+
+    training_api = FinQATrainingAPI(
+        root_dataset_dir=root_dataset_dir,
+        model_id=config["model"]["id"],
+        training_arguments=training_arguments,
+        max_seq_length=config["model"]["max_seq_length"],
+        debug=config["setup"]["debug"],
+    )
     training_api.train()
 
 

@@ -18,3 +18,8 @@ training:
   report_to: comet_ml
   seed: 42
   load_best_model_at_end: True
+model:
+  id: tiiuae/falcon-7b-instruct
+  max_seq_length: 1024
+setup:
+  debug: True
