@@ -5,6 +5,7 @@ description = ""
 authors = ["Paul Iusztin <p.e.iusztin@gmail.com>", "Pau Labarta Bajo <plabartabajo@gmail.com>"]
 readme = "README.md"
 
+
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
 bitsandbytes = "^0.41.0"
@@ -18,18 +19,14 @@ python-dotenv = "^1.0.0"
 scipy = "^1.11.1"
 einops = "^0.6.1"
 beam-sdk = "^0.14.6"
-torch = {version = "2.0.1+cu117", source = "torch"}
+psutil = "^5.9.5"
+torch = "2.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.25.0"
 notebook = "^7.0.1"
 
-
-[[tool.poetry.source]]
-name = "torch"
-url = "https://download.pytorch.org/whl/cu117"
-priority = "supplemental"
 
 [build-system]
 requires = ["poetry-core"]

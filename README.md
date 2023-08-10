@@ -22,6 +22,15 @@
 
 ## Usage
 
+## Install Training Pipeline
+
+```shell
+cd modules/training
+poetry env use $(which python3.10) 
+poetry install
+poetry shell && pip install torch==2.0.1 # Let pip do its vodoo.
+```
+
 ### Run Training on Beam
 Go to Beam and create a new Volume called `train_finqa_dataset`, pick `Persistent` as the type, and finally choose the `train_finqa` app (#TODO: Automate this step.)
 

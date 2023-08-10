@@ -1,6 +1,8 @@
 from enum import Enum
 from pathlib import Path
 
+import yaml
+
 from transformers import TrainingArguments
 
 
@@ -12,11 +14,11 @@ class Scope(Enum):
 
 # TODO: Use Hydra as a configuration management tool.
 # TODO: Configure this path instead of hardcoding it.
-# ROOT_DIR = Path("/workspace")
-ROOT_DIR = Path("..") / ".."
+ROOT_DIR = Path("/workspace")
+# ROOT_DIR = Path("..") / ".."
 # TODO: Fix this /dataset/dataset nested directory.
-# ROOT_DATASET_DIR_DEFAULT = ROOT_DIR / "dataset" / "dataset"
-ROOT_DATASET_DIR_DEFAULT = ROOT_DIR / "dataset"
+ROOT_DATASET_DIR_DEFAULT = ROOT_DIR / "dataset" / "dataset"
+# ROOT_DATASET_DIR_DEFAULT = ROOT_DIR / "dataset"
 MODEL_ID_DEFAULT = "tiiuae/falcon-7b-instruct"
 
 RESULT_DIR_DEFAULT = ROOT_DIR / "results"
@@ -42,3 +44,16 @@ DEFAULT_TRAINING_ARGUMENTS = TrainingArguments(
     seed=42,
     load_best_model_at_end=True, # By default it will use the 'loss' to find the best checkpoint. Leverage the 'metric_for_best_model' paramater if you want to use a different metric. 
 )
+
+def load_config(config_path: Path) -> dict:
+    """
+    Load a configuration file from the given path.
+    """
+
+    with config_path.open("r") as f:
+        config = yaml.safe_load(f)
+
+
+    training_arguments = TrainingArguments(**config["training_arguments"])
+
+    return config

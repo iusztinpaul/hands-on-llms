@@ -4,7 +4,7 @@ from typing import Tuple
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftConfig
 
-from training import constants, models
+from training_pipeline import constants, models
 
 
 logger = logging.getLogger(__name__)

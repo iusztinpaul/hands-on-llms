@@ -1,4 +1,6 @@
 from typing import Optional, Tuple
+
+import transformers
 import torch
 
 from peft import LoraConfig, PeftModel, PeftConfig
@@ -29,11 +31,11 @@ def build_qlora_model(
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
 
+    from training_pipeline import utils
 
-    from training import utils
     print("#" * 100)
-    utils.print_available_gpu_memory()
-    utils.print_available_ram()
+    utils.log_available_gpu_memory()
+    utils.log_available_ram()
     print("#" * 100)
 
     # TODO: For multi-GPU: max_memory = {i: '46000MB' for i in range(torch.cuda.device_count())}
@@ -44,7 +46,7 @@ def build_qlora_model(
         load_in_4bit=True,
         device_map="auto",
         trust_remote_code=True,
-        cache_dir="./model_cache"
+        cache_dir="./model_cache",
     )
 
     # TODO: Should we also enable kbit training? Check out what it does.
@@ -74,10 +76,12 @@ def build_qlora_model(
 
     if gradient_checkpointing:
         model.gradient_checkpointing_enable()
-        model.config.use_cache = False  # Gradient checkpointing is not compatible with caching.
+        model.config.use_cache = (
+            False  # Gradient checkpointing is not compatible with caching.
+        )
     else:
         model.gradient_checkpointing_disable()
-        model.config.use_cache = True # It is good practice to enable caching when using the model for inference.
+        model.config.use_cache = True  # It is good practice to enable caching when using the model for inference.
 
     return model, tokenizer, lora_config
 
@@ -115,4 +119,23 @@ def prompt(
     ]  # The input to the model is a batch of size 1, so the output is also a batch of size 1.
     output = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-    return output
+    pipeline = transformers.pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        torch_dtype=torch.bfloat16,
+        trust_remote_code=True,
+        device_map="auto",
+    )
+
+    sequences = pipeline(
+        input_text,
+        max_length=max_new_tokens,
+        do_sample=True,
+        top_k=10,
+        num_return_sequences=1,
+        eos_token_id=tokenizer.eos_token_id,
+        pad_token_id=tokenizer.eos_token_id,
+    )
+
+    return sequences

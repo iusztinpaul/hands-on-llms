@@ -16,8 +16,8 @@ from transformers import (
 from peft import PeftConfig
 from trl import SFTTrainer
 
-from training.data import finqa
-from training import models, constants, metrics
+from training_pipeline.data import finqa
+from training_pipeline import models, constants, metrics
 
 
 logger = logging.getLogger(__name__)
