@@ -20,3 +20,6 @@ run_training_pipeline_on_beam:
 	@echo "Running training pipeline on beam..."
 
 	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_finqa.py:train
+
+upload_dataset_to_beam:
+	beam volume upload train_finqa_dataset dataset

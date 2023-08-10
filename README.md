@@ -36,7 +36,7 @@ Go to Beam and create a new Volume called `train_finqa_dataset`, pick `Persisten
 
 Upload dataset on a Beam volume:
 ```shell
-beam volume upload train_finqa_dataset dataset -a train_finqa
+beam volume upload train_finqa_dataset dataset
 ```
 
 Start the training on Beam:
