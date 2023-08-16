@@ -15,6 +15,7 @@ def build_qlora_model(
     model_id: str = "tiiuae/falcon-7b-instruct",
     peft_model_id: Optional[str] = None,
     gradient_checkpointing: bool = True,
+    cache_dir: str = "../model_cache",
 ) -> Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
     """
     Function that builds a QLoRA LLM model based on the given HuggingFace name:
@@ -31,13 +32,6 @@ def build_qlora_model(
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
 
-    from training_pipeline import utils
-
-    print("#" * 100)
-    utils.log_available_gpu_memory()
-    utils.log_available_ram()
-    print("#" * 100)
-
     # TODO: For multi-GPU: max_memory = {i: '46000MB' for i in range(torch.cuda.device_count())}
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
@@ -46,7 +40,7 @@ def build_qlora_model(
         load_in_4bit=True,
         device_map="auto",
         trust_remote_code=True,
-        cache_dir="./model_cache",
+        cache_dir=cache_dir,
     )
 
     # TODO: Should we also enable kbit training? Check out what it does.

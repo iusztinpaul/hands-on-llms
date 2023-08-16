@@ -1,0 +1,7 @@
+peft_model:
+  id: ../results/..
+model:
+  id: tiiuae/falcon-7b-instruct
+  max_new_tokens: 50
+setup:
+  device: cuda:0

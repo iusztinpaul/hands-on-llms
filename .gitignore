@@ -173,6 +173,7 @@ cython_debug/
 # Built Visual Studio Code Extensions
 *.vsix
 
-# Training
+# Artifacts
 results/
 model_cache/
+logs/

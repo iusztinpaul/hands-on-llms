@@ -26,7 +26,7 @@ def log_available_ram():
     memory_info = psutil.virtual_memory()
 
     logger.info(
-        f"Available RAM: {memory_info.available / (1024.0 ** 3)} GB"
+        f"Available RAM: {memory_info.available / (1024.0 ** 3):.2f} GB"
     )  # convert bytes to GB
 
 

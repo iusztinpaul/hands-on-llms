@@ -1,20 +1,18 @@
 training:
-  output_dir: RESULT_DIR_DEFAULT
-  logging_dir: LOGGING_DIR_DEFAULT
   per_device_train_batch_size: 1
   gradient_accumulation_steps: 4
   per_device_eval_batch_size: 1
   optim: paged_adamw_32bit
-  save_steps: 1
-  logging_steps: 1
-  learning_rate: 2e-4
+  save_steps: 750
+  logging_steps: 50
+  learning_rate: 2.e-4
   fp16: True
   max_grad_norm: 0.3
-  num_train_epochs: 1
+  num_train_epochs: 3
   warmup_ratio: 0.03
   lr_scheduler_type: constant
   evaluation_strategy: steps
-  eval_steps: 1
+  eval_steps: 750
   report_to: comet_ml
   seed: 42
   load_best_model_at_end: True
@@ -22,4 +20,4 @@ model:
   id: tiiuae/falcon-7b-instruct
   max_seq_length: 1024
 setup:
-  debug: True
+  debug: False
