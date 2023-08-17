@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from datasets import Dataset
 
@@ -34,14 +34,22 @@ class FinQATestingSample:
 
 
 class FinQADataset:
-    def __init__(self, data_path: Path, scope: Scope = Scope.TRAINING):
+    def __init__(
+            self, 
+            data_path: Path, 
+            scope: Scope = Scope.TRAINING,
+            max_samples: Optional[int] = None,
+            ):
         self._data_path = data_path
         self._scope = scope
+        self._max_samples = max_samples
 
         self._raw_data = self.load(data_path)
 
     def load(self, data_path: Path) -> List[FinQASample]:
         data = load_json(data_path)
+        if self._max_samples is not None:
+            data = data[:self._max_samples]
 
         return self.deserialize(data)
     
@@ -127,7 +135,6 @@ class FinQADataset:
         return {
             "text": prompt,
         }
-
 
     def _parse_sample_testing(self, sample: Dict[str, Any]) -> Dict[str, str]:
         # TODO: Refactor _parse_sample...() methods.

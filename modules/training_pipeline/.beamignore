@@ -1,6 +1,7 @@
 # Training artifacts
 model_cache/*
 results/*
+output/*
 logs/*
 
 # Datasets

@@ -1,6 +1,6 @@
 import logging
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 import comet_ml
 
@@ -31,46 +31,61 @@ class FinQATrainingAPI:
         training_arguments: TrainingArguments,
         max_seq_length: int = 1024,
         debug: bool = False,
+        model_cache_dir: Optional[Path] = None,
     ):
         self._root_dataset_dir = root_dataset_dir
         self._model_id = model_id
         self._training_arguments = training_arguments
         self._max_seq_length = max_seq_length
         self._debug = debug
+        self._model_cache_dir = model_cache_dir
 
         self._training_dataset, self._validation_dataset = self.load_data()
         self._model, self._tokenizer, self._peft_config = self.load_model()
 
+    @property
+    def name(self) -> str:
+        return f"finqa/{self._model_id}"
+    
     @classmethod
-    def from_config(cls, config: TrainingConfig, root_dataset_dir: Path):
+    def from_config(
+        cls,
+        config: TrainingConfig,
+        root_dataset_dir: Path,
+        model_cache_dir: Optional[Path] = None,
+    ):
         return cls(
             root_dataset_dir=root_dataset_dir,
             model_id=config.model["id"],
             training_arguments=config.training,
             max_seq_length=config.model["max_seq_length"],
             debug=config.setup["debug"],
+            model_cache_dir=model_cache_dir,
         )
-
-    @property
-    def name(self) -> str:
-        return f"FinQA/{self._model_id}"
 
     def load_data(self) -> Tuple[Dataset, Dataset]:
         logger.info(f"Loading FinQA datasets from {self._root_dataset_dir=}")
+
+        if self._debug:
+            logger.info("Debug mode enabled. Truncating datasets...")
+
+            training_max_samples = 12
+            validation_max_samples = 6
+        else:
+            training_max_samples = None
+            # To avoid waiting an eternity to run the evaluation we will only use a subset of the validation dataset.
+            validation_max_samples = 75
+
         training_dataset = finqa.FinQADataset(
             data_path=self._root_dataset_dir / "train.json",
             scope=constants.Scope.TRAINING,
+            max_samples=training_max_samples,
         ).to_huggingface()
         validation_dataset = finqa.FinQADataset(
             data_path=self._root_dataset_dir / "test.json",
             scope=constants.Scope.TRAINING,
+            max_samples=validation_max_samples,
         ).to_huggingface()
-
-        if self._debug is True:
-            logger.info("Debug mode enabled. Truncating datasets...")
-
-            training_dataset = training_dataset.select(range(12))
-            validation_dataset = validation_dataset.select(range(6))
 
         logger.info(f"Training dataset size: {len(training_dataset)}")
         logger.info(f"Validation dataset size: {len(validation_dataset)}")
@@ -80,7 +95,9 @@ class FinQATrainingAPI:
     def load_model(self) -> Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
         logger.info(f"Loading model using {self._model_id=}")
         model, tokenizer, peft_config = models.build_qlora_model(
-            model_id=self._model_id, gradient_checkpointing=True
+            pretrained_model_name_or_path=self._model_id,
+            gradient_checkpointing=True,
+            cache_dir=self._model_cache_dir,
         )
 
         return model, tokenizer, peft_config

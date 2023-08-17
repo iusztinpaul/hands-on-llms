@@ -12,15 +12,15 @@ training_app = App(
     name="train_finqa",
     runtime=Runtime(
         cpu=4,
-        memory="32Gi",
+        memory="64Gi",
         gpu="A10G",
         # TODO: Install requirements using Poetry & custom commands.
         image=Image(python_version="python3.10", python_packages=requirements),
     ),
     volumes=[
         Volume(path="./dataset", name="train_finqa_dataset"),
-        Volume(path="../results", name="train_finqa_results"),
-        Volume(path="../model_cache", name="model_cache"),
+        Volume(path="./output", name="train_finqa_output"),
+        Volume(path="./model_cache", name="model_cache"),
     ],
 )
 
@@ -32,6 +32,7 @@ def train(
     dataset_dir: str,
     env_file_path: str = ".env",
     logging_config_path: str = "logging.yaml",
+    model_cache_dir: str = None,
 ):
     import logging
 
@@ -53,10 +54,11 @@ def train(
     config_file = Path(config_file)
     output_dir = Path(output_dir)
     root_dataset_dir = Path(dataset_dir)
+    model_cache_dir = Path(model_cache_dir) if model_cache_dir else None
 
     training_config = configs.TrainingConfig.from_yaml(config_file, output_dir)
     training_api = FinQATrainingAPI.from_config(
-        config=training_config, root_dataset_dir=root_dataset_dir
+        config=training_config, root_dataset_dir=root_dataset_dir, model_cache_dir=model_cache_dir
     )
     training_api.train()
 

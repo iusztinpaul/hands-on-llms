@@ -20,25 +20,35 @@ export_requirements:
 upload_dataset_to_beam:
 	beam volume upload train_finqa_dataset dataset
 
-help:
+train_help:
 	poetry run python -m tools.train_finqa --help
 
-dev_train_locally:
+dev_train_local:
 	@echo "Running training pipeline locally using the development config..."
 	
-	poetry run python -m tools.train_finqa --config_file configs/dev_training_config.yaml --output_dir ../results --dataset_dir ./dataset
+	poetry run python -m tools.train_finqa --config_file configs/dev_training_config.yaml --output_dir ./output --dataset_dir ./dataset
 
-train_locally:
+train_local:
 	@echo "Running training pipeline locally using the production config..."
 	
-	poetry run python -m tools.train_finqa --config_file configs/training_config.yaml --output_dir ../results --dataset_dir ./dataset
+	poetry run python -m tools.train_finqa --config_file configs/training_config.yaml --output_dir ./output --dataset_dir ./dataset
 
-dev_train_on_beam:
+dev_infer_local:
+	@echo "Running inference pipeline locally using the production config..."
+
+	poetry run python -m tools.inference_finqa --config_file configs/dev_inference_config.yaml --output_dir ./output --dataset_dir ./dataset
+
+infer_local:
+	@echo "Running inference pipeline locally using the production config..."
+
+	poetry run python -m tools.inference_finqa --config_file configs/inference_config.yaml --output_dir ./output --dataset_dir ./dataset
+
+dev_train_beam:
 	@echo "Running training pipeline on Beam using the development config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "../results", "dataset_dir": "./dataset/dataset", "env_file_path": "env"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
-train_on_beam:
+train_beam:
 	@echo "Running training pipeline on Beam using the production config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "../results", "dataset_dir": "./dataset/dataset", "env_file_path": "env"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'

@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from typing import Any, Dict
-import yaml
-
 from pathlib import Path
 
+import yaml
+
 from transformers import TrainingArguments
+from training_pipeline.data.utils import load_yaml
 
 
 @dataclass
@@ -22,9 +23,8 @@ class TrainingConfig:
         """
         Load a configuration file from the given path.
         """
-
-        with config_path.open("r") as f:
-            config = yaml.safe_load(f)
+        
+        config = load_yaml(config_path)
 
         config["training"] = cls._dict_to_training_arguments(
             training_config=config["training"], output_dir=output_dir
@@ -46,6 +46,7 @@ class TrainingConfig:
             per_device_train_batch_size=training_config["per_device_train_batch_size"],
             gradient_accumulation_steps=training_config["gradient_accumulation_steps"],
             per_device_eval_batch_size=training_config["per_device_eval_batch_size"],
+            eval_accumulation_steps=training_config["eval_accumulation_steps"],
             optim=training_config["optim"],
             save_steps=training_config["save_steps"],
             logging_steps=training_config["logging_steps"],
@@ -78,9 +79,6 @@ class InferenceConfig:
         Load a configuration file from the given path.
         """
 
-        # TODO: Load peft_model from model registry. 
-
-        with config_path.open("r") as f:
-            config = yaml.safe_load(f)
+        config = load_yaml(config_path)
 
         return cls(**config)
