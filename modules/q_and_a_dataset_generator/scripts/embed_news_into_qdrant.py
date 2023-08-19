@@ -116,14 +116,16 @@ def process_one_document(_data: Dict) -> None:
     doc = embedding(doc)
     push_document_to_qdrant(doc)
 
-    # breakpoint()
+    return doc
 
 def embed_news_into_qdrant(news_data: List[Dict], n_processes: int = 1) -> None:
     """"""
+    results = []
     if n_processes == 1:
         # sequential
         for _data in tqdm(news_data):
-            process_one_document(_data)
+            result = process_one_document(_data)
+            results.append(result)
     
     else:
         # parallel
@@ -137,6 +139,8 @@ def embed_news_into_qdrant(news_data: List[Dict], n_processes: int = 1) -> None:
                                 desc="Processing",
                                 unit="news"))
 
+    breakpoint()
+
 if __name__ == '__main__':
     """"""
     import json
@@ -145,7 +149,7 @@ if __name__ == '__main__':
 
     embed_news_into_qdrant(
         news_data,
-        n_processes=4,
+        n_processes=1,
     )
 
 

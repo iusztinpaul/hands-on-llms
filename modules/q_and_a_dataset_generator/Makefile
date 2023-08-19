@@ -7,10 +7,12 @@ init:
 
 # download 150k news articles from Alpaca and save them in JSON file
 download:
+	@echo "Downloading data from Alpaca..."
 	poetry run python scripts/download_news_from_alpaca.py
 	
 # run the feature-pipeline and send the feature to the feature store
 embed:
+	@echo "Embedding text chunks into Qdrant..."
 	poetry run python scripts/embed_news_into_qdrant.py
 
 # backfills the feature group using historical data
