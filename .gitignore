@@ -178,3 +178,4 @@ results/
 output/
 model_cache/
 logs/
+set_env_variables.sh
