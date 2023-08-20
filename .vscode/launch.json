@@ -10,8 +10,72 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "justMyCode": false,
             "cwd": "${workspaceFolder}/modules",
+        },
+        {
+            "name": "Dev Train Local",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.train_finqa",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/training_pipeline",
+            "args": [
+                "--config_file",
+                "configs/dev_training_config.yaml",
+                "--output_dir",
+                "./output",
+                "--dataset_dir",
+                "./dataset"
+            ]
+        },
+        {
+            "name": "Train Local",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.train_finqa",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/training_pipeline",
+            "args": [
+                "--config_file",
+                "configs/training_config.yaml",
+                "--output_dir",
+                "./output",
+                "--dataset_dir",
+                "./dataset"
+            ]
+        },
+        {
+            "name": "Dev Inference Local",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.inference_finqa",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/training_pipeline",
+            "args": [
+                "--config_file",
+                "configs/dev_inference_config.yaml",
+                "--output_dir",
+                "./output",
+                "--dataset_dir",
+                "./dataset"
+            ]
+        },
+        {
+            "name": "Inference Local",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.inference_finqa",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/training_pipeline",
+            "args": [
+                "--config_file",
+                "configs/inference_config.yaml",
+                "--output_dir",
+                "./output",
+                "--dataset_dir",
+                "./dataset"
+            ]
         }
     ]
 }

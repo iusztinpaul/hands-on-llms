@@ -1,4 +1,8 @@
+import os
+from pathlib import Path
 from typing import Optional, Tuple
+from comet_ml import API
+from training_pipeline import constants
 
 import transformers
 import torch
@@ -12,9 +16,10 @@ from transformers import (
 
 
 def build_qlora_model(
-    model_id: str = "tiiuae/falcon-7b-instruct",
-    peft_model_id: Optional[str] = None,
+    pretrained_model_name_or_path: str = "tiiuae/falcon-7b-instruct",
+    peft_pretrained_model_name_or_path: Optional[str] = None,
     gradient_checkpointing: bool = True,
+    cache_dir: Optional[Path] = None,
 ) -> Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
     """
     Function that builds a QLoRA LLM model based on the given HuggingFace name:
@@ -31,39 +36,39 @@ def build_qlora_model(
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
 
-    from training_pipeline import utils
-
-    print("#" * 100)
-    utils.log_available_gpu_memory()
-    utils.log_available_ram()
-    print("#" * 100)
-
     # TODO: For multi-GPU: max_memory = {i: '46000MB' for i in range(torch.cuda.device_count())}
     model = AutoModelForCausalLM.from_pretrained(
-        model_id,
+        pretrained_model_name_or_path,
         revision="main",
         quantization_config=bnb_config,
         load_in_4bit=True,
         device_map="auto",
         trust_remote_code=True,
-        cache_dir="./model_cache",
+        cache_dir=str(cache_dir) if cache_dir else None,
     )
 
     # TODO: Should we also enable kbit training? Check out what it does.
     # from peft import prepare_model_for_kbit_training
     # model = prepare_model_for_kbit_training(model)
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
 
-    if peft_model_id:
-        lora_config = LoraConfig.from_pretrained(peft_model_id)
+    if peft_pretrained_model_name_or_path:
+        is_model_name = not os.path.isdir(peft_pretrained_model_name_or_path)
+        if is_model_name:
+            peft_pretrained_model_name_or_path = get_model_from_registry(
+                model_id=peft_pretrained_model_name_or_path,
+                cache_dir=cache_dir,
+            )
+
+        lora_config = LoraConfig.from_pretrained(peft_pretrained_model_name_or_path)
         assert (
-            lora_config.base_model_name_or_path == model_id
-        ), f"Lora Model trained on different base model than the one requested: {lora_config.base_model_name_or_path} != {model_id}"
+            lora_config.base_model_name_or_path == pretrained_model_name_or_path
+        ), f"Lora Model trained on different base model than the one requested: {lora_config.base_model_name_or_path} != {pretrained_model_name_or_path}"
 
         # model = get_peft_model(model, lora_config)  # TODO: Why this is not working?
-        model = PeftModel.from_pretrained(model, peft_model_id)
+        model = PeftModel.from_pretrained(model, peft_pretrained_model_name_or_path)
     else:
         lora_config = LoraConfig(
             lora_alpha=16,
@@ -86,56 +91,41 @@ def build_qlora_model(
     return model, tokenizer, lora_config
 
 
+def get_model_from_registry(model_id: str, cache_dir: Optional[str] = None):
+    if cache_dir is None: 
+        cache_dir = constants.CACHE_DIR
+    output_folder = cache_dir / "models" / model_id
+
+    workspace, model_id = model_id.split("/")
+    model_name, version = model_id.split(":")
+
+    api = API()
+    model = api.get_model(workspace=workspace, model_name=model_name)
+    model.download(
+        version=version,
+        output_folder=output_folder,
+        expand=True
+    )
+
+    subdirs = [d for d in output_folder.iterdir() if d.is_dir()]
+    if len(subdirs) == 1:
+        model_dir = output_folder / subdirs[0]
+    else:
+        raise RuntimeError(f"There should be only one directory inside the model folder. Check the downloaded model at: {output_folder}")
+
+    return model_dir
+
+
 def prompt(
     model, tokenizer, input_text: str, max_new_tokens: int = 40, device: str = "cuda:0"
 ):
-    # TODO: Rewrite this function using the huggingface pipeline class.
-    # Example: https://huggingface.co/tiiuae/falcon-7b#how-to-get-started-with-the-model
-    # pipeline = pipeline(
-    #     "text-generation",
-    #     model=model_4bit,
-    #     tokenizer=tokenizer,
-    #     use_cache=True,
-    #     device_map="auto",
-    #     max_length=296,
-    #     do_sample=True,
-    #     top_k=10,
-    #     num_return_sequences=1,
-    #     eos_token_id=tokenizer.eos_token_id,
-    #     pad_token_id=tokenizer.eos_token_id,
-    # )
-    # TODO: Should I add a pytorch with.inference_mode() or torch.no_grad() context manager? when running the inference or is done by default by hugingface?
+    inputs = tokenizer(input_text, return_tensors="pt").to(device)
+    # TODO: How can I get rid of token_type_ids in a cleaner way?
+    del inputs["token_type_ids"]
 
-    # tokenizer.return_token_type_ids = False
+    outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
 
-    # inputs = tokenizer(input_text, return_tensors="pt").to(device)
-    # # TODO: How can I get rid of token_type_ids in a cleaner way?
-    # del inputs["token_type_ids"]
-
-    # outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
-
-    # output = outputs[
-    #     0
-    # ]  # The input to the model is a batch of size 1, so the output is also a batch of size 1.
-    # output = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    pipeline = transformers.pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        torch_dtype=torch.bfloat16,
-        trust_remote_code=True,
-        device_map="auto",
-    )
-
-    sequences = pipeline(
-        input_text,
-        max_length=max_new_tokens,
-        do_sample=True,
-        top_k=10,
-        num_return_sequences=1,
-        eos_token_id=tokenizer.eos_token_id,
-        pad_token_id=tokenizer.eos_token_id,
-    )
-
-    return sequences
+    output = outputs[0]  # The input to the model is a batch of size 1, so the output is also a batch of size 1.
+    output = tokenizer.decode(output, skip_special_tokens=True)
+   
+    return output

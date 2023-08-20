@@ -23,7 +23,9 @@ def initialize(logging_config_path: str = "logging.yaml", env_file_path: str = "
         env_file_path = find_dotenv(raise_error_if_not_found=True, usecwd=False)
         
     logger.info(f"Loading environment variables from: {env_file_path}")
-    load_dotenv(env_file_path, verbose=True)
+    found_env_file = load_dotenv(env_file_path, verbose=True, override=True)
+    if found_env_file is False:
+        raise RuntimeError(f"Could not find environment file at: {env_file_path}")
 
     # Enable logging of model checkpoints.
     os.environ["COMET_LOG_ASSETS"] = "True"

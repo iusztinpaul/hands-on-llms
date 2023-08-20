@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "training"
+name = "training_pipeline"
 version = "0.1.0"
 description = ""
 authors = ["Paul Iusztin <p.e.iusztin@gmail.com>", "Pau Labarta Bajo <plabartabajo@gmail.com>"]
@@ -21,11 +21,14 @@ einops = "^0.6.1"
 beam-sdk = "^0.14.6"
 psutil = "^5.9.5"
 torch = "2.0.1"
+fire = "^0.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.25.0"
 notebook = "^7.0.1"
+ruff = "^0.0.284"
+black = "^23.7.0"
 
 
 [build-system]

@@ -33,11 +33,6 @@ def build_qlora_model(
 
     from training_pipeline import utils
 
-    print("#" * 100)
-    utils.log_available_gpu_memory()
-    utils.log_available_ram()
-    print("#" * 100)
-
     # TODO: For multi-GPU: max_memory = {i: '46000MB' for i in range(torch.cuda.device_count())}
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
