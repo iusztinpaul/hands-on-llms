@@ -177,4 +177,6 @@ cython_debug/
 results/
 output/
 model_cache/
+
+set_env_variables.sh
 logs/
