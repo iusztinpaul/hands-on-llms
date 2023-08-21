@@ -34,12 +34,14 @@ class FinQATestingSample:
 
 
 class FinQADataset:
+    ANSWER_DELIMITER = "ANSWER"
+
     def __init__(
-            self, 
-            data_path: Path, 
-            scope: Scope = Scope.TRAINING,
-            max_samples: Optional[int] = None,
-            ):
+        self,
+        data_path: Path,
+        scope: Scope = Scope.TRAINING,
+        max_samples: Optional[int] = None,
+    ):
         self._data_path = data_path
         self._scope = scope
         self._max_samples = max_samples
@@ -49,11 +51,13 @@ class FinQADataset:
     def load(self, data_path: Path) -> List[FinQASample]:
         data = load_json(data_path)
         if self._max_samples is not None:
-            data = data[:self._max_samples]
+            data = data[: self._max_samples]
 
         return self.deserialize(data)
-    
-    def deserialize(self, data: List[dict]) -> List[Union[FinQASample, FinQATestingSample]]:
+
+    def deserialize(
+        self, data: List[dict]
+    ) -> List[Union[FinQASample, FinQATestingSample]]:
         if self._scope == Scope.TRAINING:
             return [
                 FinQASample(
@@ -100,7 +104,7 @@ class FinQADataset:
         prompt = self.to_testing_prompt(sample)
 
         answer_prompt = f"### ASSISTANT:\n\
-        ### ANSWER: {parse_sample['answer']}\n\
+        ### {self.ANSWER_DELIMITER}: {parse_sample['answer']}\n\
         ### REASONING STEPS:\n \
         {parse_sample['steps']}\n \
         ### PROGRAM compiled from reasoning steps above:\n \
@@ -115,7 +119,7 @@ class FinQADataset:
 
     def to_testing_prompt(self, sample: dict) -> str:
         parsed_sample = self._parse_sample_testing(sample)
-        
+
         system_prompt = f"### SYSTEM: You are a professional financial advisor. Your task is to read a financial report as text and numbers and do the proper math calculations to answer the given question."
 
         human_prompt = f"### Human:\n \
@@ -138,38 +142,38 @@ class FinQADataset:
 
     def _parse_sample_testing(self, sample: Dict[str, Any]) -> Dict[str, str]:
         # TODO: Refactor _parse_sample...() methods.
-        pre_text = sample['pre_text']
+        pre_text = sample["pre_text"]
         pre_text = "\n".join(pre_text)
 
-        table = sample['table']
+        table = sample["table"]
         table_rows = []
         for table_row in table:
             table_row = " | ".join(table_row)
             table_rows.append(table_row)
         table = "\n".join(table_rows)
 
-        post_text = sample['post_text']
+        post_text = sample["post_text"]
         post_text = "\n".join(post_text)
 
         return {
             "pre_text": pre_text,
             "table": table,
             "post_text": post_text,
-            "question": sample['question'],
+            "question": sample["question"],
         }
 
     def _parse_sample_training(self, sample: Dict[str, Any]) -> Dict[str, str]:
         parsed_sample = self._parse_sample_testing(sample)
-        
+
         formatted_steps = []
-        for i, step in enumerate(sample['steps']):
+        for i, step in enumerate(sample["steps"]):
             formatted_step = f"###STEP {i}: {step['arg1']} {step['op']} {step['arg2']} = {step['res']}"
             formatted_steps.append(formatted_step)
         formatted_steps = "\n".join(formatted_steps)
 
         return {
             **parsed_sample,
-            "answer": sample['answer'],
+            "answer": sample["answer"],
             "steps": formatted_steps,
-            "program": sample['program'],
+            "program": sample["program"],
         }

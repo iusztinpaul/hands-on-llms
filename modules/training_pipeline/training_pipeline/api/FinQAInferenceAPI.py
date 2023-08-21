@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -104,25 +105,35 @@ class FinQAInferenceAPI:
         ), "Dataset not loaded. Provide a dataset directory to the constructor: 'root_dataset_dir'."
 
         for sample in self._dataset:
-            answer = self.infer(question=sample["text"])
-            print(answer)
+            question_and_answer = self.infer(question=sample["text"])
+            print(question_and_answer)
             print("-" * 100)
             print()
 
-            # comet_llm.log_prompt(
-            #     prompt=sample["text"],
-            #     output=answer,
-            #     metadata={
-            #         "usage.prompt_tokens": len(sample["text"]),
-            #         "usage.completion_tokens": self._max_new_tokens,
-            #         "usage.total_tokens": len(answer),
-            #         "model": self._model_id,
-            #         "peft_model": self._peft_model_id
-            #     }
-            # )
+            try:
+                project = os.environ["COMET_PROJECT_NAME"]
+            except KeyError:
+                raise RuntimeError(
+                    "Please set the COMET_PROJECT_NAME environment variable."
+                )
+
+            output = question_and_answer.split(finqa.FinQADataset.ANSWER_DELIMITER)[1]
+            comet_llm.log_prompt(
+                project=f'{project}-prompts',
+                prompt=sample["text"],
+                output=output,
+                metadata={
+                    "usage.prompt_tokens": len(sample["text"]),
+                    "usage.max_new_tokens": self._max_new_tokens,
+                    "usage.actual_new_tokens": len(output),
+                    "usage.total_tokens": len(question_and_answer),
+                    "model": self._model_id,
+                    "peft_model": self._peft_model_id,
+                },
+            )
 
             if output_file is not None:
                 with output_file.open("a") as f:
-                    f.write(f"{answer}\n")
+                    f.write(f"{question_and_answer}\n")
                     f.write("-" * 100)
                     f.write("\n")

@@ -55,8 +55,6 @@
             "args": [
                 "--config_file",
                 "configs/dev_inference_config.yaml",
-                "--output_dir",
-                "./output",
                 "--dataset_dir",
                 "./dataset"
             ]
@@ -71,8 +69,6 @@
             "args": [
                 "--config_file",
                 "configs/inference_config.yaml",
-                "--output_dir",
-                "./output",
                 "--dataset_dir",
                 "./dataset"
             ]
