@@ -116,6 +116,8 @@ class FinQAInferenceAPI:
             #         "usage.prompt_tokens": len(sample["text"]),
             #         "usage.completion_tokens": self._max_new_tokens,
             #         "usage.total_tokens": len(answer),
+            #         "model": self._model_id,
+            #         "peft_model": self._peft_model_id
             #     }
             # )
 
