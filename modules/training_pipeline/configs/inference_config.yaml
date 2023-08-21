@@ -5,3 +5,4 @@ model:
   max_new_tokens: 128
 setup:
   device: cuda:0
+  debug: False

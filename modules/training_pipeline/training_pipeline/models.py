@@ -1,10 +1,10 @@
+import logging
 import os
 from pathlib import Path
 from typing import Optional, Tuple
 from comet_ml import API
 from training_pipeline import constants
 
-import transformers
 import torch
 
 from peft import LoraConfig, PeftModel, PeftConfig
@@ -13,6 +13,9 @@ from transformers import (
     AutoTokenizer,
     BitsAndBytesConfig,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def build_qlora_model(
@@ -51,23 +54,28 @@ def build_qlora_model(
     # from peft import prepare_model_for_kbit_training
     # model = prepare_model_for_kbit_training(model)
 
-    tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(
+        pretrained_model_name_or_path, 
+        trust_remote_code=True,
+        cache_dir=str(cache_dir) if cache_dir else None
+        )
     tokenizer.pad_token = tokenizer.eos_token
 
     if peft_pretrained_model_name_or_path:
         is_model_name = not os.path.isdir(peft_pretrained_model_name_or_path)
         if is_model_name:
-            peft_pretrained_model_name_or_path = get_model_from_registry(
+            peft_pretrained_model_name_or_path = download_from_model_registry(
                 model_id=peft_pretrained_model_name_or_path,
                 cache_dir=cache_dir,
             )
 
+        logger.info(f"Loading Lora Confing from: {peft_pretrained_model_name_or_path}")
         lora_config = LoraConfig.from_pretrained(peft_pretrained_model_name_or_path)
         assert (
             lora_config.base_model_name_or_path == pretrained_model_name_or_path
         ), f"Lora Model trained on different base model than the one requested: {lora_config.base_model_name_or_path} != {pretrained_model_name_or_path}"
 
-        # model = get_peft_model(model, lora_config)  # TODO: Why this is not working?
+        logger.info(f"Loading Peft Model from: {peft_pretrained_model_name_or_path}")
         model = PeftModel.from_pretrained(model, peft_pretrained_model_name_or_path)
     else:
         lora_config = LoraConfig(
@@ -91,10 +99,11 @@ def build_qlora_model(
     return model, tokenizer, lora_config
 
 
-def get_model_from_registry(model_id: str, cache_dir: Optional[str] = None):
+def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None):
     if cache_dir is None: 
         cache_dir = constants.CACHE_DIR
     output_folder = cache_dir / "models" / model_id
+    
 
     workspace, model_id = model_id.split("/")
     model_name, version = model_id.split(":")
@@ -109,9 +118,11 @@ def get_model_from_registry(model_id: str, cache_dir: Optional[str] = None):
 
     subdirs = [d for d in output_folder.iterdir() if d.is_dir()]
     if len(subdirs) == 1:
-        model_dir = output_folder / subdirs[0]
+        model_dir = subdirs[0]
     else:
         raise RuntimeError(f"There should be only one directory inside the model folder. Check the downloaded model at: {output_folder}")
+
+    logger.info(f"Model {model_id=} downloaded from the registry to: {model_dir}")
 
     return model_dir
 

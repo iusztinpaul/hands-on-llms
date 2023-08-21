@@ -1,8 +1,8 @@
-from pathlib import Path
-
 import fire
 
-from beam import App, Runtime, Image, Volume
+from pathlib import Path
+
+from beam import App, Runtime, Image, Volume, VolumeType
 
 from training_pipeline import configs, utils
 
@@ -18,9 +18,9 @@ training_app = App(
         image=Image(python_version="python3.10", python_packages=requirements),
     ),
     volumes=[
-        Volume(path="./dataset", name="train_finqa_dataset"),
-        Volume(path="./output", name="train_finqa_output"),
-        Volume(path="./model_cache", name="model_cache"),
+        Volume(path="./dataset", name="finqa_dataset"),
+        Volume(path="./output", name="train_finqa_output", volume_type=VolumeType.Persistent),
+        Volume(path="./model_cache", name="model_cache", volume_type=VolumeType.Persistent),
     ],
 )
 
@@ -58,7 +58,9 @@ def train(
 
     training_config = configs.TrainingConfig.from_yaml(config_file, output_dir)
     training_api = FinQATrainingAPI.from_config(
-        config=training_config, root_dataset_dir=root_dataset_dir, model_cache_dir=model_cache_dir
+        config=training_config,
+        root_dataset_dir=root_dataset_dir,
+        model_cache_dir=model_cache_dir,
     )
     training_api.train()
 

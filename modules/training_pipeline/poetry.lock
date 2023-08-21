@@ -655,6 +655,22 @@ files = [
 ]
 
 [[package]]
+name = "comet-llm"
+version = "1.1.0"
+description = "Comet logger for LLM"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "comet_llm-1.1.0-py3-none-any.whl", hash = "sha256:ae89e7582df389ca93447de994f36f3e9cd01100073c0a6f006326f7ad756669"},
+    {file = "comet_llm-1.1.0.tar.gz", hash = "sha256:47b882a8a835aa7ea5bad5fe81c9fd7bf31efedcd595d93c4ce0a90f2f815dfe"},
+]
+
+[package.dependencies]
+comet-ml = "*"
+flatten-dict = "*"
+types-requests = "*"
+
+[[package]]
 name = "comet-ml"
 version = "3.33.8"
 description = "Supercharging Machine Learning"
@@ -1007,6 +1023,20 @@ files = [
 [package.dependencies]
 six = "*"
 termcolor = "*"
+
+[[package]]
+name = "flatten-dict"
+version = "0.4.2"
+description = "A flexible utility for flattening and unflattening dict-like objects in Python."
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+files = [
+    {file = "flatten-dict-0.4.2.tar.gz", hash = "sha256:506a96b6e6f805b81ae46a0f9f31290beb5fa79ded9d80dbe1b7fa236ab43076"},
+    {file = "flatten_dict-0.4.2-py2.py3-none-any.whl", hash = "sha256:7e245b20c4c718981212210eec4284a330c9f713e632e98765560e05421e48ad"},
+]
+
+[package.dependencies]
+six = ">=1.12,<2.0"
 
 [[package]]
 name = "fqdn"
@@ -3627,6 +3657,31 @@ doc = ["sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
 test = ["mypy", "pytest", "typing-extensions"]
 
 [[package]]
+name = "types-requests"
+version = "2.31.0.2"
+description = "Typing stubs for requests"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-requests-2.31.0.2.tar.gz", hash = "sha256:6aa3f7faf0ea52d728bb18c0a0d1522d9bfd8c72d26ff6f61bfc3d06a411cf40"},
+    {file = "types_requests-2.31.0.2-py3-none-any.whl", hash = "sha256:56d181c85b5925cbc59f4489a57e72a8b2166f18273fd8ba7b6fe0c0b986f12a"},
+]
+
+[package.dependencies]
+types-urllib3 = "*"
+
+[[package]]
+name = "types-urllib3"
+version = "1.26.25.14"
+description = "Typing stubs for urllib3"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-urllib3-1.26.25.14.tar.gz", hash = "sha256:229b7f577c951b8c1b92c1bc2b2fdb0b49847bd2af6d1cc2a2e3dd340f3bda8f"},
+    {file = "types_urllib3-1.26.25.14-py3-none-any.whl", hash = "sha256:9683bbb7fb72e32bfe9d2be6e04875fbe1b3eeec3cbb4ea231435aa7fd6b4f0e"},
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.7.1"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -4057,4 +4112,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "2b67aaeceb8883bb9ff18f8e2dad407a08f9407740f854050700e2c56174fe17"
+content-hash = "92e5f9bb70ff7e031fe91ee9b30ce688bd1a2628f369105976fcf056f96c44a9"

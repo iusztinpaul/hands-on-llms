@@ -22,6 +22,7 @@ beam-sdk = "^0.14.6"
 psutil = "^5.9.5"
 torch = "2.0.1"
 fire = "^0.5.0"
+comet-llm = "^1.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
