@@ -23,7 +23,7 @@ inference_app = App(
 )
 
 
-@inference_app.task_queue(outputs=[Output(path="output.txt")])
+@inference_app.task_queue(outputs=[Output(path="output.json")])
 def infer(
     config_file: str,
     dataset_dir: str,
@@ -58,7 +58,7 @@ def infer(
         root_dataset_dir=root_dataset_dir,
         model_cache_dir=model_cache_dir,
     )
-    inference_api.infer_all(output_file=Path("output.txt"))
+    inference_api.infer_all(output_file=Path("output.json"))
 
 
 if __name__ == "__main__":

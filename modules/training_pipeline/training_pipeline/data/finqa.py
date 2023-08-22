@@ -34,8 +34,6 @@ class FinQATestingSample:
 
 
 class FinQADataset:
-    ANSWER_DELIMITER = "ANSWER"
-
     def __init__(
         self,
         data_path: Path,
@@ -54,6 +52,49 @@ class FinQADataset:
             data = data[: self._max_samples]
 
         return self.deserialize(data)
+    
+    @property
+    def question_template(self) -> str:
+        return \
+        """
+        ### SYSTEM: You are a professional financial advisor. Your task is to read a financial report 
+        as text and numbers and do the proper math calculations to answer the given question.
+
+                
+        ### Human:
+        ### START_FINANCIAL_REPORT
+        ### PRE_TEXT:
+        {pre_text}
+
+        #### TABLE:
+        {table}
+
+        ### POST_TEXT:
+        {post_text}
+        #### END_FINANCIAL_REPORT
+
+        ### QUESTION: 
+        {question}
+        """
+    
+    @property
+    def answer_template(self) -> str:
+        return \
+        """
+        ### ASSISTANT:
+        ### ANSWER:
+        {answer}
+
+        ### REASONING STEPS:
+        {reasoning_steps}
+
+        ### PROGRAM compiled from reasoning steps above:
+        {program}
+        """
+    
+    @property
+    def question_and_answer_template(self) -> str:
+        return f"{self.question_template}\n\n{self.answer_template}"
 
     def deserialize(
         self, data: List[dict]
@@ -91,57 +132,23 @@ class FinQADataset:
         data_as_dict = [asdict(sample) for sample in self._raw_data]
         dataset = Dataset.from_list(data_as_dict)
         if self._scope == Scope.TRAINING:
-            mapping_func = self.to_training_prompt
+            mapping_func = self.to_question_and_answer_prompt
         else:
-            mapping_func = self.to_testing_prompt
+            mapping_func = self.to_question_prompt
         dataset = dataset.map(mapping_func, remove_columns=dataset.column_names)
 
         return dataset
 
-    def to_training_prompt(self, sample: dict) -> str:
-        parse_sample = self._parse_sample_training(sample)
-
-        prompt = self.to_testing_prompt(sample)
-
-        answer_prompt = f"### ASSISTANT:\n\
-        ### {self.ANSWER_DELIMITER}: {parse_sample['answer']}\n\
-        ### REASONING STEPS:\n \
-        {parse_sample['steps']}\n \
-        ### PROGRAM compiled from reasoning steps above:\n \
-        {parse_sample['program']}\n \
-        "
-
-        prompt = f"{prompt['text']}\n\n{answer_prompt}"
+    def to_question_prompt(self, sample: dict) -> str:
+        variables = self._get_question_variables(sample)
 
         return {
-            "text": prompt,
+            "text": self.question_template.format(**variables),
+            "template": self.question_template,
+            "variables": variables
         }
-
-    def to_testing_prompt(self, sample: dict) -> str:
-        parsed_sample = self._parse_sample_testing(sample)
-
-        system_prompt = f"### SYSTEM: You are a professional financial advisor. Your task is to read a financial report as text and numbers and do the proper math calculations to answer the given question."
-
-        human_prompt = f"### Human:\n \
-        ### START_FINANCIAL_REPORT\n \
-        ### PRE_TEXT:\n \
-        {parsed_sample['pre_text']}\n \
-        ### TABLE:\n \
-        {parsed_sample['table']}\n \
-        ### POST_TEXT:\n \
-        {parsed_sample['post_text']}\n \
-        ### END_FINANCIAL_REPORT\n \
-        ### QUESTION: {parsed_sample['question']} \
-        "
-
-        prompt = f"{system_prompt}\n\n{human_prompt}"
-
-        return {
-            "text": prompt,
-        }
-
-    def _parse_sample_testing(self, sample: Dict[str, Any]) -> Dict[str, str]:
-        # TODO: Refactor _parse_sample...() methods.
+    
+    def _get_question_variables(self, sample: Dict[str, Any]) -> Dict[str, str]:
         pre_text = sample["pre_text"]
         pre_text = "\n".join(pre_text)
 
@@ -162,8 +169,18 @@ class FinQADataset:
             "question": sample["question"],
         }
 
-    def _parse_sample_training(self, sample: Dict[str, Any]) -> Dict[str, str]:
-        parsed_sample = self._parse_sample_testing(sample)
+    
+    def to_question_and_answer_prompt(self, sample: dict) -> str:
+        variables = self._get_question_and_answer_variables(sample)
+
+        return {
+            "text": self.question_and_answer_template.format(**variables),
+            "template": self.question_and_answer_template,
+            "variables": variables
+        }
+    
+    def _get_question_and_answer_variables(self, sample: Dict[str, Any]) -> Dict[str, str]:
+        parsed_sample = self._get_question_variables(sample)
 
         formatted_steps = []
         for i, step in enumerate(sample["steps"]):
@@ -174,6 +191,6 @@ class FinQADataset:
         return {
             **parsed_sample,
             "answer": sample["answer"],
-            "steps": formatted_steps,
+            "reasoning_steps": formatted_steps,
             "program": sample["program"],
         }

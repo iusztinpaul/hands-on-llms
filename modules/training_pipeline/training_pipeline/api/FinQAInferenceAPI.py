@@ -6,12 +6,19 @@ from typing import Optional, Tuple
 import comet_llm
 
 from datasets import Dataset
-from training_pipeline.data import finqa
+from tqdm import tqdm
+from training_pipeline.data import finqa, utils
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftConfig
 
 from training_pipeline.configs import InferenceConfig
 from training_pipeline import constants, models
+
+
+try:
+    comet_project_name = os.environ["COMET_PROJECT_NAME"]
+except KeyError:
+    raise RuntimeError("Please set the COMET_PROJECT_NAME environment variable.")
 
 
 logger = logging.getLogger(__name__)
@@ -94,8 +101,24 @@ class FinQAInferenceAPI:
             model=self._model,
             tokenizer=self._tokenizer,
             input_text=question,
+            max_new_tokens=self._max_new_tokens,
             device=self._device,
+            return_only_answer=True,
         )
+
+        comet_llm.log_prompt(
+                project=f"{comet_project_name}-prompts",
+                prompt=question,
+                output=answer,
+                metadata={
+                    "usage.prompt_tokens": len(question),
+                    "usage.total_tokens": len(question) + len(answer),
+                    "usage.max_new_tokens": self._max_new_tokens,
+                    "usage.actual_new_tokens": len(answer),
+                    "model": self._model_id,
+                    "peft_model": self._peft_model_id,
+                },
+            )
 
         return answer
 
@@ -104,36 +127,18 @@ class FinQAInferenceAPI:
             self._dataset is not None
         ), "Dataset not loaded. Provide a dataset directory to the constructor: 'root_dataset_dir'."
 
-        for sample in self._dataset:
-            question_and_answer = self.infer(question=sample["text"])
-            print(question_and_answer)
-            print("-" * 100)
-            print()
+        question_and_answers = []
+        should_save_output = output_file is not None
+        for sample in tqdm(self._dataset):
+            answer = self.infer(question=sample["text"])
 
-            try:
-                project = os.environ["COMET_PROJECT_NAME"]
-            except KeyError:
-                raise RuntimeError(
-                    "Please set the COMET_PROJECT_NAME environment variable."
+            if should_save_output:
+                question_and_answers.append(
+                    {
+                        "question": sample["text"],
+                        "answer": answer,
+                    }
                 )
 
-            output = question_and_answer.split(finqa.FinQADataset.ANSWER_DELIMITER)[1]
-            comet_llm.log_prompt(
-                project=f'{project}-prompts',
-                prompt=sample["text"],
-                output=output,
-                metadata={
-                    "usage.prompt_tokens": len(sample["text"]),
-                    "usage.max_new_tokens": self._max_new_tokens,
-                    "usage.actual_new_tokens": len(output),
-                    "usage.total_tokens": len(question_and_answer),
-                    "model": self._model_id,
-                    "peft_model": self._peft_model_id,
-                },
-            )
-
-            if output_file is not None:
-                with output_file.open("a") as f:
-                    f.write(f"{question_and_answer}\n")
-                    f.write("-" * 100)
-                    f.write("\n")
+        if should_save_output:
+            utils.write_json(question_and_answers, output_file)

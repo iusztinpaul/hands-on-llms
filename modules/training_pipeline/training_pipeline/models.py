@@ -57,6 +57,7 @@ def build_qlora_model(
     tokenizer = AutoTokenizer.from_pretrained(
         pretrained_model_name_or_path, 
         trust_remote_code=True,
+        truncation=True,
         cache_dir=str(cache_dir) if cache_dir else None
         )
     tokenizer.pad_token = tokenizer.eos_token
@@ -128,15 +129,18 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
 
 
 def prompt(
-    model, tokenizer, input_text: str, max_new_tokens: int = 40, device: str = "cuda:0"
+    model, tokenizer, input_text: str, max_new_tokens: int = 40, device: str = "cuda:0", return_only_answer: bool = False
 ):
-    inputs = tokenizer(input_text, return_tensors="pt").to(device)
-    # TODO: How can I get rid of token_type_ids in a cleaner way?
-    del inputs["token_type_ids"]
+    inputs = tokenizer(input_text, return_tensors="pt", return_token_type_ids=False).to(device)
 
     outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
 
     output = outputs[0]  # The input to the model is a batch of size 1, so the output is also a batch of size 1.
+    if return_only_answer:
+        input_ids = inputs.input_ids
+        input_length = input_ids.shape[-1]
+        output = output[input_length:]
+
     output = tokenizer.decode(output, skip_special_tokens=True)
    
     return output
