@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+import time
 from typing import Optional, Tuple
 
 import comet_llm
@@ -29,6 +30,7 @@ class FinQAInferenceAPI:
         self,
         peft_model_id: str,
         model_id: str,
+        name: str = "inference-prompts",
         root_dataset_dir: Optional[Path] = None,
         max_new_tokens: int = 50,
         model_cache_dir: Optional[Path] = None,
@@ -37,8 +39,9 @@ class FinQAInferenceAPI:
     ):
         self._peft_model_id = peft_model_id
         self._model_id = model_id
-        self._max_new_tokens = max_new_tokens
+        self._name = name
         self._root_dataset_dir = root_dataset_dir
+        self._max_new_tokens = max_new_tokens
         self._model_cache_dir = model_cache_dir
         self._debug = debug
         self._device = device
@@ -97,6 +100,10 @@ class FinQAInferenceAPI:
         return model, tokenizer, peft_config
 
     def infer(self, question: str) -> str:
+        # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
+        # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
+
+        start_time = time.time()
         answer = models.prompt(
             model=self._model,
             tokenizer=self._tokenizer,
@@ -105,20 +112,24 @@ class FinQAInferenceAPI:
             device=self._device,
             return_only_answer=True,
         )
+        end_time = time.time()
+
+        duration_milliseconds = (end_time - start_time) * 1000
 
         comet_llm.log_prompt(
-                project=f"{comet_project_name}-prompts",
-                prompt=question,
-                output=answer,
-                metadata={
-                    "usage.prompt_tokens": len(question),
-                    "usage.total_tokens": len(question) + len(answer),
-                    "usage.max_new_tokens": self._max_new_tokens,
-                    "usage.actual_new_tokens": len(answer),
-                    "model": self._model_id,
-                    "peft_model": self._peft_model_id,
-                },
-            )
+            project=f"{comet_project_name}-{self._name}",
+            prompt=question,
+            output=answer,
+            metadata={
+                "usage.prompt_tokens": len(question),
+                "usage.total_tokens": len(question) + len(answer),
+                "usage.max_new_tokens": self._max_new_tokens,
+                "usage.actual_new_tokens": len(answer),
+                "model": self._model_id,
+                "peft_model": self._peft_model_id,
+            },
+            duration=duration_milliseconds,
+        )
 
         return answer
 

@@ -46,7 +46,7 @@ class FinQATrainingAPI:
     @property
     def name(self) -> str:
         return f"finqa/{self._model_id}"
-    
+
     @classmethod
     def from_config(
         cls,
