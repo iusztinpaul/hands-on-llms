@@ -4,8 +4,8 @@
 
 - [1. Motivation](#1-motivation)
 - [2. Install](#2-install)
-    [2.1 Dependencies](#21-dependencies)
-    [2.2. Beam](#22-beam)
+    - [2.1 Dependencies](#21-dependencies)
+    - [2.2. Beam](#22-beam)
 - [3. Usage](#3-usage)
     - [3.1. Train](#31-train)
     - [3.2. Inference](#32-inference)
