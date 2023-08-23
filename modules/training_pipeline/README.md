@@ -23,7 +23,7 @@ Main dependencies you have to install yourself:
 * Poetry 1.5.1
 * GNU Make 4.3
 
-Install all the dependencies is as easy as running:
+Installing all the other dependencies is as easy as running:
 ```shell
 make install
 ```
