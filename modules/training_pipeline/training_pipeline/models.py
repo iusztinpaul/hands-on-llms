@@ -54,11 +54,11 @@ def build_qlora_model(
     # model = prepare_model_for_kbit_training(model)
 
     tokenizer = AutoTokenizer.from_pretrained(
-        pretrained_model_name_or_path, 
+        pretrained_model_name_or_path,
         trust_remote_code=True,
         truncation=True,
-        cache_dir=str(cache_dir) if cache_dir else None
-        )
+        cache_dir=str(cache_dir) if cache_dir else None,
+    )
     tokenizer.pad_token = tokenizer.eos_token
 
     if peft_pretrained_model_name_or_path:
@@ -73,7 +73,8 @@ def build_qlora_model(
         lora_config = LoraConfig.from_pretrained(peft_pretrained_model_name_or_path)
         assert (
             lora_config.base_model_name_or_path == pretrained_model_name_or_path
-        ), f"Lora Model trained on different base model than the one requested: {lora_config.base_model_name_or_path} != {pretrained_model_name_or_path}"
+        ), f"Lora Model trained on different base model than the one requested: \
+        {lora_config.base_model_name_or_path} != {pretrained_model_name_or_path}"
 
         logger.info(f"Loading Peft Model from: {peft_pretrained_model_name_or_path}")
         model = PeftModel.from_pretrained(model, peft_pretrained_model_name_or_path)
@@ -100,27 +101,25 @@ def build_qlora_model(
 
 
 def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None):
-    if cache_dir is None: 
+    if cache_dir is None:
         cache_dir = constants.CACHE_DIR
     output_folder = cache_dir / "models" / model_id
-    
 
     workspace, model_id = model_id.split("/")
     model_name, version = model_id.split(":")
 
     api = API()
     model = api.get_model(workspace=workspace, model_name=model_name)
-    model.download(
-        version=version,
-        output_folder=output_folder,
-        expand=True
-    )
+    model.download(version=version, output_folder=output_folder, expand=True)
 
     subdirs = [d for d in output_folder.iterdir() if d.is_dir()]
     if len(subdirs) == 1:
         model_dir = subdirs[0]
     else:
-        raise RuntimeError(f"There should be only one directory inside the model folder. Check the downloaded model at: {output_folder}")
+        raise RuntimeError(
+            f"There should be only one directory inside the model folder. \
+                Check the downloaded model at: {output_folder}"
+        )
 
     logger.info(f"Model {model_id=} downloaded from the registry to: {model_dir}")
 
@@ -128,18 +127,27 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
 
 
 def prompt(
-    model, tokenizer, input_text: str, max_new_tokens: int = 40, device: str = "cuda:0", return_only_answer: bool = False
+    model,
+    tokenizer,
+    input_text: str,
+    max_new_tokens: int = 40,
+    device: str = "cuda:0",
+    return_only_answer: bool = False,
 ):
-    inputs = tokenizer(input_text, return_tensors="pt", return_token_type_ids=False).to(device)
+    inputs = tokenizer(input_text, return_tensors="pt", return_token_type_ids=False).to(
+        device
+    )
 
     outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
 
-    output = outputs[0]  # The input to the model is a batch of size 1, so the output is also a batch of size 1.
+    output = outputs[
+        0
+    ]  # The input to the model is a batch of size 1, so the output is also a batch of size 1.
     if return_only_answer:
         input_ids = inputs.input_ids
         input_length = input_ids.shape[-1]
         output = output[input_length:]
 
     output = tokenizer.decode(output, skip_special_tokens=True)
-   
+
     return output

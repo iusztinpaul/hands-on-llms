@@ -19,8 +19,14 @@ training_app = App(
     ),
     volumes=[
         Volume(path="./dataset", name="finqa_dataset"),
-        Volume(path="./output", name="train_finqa_output", volume_type=VolumeType.Persistent),
-        Volume(path="./model_cache", name="model_cache", volume_type=VolumeType.Persistent),
+        Volume(
+            path="./output",
+            name="train_finqa_output",
+            volume_type=VolumeType.Persistent,
+        ),
+        Volume(
+            path="./model_cache", name="model_cache", volume_type=VolumeType.Persistent
+        ),
     ],
 )
 

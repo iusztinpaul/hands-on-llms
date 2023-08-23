@@ -15,13 +15,15 @@ def initialize(logging_config_path: str = "logging.yaml", env_file_path: str = "
     try:
         initialize_logger(config_path=logging_config_path)
     except FileNotFoundError:
-        logger.warning(f"No logging configuration file found at: {logging_config_path}. Setting logging level to INFO.")
+        logger.warning(
+            f"No logging configuration file found at: {logging_config_path}. Setting logging level to INFO."
+        )
         logging.basicConfig(level=logging.INFO)
 
     logger.info("Initializing env vars...")
     if env_file_path is None:
         env_file_path = find_dotenv(raise_error_if_not_found=True, usecwd=False)
-        
+
     logger.info(f"Loading environment variables from: {env_file_path}")
     found_env_file = load_dotenv(env_file_path, verbose=True, override=True)
     if found_env_file is False:

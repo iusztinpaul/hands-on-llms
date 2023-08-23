@@ -52,11 +52,10 @@ class FinQADataset:
             data = data[: self._max_samples]
 
         return self.deserialize(data)
-    
+
     @property
     def question_template(self) -> str:
-        return \
-        """
+        return """
         ### SYSTEM: You are a professional financial advisor. Your task is to read a financial report 
         as text and numbers and do the proper math calculations to answer the given question.
 
@@ -76,11 +75,10 @@ class FinQADataset:
         ### QUESTION: 
         {question}
         """
-    
+
     @property
     def answer_template(self) -> str:
-        return \
-        """
+        return """
         ### ASSISTANT:
         ### ANSWER:
         {answer}
@@ -91,7 +89,7 @@ class FinQADataset:
         ### PROGRAM compiled from reasoning steps above:
         {program}
         """
-    
+
     @property
     def question_and_answer_template(self) -> str:
         return f"{self.question_template}\n\n{self.answer_template}"
@@ -145,9 +143,9 @@ class FinQADataset:
         return {
             "text": self.question_template.format(**variables),
             "template": self.question_template,
-            "variables": variables
+            "variables": variables,
         }
-    
+
     def _get_question_variables(self, sample: Dict[str, Any]) -> Dict[str, str]:
         pre_text = sample["pre_text"]
         pre_text = "\n".join(pre_text)
@@ -169,17 +167,18 @@ class FinQADataset:
             "question": sample["question"],
         }
 
-    
     def to_question_and_answer_prompt(self, sample: dict) -> str:
         variables = self._get_question_and_answer_variables(sample)
 
         return {
             "text": self.question_and_answer_template.format(**variables),
             "template": self.question_and_answer_template,
-            "variables": variables
+            "variables": variables,
         }
-    
-    def _get_question_and_answer_variables(self, sample: Dict[str, Any]) -> Dict[str, str]:
+
+    def _get_question_and_answer_variables(
+        self, sample: Dict[str, Any]
+    ) -> Dict[str, str]:
         parsed_sample = self._get_question_variables(sample)
 
         formatted_steps = []

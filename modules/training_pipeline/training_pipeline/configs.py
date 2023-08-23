@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Any, Dict
 from pathlib import Path
 
-import yaml
 
 from transformers import TrainingArguments
 from training_pipeline.data.utils import load_yaml
@@ -23,7 +22,7 @@ class TrainingConfig:
         """
         Load a configuration file from the given path.
         """
-        
+
         config = load_yaml(config_path)
 
         config["training"] = cls._dict_to_training_arguments(
@@ -62,6 +61,7 @@ class TrainingConfig:
             seed=training_config["seed"],
             load_best_model_at_end=training_config["load_best_model_at_end"],
         )
+
 
 @dataclass
 class InferenceConfig:

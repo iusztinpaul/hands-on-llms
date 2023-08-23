@@ -7,11 +7,14 @@ install:
 	poetry install && \
 	poetry run pip install torch==2.0.1
 
+install_dev: install
+	poetry install --only dev
+
 add:
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add $(package)
 
 add_dev:
-	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
+	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
 
 export_requirements:
 	@echo "Exporting requirements..."
@@ -70,3 +73,27 @@ infer_beam:
 	@echo "Running inference pipeline on Beam using the production config..."
 
 	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_finqa.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+
+
+### PEP 8 ###
+# Be sure to install the dev dependencies first #
+
+lint_check:
+	@echo "Checking for linting issues..."
+
+	poetry run ruff check .
+
+lint_fix:
+	@echo "Fixing linting issues..."
+
+	poetry run ruff check --fix .
+
+format_check:
+	@echo "Checking for formatting issues..."
+
+	poetry run black --check .
+
+format_fix:
+	@echo "Formatting code..."
+
+	poetry run black .
