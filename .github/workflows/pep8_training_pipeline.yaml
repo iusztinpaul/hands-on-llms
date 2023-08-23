@@ -1,0 +1,38 @@
+name: pep8_training_pipeline
+
+on: [push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pep8-python:
+    name: PEP8
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: 1.5.1
+
+      - name: Install packages
+        working-directory: ./modules/training_pipeline
+        run: make install_only_dev
+
+      - name: Run PEP8 linter
+        working-directory: ./modules/training_pipeline
+        run: make lint_check
+
+      - name: Run PEP8 format checker
+        working-directory: ./modules/training_pipeline
+        run: make format_check
