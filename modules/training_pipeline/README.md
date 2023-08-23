@@ -22,7 +22,7 @@ In this case, we will use the finance dataset generated using the `q_and_a_datas
 
 ## 2. Install
 
-### 2.1 Dependencies
+### 2.1. Dependencies
 
 Main dependencies you have to install yourself:
 * Python 3.10
@@ -46,7 +46,7 @@ cp .env.example .env
 --> and complete the `.env` file with your credentials.
 
 
-### 2.2 Beam
+### 2.2. Beam
 `optional step in case you want to use Beam` 
 
 Export the Poetry Python dependencies into a `requirements.txt` file that will be used by Beam to recreate the same environment:
