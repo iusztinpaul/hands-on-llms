@@ -52,7 +52,7 @@ Every module has its dependencies and scripts. In a production setup, every modu
 Thus, check out the README for every module individually to see how to install & use it:
 1. [q_and_a_dataset_generator](/modules/q_and_a_dataset_generator/)
 2. [training_pipeline](/modules/training_pipeline/)
-3. [streaming_pipeline]()
+3. [streaming_pipeline](/modules/streaming_pipeline/)
 4. [inference_pipeline]()
 
 

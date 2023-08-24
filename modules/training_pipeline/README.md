@@ -1,5 +1,7 @@
 # Training / Fine-tuning Pipeline 
 
+Training pipeline that supports fine-tuning an LLM on a proprietary Q&A dataset and storing it in a model registry. 
+
 ## Table of Contents
 
 - [1. Motivation](#1-motivation)

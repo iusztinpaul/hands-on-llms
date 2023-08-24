@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "streaming-pipeline"
+version = "0.1.0"
+description = ""
+authors = ["iusztinpaul <p.e.iusztin@gmail.com>"]
+readme = "README.md"
+packages = [{include = "streaming_pipeline"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+bytewax = "^0.16.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+ruff = "^0.0.285"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
