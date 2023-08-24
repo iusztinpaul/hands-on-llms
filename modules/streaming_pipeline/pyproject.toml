@@ -9,10 +9,29 @@ packages = [{include = "streaming_pipeline"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 bytewax = "^0.16.2"
+pyyaml = "^6.0.1"
+python-dotenv = "^1.0.0"
+websocket-client = "^1.6.2"
+pydantic = "^2.3.0"
+unstructured = "^0.10.5"
+transformers = "^4.32.0"
+sentencepiece = "^0.1.99"
+torch = {version = "2.0.1+cu118", source = "torch"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 ruff = "^0.0.285"
+
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "supplemental"
 
 [build-system]
 requires = ["poetry-core"]
