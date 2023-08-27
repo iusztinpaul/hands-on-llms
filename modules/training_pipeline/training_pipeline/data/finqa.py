@@ -1,36 +1,18 @@
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from datasets import Dataset
-
 from training_pipeline.constants import Scope
 from training_pipeline.data.utils import load_json
 
 
-@dataclass
-class FinQASample:
-    id: str
-
-    pre_text: List[str]
-    post_text: List[str]
-    table: List[List[str]]
-
-    question: str
-    answer: str
-    steps: List[Dict[str, str]]
-    program: str
-
-
-@dataclass
-class FinQATestingSample:
-    id: str
-
-    pre_text: List[str]
-    post_text: List[str]
-    table: List[List[str]]
-
-    question: str
+@dataclass(frozen=True)
+class DataSample:
+    about_me: str = field(repr=False)
+    context: str = ""
+    question: str = ""
+    response: str = ""
 
 
 class FinQADataset:
@@ -46,7 +28,7 @@ class FinQADataset:
 
         self._raw_data = self.load(data_path)
 
-    def load(self, data_path: Path) -> List[FinQASample]:
+    def load(self, data_path: Path) -> List[DataSample]:
         data = load_json(data_path)
         if self._max_samples is not None:
             data = data[: self._max_samples]
@@ -55,141 +37,91 @@ class FinQADataset:
 
     @property
     def question_template(self) -> str:
-        return """
-        ### SYSTEM: You are a professional financial advisor. Your task is to read a financial report 
-        as text and numbers and do the proper math calculations to answer the given question.
-
-                
-        ### Human:
-        ### START_FINANCIAL_REPORT
-        ### PRE_TEXT:
-        {pre_text}
-
-        #### TABLE:
-        {table}
-
-        ### POST_TEXT:
-        {post_text}
-        #### END_FINANCIAL_REPORT
-
-        ### QUESTION: 
-        {question}
         """
+        Formats to Falcon compatible template, using `added_tokens`:
+        - INTRODUCTION : specifies agent behaviour
+        - COMMENT : used for context and user description
+        - QUESTION: formats user question for the agent.
+        spec: https://huggingface.co/tiiuae/falcon-7b/raw/main/tokenizer.json
+        """
+        template = """
+        >>INTRODUCTION<<
+        You are an expert in the stock and crypto markets.
+        
+        >>COMMENT<<
+        {ABOUT_ME}
+        
+        >>COMMENT<<
+        {CONTEXT}
+
+        >>QUESTION<<
+        User: {QUESTION}
+        """
+        return template
 
     @property
     def answer_template(self) -> str:
-        return """
-        ### ASSISTANT:
-        ### ANSWER:
-        {answer}
-
-        ### REASONING STEPS:
-        {reasoning_steps}
-
-        ### PROGRAM compiled from reasoning steps above:
-        {program}
         """
+        Formats to Falcon compatible template, using `added_tokens`:
+        - ANSWER : specifies agent answer format
+        spec: https://huggingface.co/tiiuae/falcon-7b/raw/main/tokenizer.json
+        """
+        template = """
+        >>ANSWER<<
+        Assistant: {ANSWER}
+        """
+        return template
 
     @property
     def question_and_answer_template(self) -> str:
         return f"{self.question_template}\n\n{self.answer_template}"
 
-    def deserialize(
-        self, data: List[dict]
-    ) -> List[Union[FinQASample, FinQATestingSample]]:
+    def deserialize(self, data: List[dict]) -> List[DataSample]:
         if self._scope == Scope.TRAINING:
             return [
-                FinQASample(
-                    id=sample["id"],
-                    pre_text=sample["pre_text"],
-                    post_text=sample["post_text"],
-                    table=sample["table"],
-                    question=sample["qa"]["question"],
-                    answer=sample["qa"]["answer"],
-                    steps=sample["qa"]["steps"],
-                    program=sample["qa"]["program"],
-                )
-                for sample in data
-            ]
-        else:
-            return [
-                FinQATestingSample(
-                    id=sample["id"],
-                    pre_text=sample["pre_text"],
-                    post_text=sample["post_text"],
-                    table=sample["table"],
-                    question=sample["qa"]["question"],
+                DataSample(
+                    about_me=sample["about_me"],
+                    context=sample["context"],
+                    question=sample["question"],
+                    response=sample["response"],
                 )
                 for sample in data
             ]
 
     def to_huggingface(self) -> Dataset:
-        # TODO: should I add a "eos_token" at the end of the prompt,
-        #  as in the following example: sample["text"] = f"{format_dolly(sample)}{tokenizer.eos_token}" ?
-
+        """Configures as HF dataset format."""
         data_as_dict = [asdict(sample) for sample in self._raw_data]
         dataset = Dataset.from_list(data_as_dict)
         if self._scope == Scope.TRAINING:
-            mapping_func = self.to_question_and_answer_prompt
+            mapping_func = self.to_qa_prompt
         else:
-            mapping_func = self.to_question_prompt
+            mapping_func = self.to_q_prompt
         dataset = dataset.map(mapping_func, remove_columns=dataset.column_names)
 
         return dataset
 
-    def to_question_prompt(self, sample: dict) -> str:
-        variables = self._get_question_variables(sample)
+    def to_q_prompt(self, sample: dict) -> str:
+        """Formats data sample without response field."""
+        formatted_prompt = self.question_template.format(
+            ABOUT_ME=sample["about_me"],
+            CONTEXT=sample["context"],
+            QUESTION=sample["question"],
+        )
+        # spec: https://github.com/cmp-nct/ggllm.cpp/discussions/36#discussioncomment-6315713
+        formatted_prompt += "<|endoftext|>"
 
-        return {
-            "text": self.question_template.format(**variables),
-            "template": self.question_template,
-            "variables": variables,
-        }
+        return formatted_prompt
 
-    def _get_question_variables(self, sample: Dict[str, Any]) -> Dict[str, str]:
-        pre_text = sample["pre_text"]
-        pre_text = "\n".join(pre_text)
+    def to_qa_prompt(self, sample: dict) -> str:
+        """Formats sample dict as training-ready."""
+        qa_formatted_prompt = self.question_and_answer_template.format(
+            ABOUT_ME=sample["about_me"],
+            CONTEXT=sample["context"],
+            QUESTION=sample["question"],
+            ANSWER=sample["response"],
+        )
 
-        table = sample["table"]
-        table_rows = []
-        for table_row in table:
-            table_row = " | ".join(table_row)
-            table_rows.append(table_row)
-        table = "\n".join(table_rows)
+        # spec: https://github.com/cmp-nct/ggllm.cpp/discussions/36#discussioncomment-6315713
+        qa_formatted_prompt += "<|endoftext|>"
 
-        post_text = sample["post_text"]
-        post_text = "\n".join(post_text)
-
-        return {
-            "pre_text": pre_text,
-            "table": table,
-            "post_text": post_text,
-            "question": sample["question"],
-        }
-
-    def to_question_and_answer_prompt(self, sample: dict) -> str:
-        variables = self._get_question_and_answer_variables(sample)
-
-        return {
-            "text": self.question_and_answer_template.format(**variables),
-            "template": self.question_and_answer_template,
-            "variables": variables,
-        }
-
-    def _get_question_and_answer_variables(
-        self, sample: Dict[str, Any]
-    ) -> Dict[str, str]:
-        parsed_sample = self._get_question_variables(sample)
-
-        formatted_steps = []
-        for i, step in enumerate(sample["steps"]):
-            formatted_step = f"###STEP {i}: {step['arg1']} {step['op']} {step['arg2']} = {step['res']}"
-            formatted_steps.append(formatted_step)
-        formatted_steps = "\n".join(formatted_steps)
-
-        return {
-            **parsed_sample,
-            "answer": sample["answer"],
-            "reasoning_steps": formatted_steps,
-            "program": sample["program"],
-        }
+        return qa_formatted_prompt
