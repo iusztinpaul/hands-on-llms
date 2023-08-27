@@ -87,6 +87,15 @@ class FinQADataset:
                 )
                 for sample in data
             ]
+        else:
+            return [
+                DataSample(
+                    about_me=sample["about_me"],
+                    context=sample["context"],
+                    question=sample["question"],
+                )
+                for sample in data
+            ]
 
     def to_huggingface(self) -> Dataset:
         """Configures as HF dataset format."""
@@ -110,7 +119,7 @@ class FinQADataset:
         # spec: https://github.com/cmp-nct/ggllm.cpp/discussions/36#discussioncomment-6315713
         formatted_prompt += "<|endoftext|>"
 
-        return formatted_prompt
+        return {"prompt": formatted_prompt}
 
     def to_qa_prompt(self, sample: dict) -> str:
         """Formats sample dict as training-ready."""
@@ -124,4 +133,4 @@ class FinQADataset:
         # spec: https://github.com/cmp-nct/ggllm.cpp/discussions/36#discussioncomment-6315713
         qa_formatted_prompt += "<|endoftext|>"
 
-        return qa_formatted_prompt
+        return {"prompt": qa_formatted_prompt}
