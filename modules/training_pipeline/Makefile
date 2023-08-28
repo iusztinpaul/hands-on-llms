@@ -88,11 +88,6 @@ lint_check:
 
 	poetry run ruff check .
 
-lint_fix:
-	@echo "Fixing linting issues..."
-
-	poetry run ruff check --fix .
-
 format_check:
 	@echo "Checking for formatting issues..."
 

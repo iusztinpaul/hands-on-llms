@@ -22,3 +22,22 @@ add_dev:
 ### Run ###
 run:
 	export RUST_BACKTRACE=1; poetry run python -m bytewax.run streaming_pipeline.alpaca:flow
+
+
+### PEP 8 ###
+# Be sure to install the dev dependencies first #
+
+lint_check:
+	@echo "Checking for linting issues..."
+
+	poetry run ruff check .
+
+format_check:
+	@echo "Checking for formatting issues..."
+
+	poetry run black --check .
+
+format_fix:
+	@echo "Formatting code..."
+
+	poetry run black .

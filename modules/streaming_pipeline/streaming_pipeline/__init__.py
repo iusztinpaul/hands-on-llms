@@ -1,6 +1,5 @@
 import logging
 import logging.config
-import os
 import yaml
 
 from dotenv import load_dotenv, find_dotenv

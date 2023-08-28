@@ -7,16 +7,17 @@ readme = "README.md"
 packages = [{include = "streaming_pipeline"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.12"
 bytewax = "^0.16.2"
 pyyaml = "^6.0.1"
 python-dotenv = "^1.0.0"
 websocket-client = "^1.6.2"
-pydantic = "^2.3.0"
+pydantic = ">=1.8,<2.0"
 unstructured = "^0.10.5"
 transformers = "^4.32.0"
 sentencepiece = "^0.1.99"
 torch = {version = "2.0.1+cu118", source = "torch"}
+qdrant-client = "1.1.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
@@ -36,3 +37,11 @@ priority = "supplemental"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.isort]
+case-sensitive = true
