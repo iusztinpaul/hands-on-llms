@@ -116,7 +116,7 @@ class QdrantVectorOutput(DynamicOutput):
         collection_name,
         vector_size,
         schema="",
-        url="localhost:6333",
+        url="http://localhost:6333",
         api_key: Optional[str] = None,
         client=None,
     ):
