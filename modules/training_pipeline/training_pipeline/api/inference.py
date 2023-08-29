@@ -35,7 +35,7 @@ class InferenceAPI:
         model_cache_dir: Optional[Path] = None,
         debug: bool = False,
         device: str = "cuda:0",
-    ):  
+    ):
         self._template = get_llm_template(template_name).raw_template
         self._peft_model_id = peft_model_id
         self._model_id = model_id
@@ -104,8 +104,7 @@ class InferenceAPI:
         # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
 
         start_time = time.time()
-        
-        
+
         answer = models.prompt(
             model=self._model,
             tokenizer=self._tokenizer,
@@ -120,9 +119,9 @@ class InferenceAPI:
 
         if self._debug:
             payload_for_template = {
-            "user_context" : infer_payload["about_me"],
-            "news_context": infer_payload["context"],
-            "question": infer_payload["question"]
+                "user_context": infer_payload["about_me"],
+                "news_context": infer_payload["context"],
+                "question": infer_payload["question"],
             }
 
             comet_llm.log_prompt(
@@ -152,7 +151,9 @@ class InferenceAPI:
         question_and_answers = []
         should_save_output = output_file is not None
         for sample in tqdm(self._dataset):
-            answer = self.infer(infer_prompt=sample["prompt"], infer_payload=sample["payload"])
+            answer = self.infer(
+                infer_prompt=sample["prompt"], infer_payload=sample["payload"]
+            )
 
             if should_save_output:
                 question_and_answers.append(

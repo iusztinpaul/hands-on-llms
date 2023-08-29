@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Dict, List, Tuple
 
+
 @dataclasses.dataclass
 class PrompterTemplate:
     name: str
@@ -8,7 +9,7 @@ class PrompterTemplate:
     >>INTRODUCTION<<
     {system_message}
     """
-    roles: List[str] = (("USER", "ASSISTANT"))
+    roles: List[str] = ("USER", "ASSISTANT")
 
     def __format_base(self, user_context: str, news_context: str) -> str:
         """
@@ -23,43 +24,46 @@ class PrompterTemplate:
         {news_context}
         """
         return base_template
-    
+
     def format_infer(self, sample: dict) -> Tuple[str, Dict[str, str]]:
         """
         - QUESTION: formats user question for the agent.
         """
-        base_template = self.__format_base(user_context=sample["about_me"], 
-                                           news_context=sample["context"])
+        base_template = self.__format_base(
+            user_context=sample["about_me"], news_context=sample["context"]
+        )
         question = f"""
         >>QUESTION<<
         {sample["question"]}
         """
-        
+
         return {"prompt": base_template + question, "payload": sample}
-        
+
     def format_train(self, sample: dict) -> Tuple[str, Dict[str, str]]:
-        """ 
+        """
         - QUESTION: formats user question for the agent.
         - ANSWER: formats user format for the agent.
         """
-        base_template = self.__format_base(user_context=sample["about_me"], 
-                                           news_context=sample["context"])
+        base_template = self.__format_base(
+            user_context=sample["about_me"], news_context=sample["context"]
+        )
         question = f"""
         >>QUESTION<<
         {sample["question"]}
         """
-        
+
         answer = f"""
          >>ANSWER<<
         {sample["response"]}
         """
-        
-        return {"prompt" : base_template + question + answer, "payload": sample}
-    
+
+        return {"prompt": base_template + question + answer, "payload": sample}
+
     @property
     def raw_template(self):
-        tmp = self.agent_behaviour + \
-        """
+        tmp = (
+            self.agent_behaviour
+            + """
         >>COMMENT<<
         {user_context}
         {news_context}
@@ -67,10 +71,13 @@ class PrompterTemplate:
         User: {question}
         >>ANSWER<<
         Answer: {answer}
-        """    
+        """
+        )
         return tmp
-    
+
+
 templates: Dict[str, PrompterTemplate] = {}
+
 
 def register_llm_template(template: PrompterTemplate):
     """Register a new conversation template."""
@@ -88,5 +95,5 @@ register_llm_template(
         name="falcon",
         agent_behaviour="You are an expert in the stock and crypto markets.",
         roles=("User", "Assistant"),
-        )
     )
+)

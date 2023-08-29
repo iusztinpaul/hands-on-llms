@@ -21,7 +21,7 @@ class FinanceDataset:
         self,
         data_path: Path,
         scope: Scope = Scope.TRAINING,
-        template: str = 'falcon',
+        template: str = "falcon",
         max_samples: Optional[int] = None,
     ):
         self._data_path = data_path
