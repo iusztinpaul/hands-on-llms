@@ -72,6 +72,16 @@
                 "--dataset_dir",
                 "./dataset"
             ]
+        },
+        {
+            "name": "Streaming Pipeline Local",
+            "type": "python",
+            "request": "launch",
+            "module": "streaming_pipeline.alpaca",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+            ]
         }
     ]
 }

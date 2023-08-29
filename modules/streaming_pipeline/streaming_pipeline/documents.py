@@ -13,14 +13,6 @@ from unstructured.staging.huggingface import chunk_by_attention_window
 from streaming_pipeline.embeddings import tokenizer
 
 
-class Document(BaseModel):
-    id: str
-    group_key: Optional[str] = None
-    metadata: Optional[dict] = {}
-    text: Optional[list]
-    chunks: Optional[list]
-    embeddings: Optional[list] = []
-
 
 # Clean the code and setup the dataclass
 def parse_article(_data):

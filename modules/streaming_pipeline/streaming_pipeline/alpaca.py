@@ -1,11 +1,11 @@
 import json
 import logging
 import os
-from typing import Optional
+from typing import List, Optional, Union
 
-from bytewax.dataflow import Dataflow
 from bytewax.inputs import DynamicInput, StatelessSource
 from bytewax.outputs import DynamicOutput, StatelessSink
+from pydantic import parse_obj_as
 from qdrant_client import QdrantClient
 from qdrant_client.http.api_client import UnexpectedResponse
 from qdrant_client.http.models import Distance, VectorParams
@@ -13,8 +13,7 @@ from qdrant_client.models import PointStruct
 from websocket import create_connection
 
 from streaming_pipeline import initialize
-from streaming_pipeline.documents import chunk, parse_article
-from streaming_pipeline.embeddings import embedding
+from streaming_pipeline.models import News
 
 initialize()
 
@@ -27,29 +26,109 @@ QDRANT_URL = os.getenv("QDRANT_URL")
 logger = logging.getLogger()
 
 
-class AlpacaSource(StatelessSource):
-    def __init__(self, worker_tickers):
-        # set the workers tickers
-        self.worker_tickers = worker_tickers
+class AlpacaNewsStream:
+    ALPACA_NEWS_STREAM_URL = "wss://stream.data.alpaca.markets/v1beta1/news"
 
-        # establish a websocket connection to alpaca
-        self.ws = create_connection("wss://stream.data.alpaca.markets/v1beta1/news")
-        logger.info(self.ws.recv())
+    # Alpaca Docs: https://alpaca.markets/docs/api-references/market-data-api/news-data/realtime/
+    # Source of implementation inspiration: https://github.com/alpacahq/alpaca-py/blob/master/alpaca/common/websocket.py
 
-        # authenticate to the websocket
-        self.ws.send(
-            json.dumps(
-                {"action": "auth", "key": f"{ALPACA_API_KEY}", "secret": f"{ALPACA_API_SECRET}"}
+    def __init__(self, tickers: Optional[List[str]] = None):
+        if tickers is None:
+            tickers = ["*"]
+
+        self._tickers = tickers
+        self._ws = None
+
+    def start(self):
+        self._connect()
+        self._auth()
+
+    def _connect(self):
+        self._ws = create_connection(self.ALPACA_NEWS_STREAM_URL)
+
+        msg = self.recv(serialize=False)
+
+        if msg[0]["T"] != "success" or msg[0]["msg"] != "connected":
+            raise ValueError("connected message not received")
+        else:
+            logger.info("[AlpacaNewsStream]: Connected to Alpaca News Stream.")
+
+    def _auth(self):
+        self._ws.send(
+            self._build_message(
+                {
+                    "action": "auth",
+                    "key": f"{ALPACA_API_KEY}",
+                    "secret": f"{ALPACA_API_SECRET}",
+                }
             )
         )
-        logger.info(self.ws.recv())
 
-        # subscribe to the tickers
-        self.ws.send(json.dumps({"action": "subscribe", "news": self.worker_tickers}))
-        logger.info(self.ws.recv())
+        msg = self.recv(serialize=False)
+        if msg[0]["T"] == "error":
+            raise ValueError(msg[0].get("msg", "auth failed"))
+        elif msg[0]["T"] != "success" or msg[0]["msg"] != "authenticated":
+            raise ValueError("failed to authenticate")
+        else:
+            logger.info("[AlpacaNewsStream]: Authenticated with Alpaca News Stream.")
+
+    def subscribe(self):
+        self._ws.send(
+            self._build_message({"action": "subscribe", "news": self._tickers})
+        )
+
+        msg = self.recv(serialize=False)
+        if msg[0]["T"] != "subscription":
+            raise ValueError("failed to subscribe")
+        else:
+            logger.info("[AlpacaNewsStream]: Subscribed to Alpaca News Stream.")
+
+    def ubsubscribe(self):
+        self._ws.send(
+            self._build_message({"action": "unsubscribe", "news": self._tickers})
+        )
+
+        msg = self.recv(serialize=False)
+        if msg[0]["T"] != "subscription":
+            raise ValueError("failed to unsubscribe")
+        else:
+            logger.info("[AlpacaNewsStream]: Unsubscribed from Alpaca News Stream.")
+
+    def _build_message(self, message: dict) -> str:
+        return json.dumps(message)
+
+    def recv(self, serialize: bool = True) -> Union[dict, List[News]]:
+        if self._ws:
+            message = self._ws.recv()
+            logger.info(f"[AlpacaNewsStream]: Received message: {message}")
+            message = json.loads(message)
+
+            if serialize is True:
+                message = parse_obj_as(List[News], message)
+
+            return message
+        else:
+            raise RuntimeError("Websocket not initialized. Call start() first.")
+
+    def close(self) -> None:
+        if self._ws:
+            self._ws.close()
+            self._ws = None
+
+
+class AlpacaSource(StatelessSource):
+    def __init__(self, worker_tickers):
+        self._alpaca_client = AlpacaNewsStream(tickers=worker_tickers)
+        self._alpaca_client.start()
+        self._alpaca_client.subscribe()
 
     def next(self):
-        return self.ws.recv()
+        return self._alpaca_client.recv()
+
+    def close(self):
+        self._alpaca_client.ubsubscribe()
+
+        return self._alpaca_client.close()
 
 
 class AlpacaNewsInput(DynamicInput):
@@ -76,90 +155,11 @@ class AlpacaNewsInput(DynamicInput):
         return AlpacaSource(worker_tickers)
 
 
-def build_payloads(doc):
-    payloads = []
-    for c in doc.chunks:
-        payload = doc.metadata
-        payload.update({"text": c})
-        payloads.append(payload)
-    return payloads
+import time
 
-
-class _QdrantVectorSink(StatelessSink):
-    def __init__(self, client: QdrantClient, collection_name: str):
-        self._client = client
-        self._collection_name = collection_name
-
-    def write(self, doc):
-        _payloads = build_payloads(doc)
-        self._client.upsert(
-            collection_name=self._collection_name,
-            points=[
-                PointStruct(id=idx, vector=vector, payload=_payload)
-                for idx, (vector, _payload) in enumerate(zip(doc.embeddings, _payloads))
-            ],
-        )
-
-
-class QdrantVectorOutput(DynamicOutput):
-    """Qdrant.
-
-    Workers are the unit of parallelism.
-
-    Can support at-least-once processing. Messages from the resume
-    epoch will be duplicated right after resume.
-
-    """
-
-    def __init__(
-        self,
-        collection_name,
-        vector_size,
-        schema="",
-        url="http://localhost:6333",
-        api_key: Optional[str] = None,
-        client=None,
-    ):
-        self.collection_name = collection_name
-        self.vector_size = vector_size
-        self.schema = schema
-
-        if client:
-            self.client = client
-
-        else:
-            self.client = QdrantClient(url, api_key=api_key)
-
-        try:
-            self.client.get_collection(collection_name="test_collection")
-        except (UnexpectedResponse, ValueError):
-            self.client.recreate_collection(
-                collection_name="test_collection",
-                vectors_config=VectorParams(
-                    size=self.vector_size, distance=Distance.COSINE
-                ),
-                schema=self.schema,
-            )
-
-    def build(self, worker_index, worker_count):
-        return _QdrantVectorSink(self.client, self.collection_name)
-
-
-flow = Dataflow()
-flow.input("input", AlpacaNewsInput(tickers=["*"]))
-flow.inspect(print)
-flow.flat_map(lambda x: json.loads(x))
-flow.map(parse_article)
-flow.map(chunk)
-flow.map(embedding)
-flow.inspect(print)
-# flow.output("output", QdrantVectorOutput("test_collection", 384, client=QdrantClient(":memory:")))
-flow.output(
-    "output",
-    QdrantVectorOutput(
-        "test_collection",
-        384,
-        url=QDRANT_URL,
-        api_key=QDRANT_API_KEY,
-    ),
-)
+alpaca_client = AlpacaNewsStream(tickers=["*"])
+alpaca_client.start()
+alpaca_client.subscribe()
+while True:
+    alpaca_client.recv()
+    time.sleep(1)
