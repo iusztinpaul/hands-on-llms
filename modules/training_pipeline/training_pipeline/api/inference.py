@@ -10,7 +10,8 @@ from peft import PeftConfig
 from tqdm import tqdm
 from training_pipeline import constants, models
 from training_pipeline.configs import InferenceConfig
-from training_pipeline.data import finqa, utils
+from training_pipeline.data import qa, utils
+from training_pipeline.templates.prompter import get_llm_template
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 try:
@@ -22,18 +23,20 @@ except KeyError:
 logger = logging.getLogger(__name__)
 
 
-class FinQAInferenceAPI:
+class InferenceAPI:
     def __init__(
         self,
         peft_model_id: str,
         model_id: str,
         name: str = "inference-prompts",
+        template_name: str = "falcon",
         root_dataset_dir: Optional[Path] = None,
         max_new_tokens: int = 50,
         model_cache_dir: Optional[Path] = None,
         debug: bool = False,
         device: str = "cuda:0",
-    ):
+    ):  
+        self._template = get_llm_template(template_name).raw_template
         self._peft_model_id = peft_model_id
         self._model_id = model_id
         self._name = name
@@ -74,7 +77,7 @@ class FinQAInferenceAPI:
         else:
             max_samples = 20
 
-        dataset = finqa.FinQADataset(
+        dataset = qa.FinanceDataset(
             data_path=self._root_dataset_dir / "training_data.json",
             scope=constants.Scope.INFERENCE,
             max_samples=max_samples,
@@ -96,15 +99,17 @@ class FinQAInferenceAPI:
 
         return model, tokenizer, peft_config
 
-    def infer(self, question: str) -> str:
+    def infer(self, infer_prompt: str, infer_payload: dict) -> str:
         # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
         # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
 
         start_time = time.time()
+        
+        
         answer = models.prompt(
             model=self._model,
             tokenizer=self._tokenizer,
-            input_text=question,
+            input_text=infer_prompt,
             max_new_tokens=self._max_new_tokens,
             device=self._device,
             return_only_answer=True,
@@ -113,20 +118,29 @@ class FinQAInferenceAPI:
 
         duration_milliseconds = (end_time - start_time) * 1000
 
-        comet_llm.log_prompt(
-            project=f"{comet_project_name}-{self._name}",
-            prompt=question,
-            output=answer,
-            metadata={
-                "usage.prompt_tokens": len(question),
-                "usage.total_tokens": len(question) + len(answer),
-                "usage.max_new_tokens": self._max_new_tokens,
-                "usage.actual_new_tokens": len(answer),
-                "model": self._model_id,
-                "peft_model": self._peft_model_id,
-            },
-            duration=duration_milliseconds,
-        )
+        if self._debug:
+            payload_for_template = {
+            "user_context" : infer_payload["about_me"],
+            "news_context": infer_payload["context"],
+            "question": infer_payload["question"]
+            }
+
+            comet_llm.log_prompt(
+                project=f"{comet_project_name}-{self._name}",
+                prompt=infer_prompt,
+                output=answer,
+                prompt_template=self._template,
+                prompt_template_variables=payload_for_template,
+                metadata={
+                    "usage.prompt_tokens": len(infer_prompt),
+                    "usage.total_tokens": len(infer_prompt) + len(answer),
+                    "usage.max_new_tokens": self._max_new_tokens,
+                    "usage.actual_new_tokens": len(answer),
+                    "model": self._model_id,
+                    "peft_model": self._peft_model_id,
+                },
+                duration=duration_milliseconds,
+            )
 
         return answer
 
@@ -138,7 +152,7 @@ class FinQAInferenceAPI:
         question_and_answers = []
         should_save_output = output_file is not None
         for sample in tqdm(self._dataset):
-            answer = self.infer(question=sample["prompt"])
+            answer = self.infer(infer_prompt=sample["prompt"], infer_payload=sample["payload"])
 
             if should_save_output:
                 question_and_answers.append(

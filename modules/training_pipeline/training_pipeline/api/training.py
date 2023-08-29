@@ -16,14 +16,14 @@ from peft import PeftConfig
 from trl import SFTTrainer
 
 from training_pipeline.configs import TrainingConfig
-from training_pipeline.data import finqa
+from training_pipeline.data import qa
 from training_pipeline import models, constants, metrics
 
 
 logger = logging.getLogger(__name__)
 
 
-class FinQATrainingAPI:
+class TrainingAPI:
     def __init__(
         self,
         root_dataset_dir: Path,
@@ -45,7 +45,7 @@ class FinQATrainingAPI:
 
     @property
     def name(self) -> str:
-        return f"finqa/{self._model_id}"
+        return f"finance_llm/{self._model_id}"
 
     @classmethod
     def from_config(
@@ -76,13 +76,13 @@ class FinQATrainingAPI:
             # To avoid waiting an eternity to run the evaluation we will only use a subset of the validation dataset.
             validation_max_samples = 75
 
-        training_dataset = finqa.FinQADataset(
-            data_path=self._root_dataset_dir / "train.json",
+        training_dataset = qa.FinanceDataset(
+            data_path=self._root_dataset_dir / "training_data.json",
             scope=constants.Scope.TRAINING,
             max_samples=training_max_samples,
         ).to_huggingface()
-        validation_dataset = finqa.FinQADataset(
-            data_path=self._root_dataset_dir / "test.json",
+        validation_dataset = qa.FinanceDataset(
+            data_path=self._root_dataset_dir / "testing_data.json",
             scope=constants.Scope.TRAINING,
             max_samples=validation_max_samples,
         ).to_huggingface()
@@ -112,7 +112,7 @@ class FinQATrainingAPI:
             train_dataset=self._training_dataset,
             eval_dataset=self._validation_dataset,
             peft_config=self._peft_config,
-            dataset_text_field="text",
+            dataset_text_field="prompt",
             max_seq_length=self._max_seq_length,
             tokenizer=self._tokenizer,
             args=self._training_arguments,
