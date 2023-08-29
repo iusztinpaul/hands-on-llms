@@ -1,20 +1,17 @@
 import logging
 import os
-from pathlib import Path
 import time
+from pathlib import Path
 from typing import Optional, Tuple
 
 import comet_llm
-
 from datasets import Dataset
+from peft import PeftConfig
 from tqdm import tqdm
+from training_pipeline import constants, models
+from training_pipeline.configs import InferenceConfig
 from training_pipeline.data import finqa, utils
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from peft import PeftConfig
-
-from training_pipeline.configs import InferenceConfig
-from training_pipeline import constants, models
-
 
 try:
     comet_project_name = os.environ["COMET_PROJECT_NAME"]
@@ -78,7 +75,7 @@ class FinQAInferenceAPI:
             max_samples = 20
 
         dataset = finqa.FinQADataset(
-            data_path=self._root_dataset_dir / "private_test.json",
+            data_path=self._root_dataset_dir / "training_data.json",
             scope=constants.Scope.INFERENCE,
             max_samples=max_samples,
         ).to_huggingface()
@@ -92,7 +89,7 @@ class FinQAInferenceAPI:
 
         model, tokenizer, peft_config = models.build_qlora_model(
             pretrained_model_name_or_path=self._model_id,
-            peft_pretrained_model_name_or_path=self._peft_model_id,
+            # peft_pretrained_model_name_or_path=self._peft_model_id,
             gradient_checkpointing=False,
             cache_dir=self._model_cache_dir,
         )
@@ -141,12 +138,12 @@ class FinQAInferenceAPI:
         question_and_answers = []
         should_save_output = output_file is not None
         for sample in tqdm(self._dataset):
-            answer = self.infer(question=sample["text"])
+            answer = self.infer(question=sample["prompt"])
 
             if should_save_output:
                 question_and_answers.append(
                     {
-                        "question": sample["text"],
+                        "question": sample["prompt"],
                         "answer": answer,
                     }
                 )
