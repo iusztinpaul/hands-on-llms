@@ -41,7 +41,7 @@ def infer(
     initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
 
     from training_pipeline import utils
-    from training_pipeline.api import FinQAInferenceAPI
+    from training_pipeline.api import InferenceAPI
 
     logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ def infer(
     model_cache_dir = Path(model_cache_dir) if model_cache_dir else None
 
     inference_config = configs.InferenceConfig.from_yaml(config_file)
-    inference_api = FinQAInferenceAPI.from_config(
+    inference_api = InferenceAPI.from_config(
         config=inference_config,
         root_dataset_dir=root_dataset_dir,
         model_cache_dir=model_cache_dir,

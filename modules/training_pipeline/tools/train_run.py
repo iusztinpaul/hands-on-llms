@@ -48,7 +48,7 @@ def train(
     initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
 
     from training_pipeline import utils
-    from training_pipeline.api import FinQATrainingAPI
+    from training_pipeline.api import TrainingAPI
 
     logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def train(
     model_cache_dir = Path(model_cache_dir) if model_cache_dir else None
 
     training_config = configs.TrainingConfig.from_yaml(config_file, output_dir)
-    training_api = FinQATrainingAPI.from_config(
+    training_api = TrainingAPI.from_config(
         config=training_config,
         root_dataset_dir=root_dataset_dir,
         model_cache_dir=model_cache_dir,
