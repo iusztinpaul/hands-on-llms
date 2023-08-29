@@ -146,6 +146,7 @@ class TrainingAPI:
 
         experiment = comet_ml.Experiment()
         experiment.log_model(self.name, str(checkpoint_dir))
+        logger.debug(f"Logging model checkpoint @ {self.name}")
 
     def compute_metrics(self, eval_pred: EvalPrediction):
         return {"perplexity": metrics.compute_perplexity(eval_pred.predictions)}
