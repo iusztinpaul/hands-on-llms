@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-class News(BaseModel):
+class NewsArticle(BaseModel):
     """
     Attributes:
         id (str): News article ID
@@ -38,3 +38,12 @@ class Document(BaseModel):
     text: Optional[list]
     chunks: Optional[list]
     embeddings: Optional[list] = []
+    
+    def to_payloads(self) -> List[dict]:
+        payloads = []
+        for c in self.chunks:
+            payload = self.metadata
+            payload.update({"text": c})
+            payloads.append(payload)
+            
+        return payloads

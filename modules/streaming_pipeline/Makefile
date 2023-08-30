@@ -21,7 +21,10 @@ add_dev:
 
 ### Run ###
 run:
-	export RUST_BACKTRACE=1; poetry run python -m bytewax.run streaming_pipeline.alpaca:flow
+	export RUST_BACKTRACE=1; poetry run python -m bytewax.run tools.run:run
+
+run_dev:
+	export RUST_BACKTRACE=1; poetry run python -m tools.dev_run
 
 
 ### PEP 8 ###

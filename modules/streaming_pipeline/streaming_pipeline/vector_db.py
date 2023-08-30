@@ -7,24 +7,8 @@ from qdrant_client.http.api_client import UnexpectedResponse
 from qdrant_client.http.models import Distance, VectorParams
 from qdrant_client.models import PointStruct
 
-from streaming_pipeline import initialize
 from streaming_pipeline.embeddings import model, tokenizer
-
-initialize()
-
-ALPACA_API_KEY = os.getenv("ALPACA_API_KEY")
-ALPACA_API_SECRET = os.getenv("ALPACA_API_SECRET")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-QDRANT_URL = os.getenv("QDRANT_URL")
-
-
-def build_payloads(doc):
-    payloads = []
-    for c in doc.chunks:
-        payload = doc.metadata
-        payload.update({"text": c})
-        payloads.append(payload)
-    return payloads
+from streaming_pipeline.models import Document
 
 
 class _QdrantVectorSink(StatelessSink):
@@ -32,13 +16,15 @@ class _QdrantVectorSink(StatelessSink):
         self._client = client
         self._collection_name = collection_name
 
-    def write(self, doc):
-        _payloads = build_payloads(doc)
+    def write(self, document: Document):
+        
+        # TODO: Understand how the payloads are loaded in qdrant
+        payloads = document.to_payloads()
         self._client.upsert(
             collection_name=self._collection_name,
             points=[
                 PointStruct(id=idx, vector=vector, payload=_payload)
-                for idx, (vector, _payload) in enumerate(zip(doc.embeddings, _payloads))
+                for idx, (vector, _payload) in enumerate(zip(document.embeddings, payloads))
             ],
         )
 
@@ -55,22 +41,31 @@ class QdrantVectorOutput(DynamicOutput):
 
     def __init__(
         self,
-        collection_name,
-        vector_size,
+        collection_name: str,
+        vector_size: int,
+        # TODO: How can I use the schema ?
         schema="",
-        url="http://localhost:6333",
-        api_key: Optional[str] = None,
-        client=None,
+        client: Optional[QdrantClient] = None,
     ):
         self.collection_name = collection_name
         self.vector_size = vector_size
         self.schema = schema
 
+        try:
+            self._qdrant_url = os.environ["QDRANT_URL"]
+        except KeyError:
+            raise KeyError("QDRANT_URL must be set as environment variable.")
+
+        try:
+            self._qdrant_api_key = os.environ["QDRANT_API_KEY"]
+        except KeyError:
+            raise KeyError("QDRANT_API_KEY must be set as environment variable.")
+
         if client:
             self.client = client
 
         else:
-            self.client = QdrantClient(url, api_key=api_key)
+            self.client = QdrantClient(self._qdrant_url, api_key=self._qdrant_api_key)
 
         try:
             self.client.get_collection(collection_name="test_collection")

@@ -1,6 +1,12 @@
-def run():
-    pass
+from bytewax.dataflow import Dataflow
+
+from streaming_pipeline import initialize
+from streaming_pipeline.flow import build as flow_builder
 
 
-if __name__ == "__main__":
-    run()
+def run() -> Dataflow:
+    initialize()
+
+    flow = flow_builder()
+
+    return flow
