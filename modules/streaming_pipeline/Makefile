@@ -26,6 +26,9 @@ run:
 run_dev:
 	export RUST_BACKTRACE=1; poetry run python -m tools.dev_run
 
+search:
+	poetry run python -m tools.search ${PARAMS}
+
 
 ### PEP 8 ###
 # Be sure to install the dev dependencies first #

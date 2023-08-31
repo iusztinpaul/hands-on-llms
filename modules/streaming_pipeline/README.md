@@ -44,4 +44,19 @@ cp .env.example .env
 
 ## 3. Usage
 
+Run production streaming pipeline:
+```shell
+make run
+```
+
+Run dev streaming pipeline:
+```shell
+make run_dev
+```
+
+Run a query in your vector DB:
+```shell
+make search PARAMS='--query_string "Should I invest in Tesla?"'
+```
+
 ...

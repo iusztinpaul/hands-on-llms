@@ -18,6 +18,7 @@ transformers = "^4.32.0"
 sentencepiece = "^0.1.99"
 torch = {version = "2.0.1+cu118", source = "torch"}
 qdrant-client = "1.1.1"
+fire = "^0.5.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"

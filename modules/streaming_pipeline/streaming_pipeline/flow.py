@@ -5,33 +5,35 @@ from pydantic import parse_obj_as
 from qdrant_client import QdrantClient
 
 from streaming_pipeline.alpaca import AlpacaNewsInput
-from streaming_pipeline.documents import chunk, parse_article
-from streaming_pipeline.embeddings import compute_embeddings
+from streaming_pipeline.embeddings import EmbeddingModelSingleton
 from streaming_pipeline.models import NewsArticle
-from streaming_pipeline.vector_db import QdrantVectorOutput
+from streaming_pipeline.qdrant import QdrantVectorOutput
 
 
 def build(in_memory: bool = False) -> Dataflow:
+    model = EmbeddingModelSingleton()
+
     flow = Dataflow()
     flow.input("input", AlpacaNewsInput(tickers=["*"]))
-    flow.inspect(print)
     flow.flat_map(lambda messages: parse_obj_as(List[NewsArticle], messages))
-    flow.map(parse_article)
-    flow.map(chunk)
-    flow.map(compute_embeddings)
     flow.inspect(print)
+    flow.map(lambda article: article.to_document())
+    flow.map(lambda document: document.compute_chunks(model))
+    flow.map(lambda document: document.compute_embeddings(model))
 
     if in_memory:
         flow.output(
             "output",
-            QdrantVectorOutput("test_collection", 384, client=QdrantClient(":memory:")),
+            QdrantVectorOutput(
+                vector_size=model.max_input_length,
+                client=QdrantClient(":memory:"),
+            ),
         )
     else:
         flow.output(
             "output",
             QdrantVectorOutput(
-                "test_collection",
-                384,
+                vector_size=model.max_input_length,
             ),
         )
 
