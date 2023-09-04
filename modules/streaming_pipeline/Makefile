@@ -24,7 +24,7 @@ run:
 	export RUST_BACKTRACE=1; poetry run python -m bytewax.run tools.run:run
 
 run_dev:
-	export RUST_BACKTRACE=1; poetry run python -m tools.dev_run
+	export RUST_BACKTRACE=1; poetry run python -m tools.run_dev
 
 search:
 	poetry run python -m tools.search ${PARAMS}

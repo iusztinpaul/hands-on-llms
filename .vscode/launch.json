@@ -88,7 +88,7 @@
             "name": "Dev Streaming Pipeline Local",
             "type": "python",
             "request": "launch",
-            "module": "tools.dev_run",
+            "module": "tools.run_dev",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [

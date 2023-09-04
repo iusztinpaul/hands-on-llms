@@ -1,10 +1,14 @@
+import logging
+import traceback
 from typing import Union
+
 import numpy as np
-from streaming_pipeline import constants
 from transformers import AutoModel, AutoTokenizer
 
+from streaming_pipeline import constants
 from streaming_pipeline.base import SingletonMeta
 
+logger = logging.getLogger(__name__)
 
 
 class EmbeddingModelSingleton(metaclass=SingletonMeta):
@@ -14,6 +18,7 @@ class EmbeddingModelSingleton(metaclass=SingletonMeta):
         max_input_length: int = constants.EMBEDDING_MODEL_MAX_INPUT_LENGTH,
         device: str = constants.EMBEDDING_MODEL_DEVICE,
     ):
+        self._model_id = model_id
         self._device = device
         self._max_input_length = max_input_length
 
@@ -28,15 +33,32 @@ class EmbeddingModelSingleton(metaclass=SingletonMeta):
     def tokenizer(self) -> AutoTokenizer:
         return self._tokenizer
 
-    def __call__(self, input_text: str, to_list: bool = True) -> Union[np.ndarray, list]:
-        tokenized_text = self._tokenizer(
-            input_text,
-            padding=True,
-            truncation=True,
-            return_tensors="pt",
-            max_length=self._max_input_length,
-        ).to(self._device)
-        result = self._model(**tokenized_text)
+    def __call__(
+        self, input_text: str, to_list: bool = True
+    ) -> Union[np.ndarray, list]:
+        try:
+            tokenized_text = self._tokenizer(
+                input_text,
+                padding=True,
+                truncation=True,
+                return_tensors="pt",
+                max_length=self._max_input_length,
+            ).to(self._device)
+        except Exception:
+            logger.error(traceback.format_exc())
+            logger.error(f"Error tokenizing the following input text: {input_text}")
+
+            return [] if to_list else np.array([])
+
+        try:
+            result = self._model(**tokenized_text)
+        except Exception:
+            logger.error(traceback.format_exc())
+            logger.error(
+                f"Error generating embeddings for the following model_id: {self._model_id} and input text: {input_text}"
+            )
+
+            return [] if to_list else np.array([])
 
         embeddings = result.last_hidden_state[:, 0, :].cpu().detach().numpy()
         if to_list:
