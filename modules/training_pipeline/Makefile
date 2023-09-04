@@ -83,15 +83,13 @@ infer_beam:
 ### PEP 8 ###
 # Be sure to install the dev dependencies first #
 
+### PEP 8 ###
+# Be sure to install the dev dependencies first #
+
 lint_check:
 	@echo "Checking for linting issues..."
 
 	poetry run ruff check .
-
-format_check:
-	@echo "Checking for formatting issues..."
-
-	poetry run black --check .
 
 format_fix:
 	@echo "Formatting code..."

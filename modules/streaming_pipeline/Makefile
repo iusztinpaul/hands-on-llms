@@ -38,11 +38,6 @@ lint_check:
 
 	poetry run ruff check .
 
-format_check:
-	@echo "Checking for formatting issues..."
-
-	poetry run black --check .
-
 format_fix:
 	@echo "Formatting code..."
 

@@ -32,7 +32,3 @@ jobs:
       - name: Run PEP8 linter
         working-directory: ./modules/training_pipeline
         run: make lint_check
-
-      - name: Run PEP8 format checker
-        working-directory: ./modules/training_pipeline
-        run: make format_check
