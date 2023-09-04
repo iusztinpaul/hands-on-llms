@@ -33,12 +33,12 @@ Before diving into the modules, you have to set up a couple of additional tools 
 ### 2.1. Comet ML
 `ML platform`
 
-Go to [Comet ML](https://www.comet.com/site/), create an account, a project, and an API KEY. We will show you in every module how to add these credentials.
+Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github), create an account, a project, and an API KEY. We will show you in every module how to add these credentials.
 
 ### 2.2. Beam
 `cloud compute`
 
-Go to [Beam](https://www.beam.cloud/) and follow their quick setup/get started tutorial. You must install their CLI and configure your credentials on your local machine.
+Go to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and follow their quick setup/get started tutorial. You must install their CLI and configure your credentials on your local machine.
 
 When using Poetry, we had issues locating the Beam CLI when using the Poetry virtual environment. To fix this, create a symlink using the following command - replace `<your-poetry-env-name>` with your Poetry env name:
  ```shell

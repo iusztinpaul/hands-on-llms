@@ -7,13 +7,42 @@ readme = "README.md"
 packages = [{include = "streaming_pipeline"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.12"
 bytewax = "^0.16.2"
+pyyaml = "^6.0.1"
+python-dotenv = "^1.0.0"
+websocket-client = "^1.6.2"
+pydantic = ">=1.8,<2.0"
+unstructured = "^0.10.5"
+transformers = "^4.32.0"
+sentencepiece = "^0.1.99"
+torch = {version = "2.0.1+cu118", source = "torch"}
+qdrant-client = "1.1.1"
+fire = "^0.5.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 ruff = "^0.0.285"
 
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "supplemental"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.isort]
+case-sensitive = true
