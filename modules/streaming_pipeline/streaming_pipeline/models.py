@@ -42,22 +42,22 @@ class NewsArticle(BaseModel):
 
     def to_document(self) -> "Document":
         document_id = hashlib.md5(self.content.encode()).hexdigest()
-
         document = Document(id=document_id)
+
         article_elements = partition_html(text=self.content)
-        self.content = clean_non_ascii_chars(
+        cleaned_content = clean_non_ascii_chars(
             replace_unicode_quotes(clean(" ".join([str(x) for x in article_elements])))
         )
-        self.headline = clean_non_ascii_chars(
+        cleaned_headline = clean_non_ascii_chars(
             replace_unicode_quotes(clean(self.headline))
         )
-        self.summary = clean_non_ascii_chars(
+        cleaned_summary = clean_non_ascii_chars(
             replace_unicode_quotes(clean(self.summary))
         )
 
-        document.text = [self.headline, self.summary, self.content]
-        document.metadata["headline"] = self.headline
-        document.metadata["summary"] = self.summary
+        document.text = [cleaned_headline, cleaned_summary, cleaned_content]
+        document.metadata["headline"] = cleaned_headline
+        document.metadata["summary"] = cleaned_summary
         document.metadata["url"] = self.url
         document.metadata["symbols"] = self.symbols
         document.metadata["author"] = self.author
