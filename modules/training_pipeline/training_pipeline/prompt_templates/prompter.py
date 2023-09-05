@@ -1,3 +1,11 @@
+"""
+This script defines a PrompterTemplate class that assists in generating 
+conversation/prompt templates. The script facilitates formatting prompts 
+for inference and training by combining various context elements and user inputs.
+
+"""
+
+
 import dataclasses
 from typing import Dict, List, Tuple
 
