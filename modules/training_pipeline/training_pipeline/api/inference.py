@@ -11,7 +11,7 @@ from tqdm import tqdm
 from training_pipeline import constants, models
 from training_pipeline.configs import InferenceConfig
 from training_pipeline.data import qa, utils
-from training_pipeline.templates.prompter import get_llm_template
+from training_pipeline.prompt_templates.prompter import get_llm_template
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 try:

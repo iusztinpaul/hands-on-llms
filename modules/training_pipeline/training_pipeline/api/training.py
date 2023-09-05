@@ -1,24 +1,20 @@
 import logging
-
+from pathlib import Path
 from typing import Optional, Tuple
 
 import comet_ml
-
-from pathlib import Path
 from datasets import Dataset
+from peft import PeftConfig
+from training_pipeline import constants, metrics, models
+from training_pipeline.configs import TrainingConfig
+from training_pipeline.data import qa
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
-    TrainingArguments,
     EvalPrediction,
+    TrainingArguments,
 )
-from peft import PeftConfig
 from trl import SFTTrainer
-
-from training_pipeline.configs import TrainingConfig
-from training_pipeline.data import qa
-from training_pipeline import models, constants, metrics
-
 
 logger = logging.getLogger(__name__)
 
@@ -69,8 +65,8 @@ class TrainingAPI:
         if self._debug:
             logger.info("Debug mode enabled. Truncating datasets...")
 
-            training_max_samples = 12
-            validation_max_samples = 6
+            training_max_samples = 60
+            validation_max_samples = None
         else:
             training_max_samples = None
             # To avoid waiting an eternity to run the evaluation we will only use a subset of the validation dataset.
@@ -119,21 +115,24 @@ class TrainingAPI:
             packing=True,
             compute_metrics=self.compute_metrics,
         )
-        trainer.train()
+        try:
+            trainer.train()
 
-        best_model_checkpoint = trainer.state.best_model_checkpoint
-        has_best_model_checkpoint = best_model_checkpoint is not None
-        if has_best_model_checkpoint:
-            best_model_checkpoint = Path(best_model_checkpoint)
-            logger.info(
-                f"Logging best model from {best_model_checkpoint} to the model registry..."
-            )
+            best_model_checkpoint = trainer.state.best_model_checkpoint
+            has_best_model_checkpoint = best_model_checkpoint is not None
+            if has_best_model_checkpoint:
+                best_model_checkpoint = Path(best_model_checkpoint)
+                logger.info(
+                    f"Logging best model from {best_model_checkpoint} to the model registry..."
+                )
 
-            self.log_model(best_model_checkpoint)
-        else:
-            logger.warning(
-                "No best model checkpoint found. Skipping logging it to the model registry..."
-            )
+                self.log_model(best_model_checkpoint)
+            else:
+                logger.warning(
+                    "No best model checkpoint found. Skipping logging it to the model registry..."
+                )
+        except Exception as e:
+            logger.error(f"Caught {e} in api.train()")
 
         return trainer
 

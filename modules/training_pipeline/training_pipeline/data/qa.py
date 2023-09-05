@@ -5,7 +5,7 @@ from typing import List, Optional
 from datasets import Dataset
 from training_pipeline.constants import Scope
 from training_pipeline.data.utils import load_json
-from training_pipeline.templates.prompter import get_llm_template
+from training_pipeline.prompt_templates.prompter import get_llm_template
 
 
 @dataclass(frozen=True)
