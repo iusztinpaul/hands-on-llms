@@ -65,8 +65,8 @@ class TrainingAPI:
         if self._debug:
             logger.info("Debug mode enabled. Truncating datasets...")
 
-            training_max_samples = 60
-            validation_max_samples = None
+            training_max_samples = 12
+            validation_max_samples = 6
         else:
             training_max_samples = None
             # To avoid waiting an eternity to run the evaluation we will only use a subset of the validation dataset.

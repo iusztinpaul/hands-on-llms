@@ -92,7 +92,7 @@ class InferenceAPI:
 
         model, tokenizer, peft_config = models.build_qlora_model(
             pretrained_model_name_or_path=self._model_id,
-            # peft_pretrained_model_name_or_path=self._peft_model_id,
+            peft_pretrained_model_name_or_path=self._peft_model_id,
             gradient_checkpointing=False,
             cache_dir=self._model_cache_dir,
         )
