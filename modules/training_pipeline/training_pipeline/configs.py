@@ -1,10 +1,9 @@
 from dataclasses import dataclass
-from typing import Any, Dict
 from pathlib import Path
+from typing import Any, Dict
 
-
-from transformers import TrainingArguments
 from training_pipeline.data.utils import load_yaml
+from transformers import TrainingArguments
 
 
 @dataclass

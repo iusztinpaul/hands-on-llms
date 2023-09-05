@@ -1,11 +1,8 @@
-import fire
-
 from pathlib import Path
 
-from beam import App, Runtime, Image, Volume, VolumeType
-
+import fire
+from beam import App, Image, Runtime, Volume, VolumeType
 from training_pipeline import configs, utils
-
 
 requirements = utils.read_requirements("requirements.txt")
 training_app = App(
