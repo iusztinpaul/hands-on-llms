@@ -25,13 +25,10 @@ class QdrantVectorOutput(DynamicOutput):
         self,
         vector_size: int,
         collection_name: str = constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
-        # TODO: How can I use the schema ?
-        schema="",
         client: Optional[QdrantClient] = None,
     ):
         self._collection_name = collection_name
         self._vector_size = vector_size
-        self._schema = schema
 
         if client:
             self.client = client
@@ -45,12 +42,11 @@ class QdrantVectorOutput(DynamicOutput):
                 collection_name=self._collection_name,
                 vectors_config=VectorParams(
                     size=self._vector_size, distance=Distance.COSINE
-                ),
-                schema=self._schema,
+                )
             )
 
     def build(self, worker_index, worker_count):
-        return _QdrantVectorSink(self.client, self._collection_name)
+        return QdrantVectorSink(self.client, self._collection_name)
 
 
 def build_qdrant_client(url: Optional[str] = None, api_key: Optional[str] = None):
@@ -75,7 +71,7 @@ def build_qdrant_client(url: Optional[str] = None, api_key: Optional[str] = None
     return client
 
 
-class _QdrantVectorSink(StatelessSink):
+class QdrantVectorSink(StatelessSink):
     def __init__(
         self,
         client: QdrantClient,
@@ -85,14 +81,14 @@ class _QdrantVectorSink(StatelessSink):
         self._collection_name = collection_name
 
     def write(self, document: Document):
-        # TODO: Understand how the payloads are loaded in qdrant
-        payloads = document.to_payloads()
+        ids, payloads = document.to_payloads()
+        points = [
+                PointStruct(id=idx, vector=vector, payload=_payload)
+                for idx, vector, _payload in 
+                    zip(ids, document.embeddings, payloads)
+            ]
+        
         self._client.upsert(
             collection_name=self._collection_name,
-            points=[
-                PointStruct(id=idx, vector=vector, payload=_payload)
-                for idx, (vector, _payload) in enumerate(
-                    zip(document.embeddings, payloads)
-                )
-            ],
+            points=points
         )

@@ -1,6 +1,7 @@
 import hashlib
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Tuple
+import uuid
 
 from pydantic import BaseModel
 from unstructured.cleaners.core import (
@@ -74,14 +75,18 @@ class Document(BaseModel):
     chunks: list = []
     embeddings: list = []
 
-    def to_payloads(self) -> List[dict]:
+    def to_payloads(self) -> Tuple[List[str], List[dict]]:
         payloads = []
-        for c in self.chunks:
+        ids = []
+        for chunk in self.chunks:
             payload = self.metadata
-            payload.update({"text": c})
+            payload.update({"text": chunk})
+            chunk_id = str(uuid.uuid4())
+            
             payloads.append(payload)
+            ids.append(chunk_id)
 
-        return payloads
+        return ids, payloads
 
     def compute_chunks(self, model: EmbeddingModelSingleton) -> "Document":
         for item in self.text:

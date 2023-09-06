@@ -29,6 +29,10 @@ jobs:
         working-directory: ./modules/training_pipeline
         run: make install_only_dev
 
-      - name: Run PEP8 linter
+      - name: Run PEP8 linter checker
         working-directory: ./modules/training_pipeline
         run: make lint_check
+      
+      - name: Run PEP8 format checker
+        working-directory: ./modules/training_pipeline
+        run: make format_check
