@@ -71,6 +71,7 @@ class InferenceConfig:
     model: Dict[str, Any]
     peft_model: Dict[str, Any]
     setup: Dict[str, Any]
+    dataset: Dict[str, str]
 
     @classmethod
     def from_yaml(cls, config_path: Path):

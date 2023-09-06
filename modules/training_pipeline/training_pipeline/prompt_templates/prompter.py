@@ -61,7 +61,7 @@ class PrompterTemplate:
         """
 
         answer = f"""
-         >>ANSWER<<
+        >>ANSWER<<
         {sample["response"]}
         """
 

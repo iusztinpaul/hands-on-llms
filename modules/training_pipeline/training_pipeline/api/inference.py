@@ -31,6 +31,7 @@ class InferenceAPI:
         name: str = "inference-prompts",
         template_name: str = "falcon",
         root_dataset_dir: Optional[Path] = None,
+        test_dataset_file: Optional[Path] = None,
         max_new_tokens: int = 50,
         model_cache_dir: Optional[Path] = None,
         debug: bool = False,
@@ -41,6 +42,7 @@ class InferenceAPI:
         self._model_id = model_id
         self._name = name
         self._root_dataset_dir = root_dataset_dir
+        self._test_dataset_file = test_dataset_file
         self._max_new_tokens = max_new_tokens
         self._model_cache_dir = model_cache_dir
         self._debug = debug
@@ -63,6 +65,7 @@ class InferenceAPI:
             peft_model_id=config.peft_model["id"],
             model_id=config.model["id"],
             root_dataset_dir=root_dataset_dir,
+            test_dataset_file=config.dataset["evaluation"],
             max_new_tokens=config.model["max_new_tokens"],
             model_cache_dir=model_cache_dir,
             debug=config.setup.get("debug", False),
@@ -78,7 +81,7 @@ class InferenceAPI:
             max_samples = 20
 
         dataset = qa.FinanceDataset(
-            data_path=self._root_dataset_dir / "training_data.json",
+            data_path=self._root_dataset_dir / self._test_dataset_file,
             scope=constants.Scope.INFERENCE,
             max_samples=max_samples,
         ).to_huggingface()
