@@ -42,7 +42,7 @@ class QdrantVectorOutput(DynamicOutput):
                 collection_name=self._collection_name,
                 vectors_config=VectorParams(
                     size=self._vector_size, distance=Distance.COSINE
-                )
+                ),
             )
 
     def build(self, worker_index, worker_count):
@@ -83,12 +83,8 @@ class QdrantVectorSink(StatelessSink):
     def write(self, document: Document):
         ids, payloads = document.to_payloads()
         points = [
-                PointStruct(id=idx, vector=vector, payload=_payload)
-                for idx, vector, _payload in 
-                    zip(ids, document.embeddings, payloads)
-            ]
-        
-        self._client.upsert(
-            collection_name=self._collection_name,
-            points=points
-        )
+            PointStruct(id=idx, vector=vector, payload=_payload)
+            for idx, vector, _payload in zip(ids, document.embeddings, payloads)
+        ]
+
+        self._client.upsert(collection_name=self._collection_name, points=points)

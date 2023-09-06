@@ -82,7 +82,7 @@ class Document(BaseModel):
             payload = self.metadata
             payload.update({"text": chunk})
             chunk_id = str(uuid.uuid4())
-            
+
             payloads.append(payload)
             ids.append(chunk_id)
 

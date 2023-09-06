@@ -48,13 +48,13 @@ class AlpacaSource(StatelessSource):
         self._alpaca_client.ubsubscribe()
 
         return self._alpaca_client.close()
-    
-    
+
+
 def build_alpaca_client(
     api_key: Optional[str] = None,
     api_secret: Optional[str] = None,
     tickers: Optional[List[str]] = None,
-) -> 'AlpacaNewsStreamClient':
+) -> "AlpacaNewsStreamClient":
     if api_key is None:
         try:
             api_key = os.environ["ALPACA_API_KEY"]
@@ -77,8 +77,8 @@ def build_alpaca_client(
     return AlpacaNewsStreamClient(
         api_key=api_key, api_secret=api_secret, tickers=tickers
     )
-    
-    
+
+
 class AlpacaNewsStreamClient:
     NEWS_STREAM_URL = "wss://stream.data.alpaca.markets/v1beta1/news"
 
