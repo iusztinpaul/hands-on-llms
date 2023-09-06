@@ -41,7 +41,7 @@ class TrainingAPI:
 
     @property
     def name(self) -> str:
-        return f"finance_llm/{self._model_id}"
+        return f"financial_assistant/{self._model_id}"
 
     @classmethod
     def from_config(
@@ -115,24 +115,22 @@ class TrainingAPI:
             packing=True,
             compute_metrics=self.compute_metrics,
         )
-        try:
-            trainer.train()
 
-            best_model_checkpoint = trainer.state.best_model_checkpoint
-            has_best_model_checkpoint = best_model_checkpoint is not None
-            if has_best_model_checkpoint:
-                best_model_checkpoint = Path(best_model_checkpoint)
-                logger.info(
-                    f"Logging best model from {best_model_checkpoint} to the model registry..."
-                )
+        trainer.train()
 
-                self.log_model(best_model_checkpoint)
-            else:
-                logger.warning(
-                    "No best model checkpoint found. Skipping logging it to the model registry..."
-                )
-        except Exception as e:
-            logger.error(f"Caught {e} in api.train()")
+        best_model_checkpoint = trainer.state.best_model_checkpoint
+        has_best_model_checkpoint = best_model_checkpoint is not None
+        if has_best_model_checkpoint:
+            best_model_checkpoint = Path(best_model_checkpoint)
+            logger.info(
+                f"Logging best model from {best_model_checkpoint} to the model registry..."
+            )
+
+            self.log_model(best_model_checkpoint)
+        else:
+            logger.warning(
+                "No best model checkpoint found. Skipping logging it to the model registry..."
+            )
 
         return trainer
 
