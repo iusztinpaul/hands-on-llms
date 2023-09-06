@@ -19,12 +19,26 @@ add_dev:
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
 
 
+### Beam ###
+
+export_requirements:
+	@echo "Exporting requirements..."
+
+	if [ -f requirements.txt ]; then rm requirements.txt; fi
+	poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+
 ### Run ###
 run:
-	export RUST_BACKTRACE=1; poetry run python -m bytewax.run tools.run:run
+	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run:run
+
+run_beam:
+	@echo "Running streaming pipeline on Beam..."
+
+	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/run.py:run -d '{"env_file_path": "env"}'
 
 run_dev:
-	export RUST_BACKTRACE=1; poetry run python -m tools.run_dev
+	export RUST_BACKTRACE=full; poetry run python -m tools.run_dev
 
 search:
 	poetry run python -m tools.search ${PARAMS}

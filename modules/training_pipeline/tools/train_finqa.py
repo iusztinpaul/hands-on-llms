@@ -1,13 +1,10 @@
-import fire
-
 from pathlib import Path
 
-from beam import App, Runtime, Image, Volume, VolumeType
+import fire
+from beam import App, Image, Runtime, Volume, VolumeType
 
-from training_pipeline import configs, utils
+from training_pipeline import configs
 
-
-requirements = utils.read_requirements("requirements.txt")
 training_app = App(
     name="train_finqa",
     runtime=Runtime(
@@ -15,7 +12,7 @@ training_app = App(
         memory="64Gi",
         gpu="A10G",
         # TODO: Install requirements using Poetry & custom commands.
-        image=Image(python_version="python3.10", python_packages=requirements),
+        image=Image(python_version="python3.10", python_packages="requirements.txt"),
     ),
     volumes=[
         Volume(path="./dataset", name="finqa_dataset"),

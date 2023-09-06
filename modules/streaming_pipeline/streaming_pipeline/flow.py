@@ -1,4 +1,5 @@
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 
 from bytewax.dataflow import Dataflow
 from pydantic import parse_obj_as
@@ -10,8 +11,8 @@ from streaming_pipeline.models import NewsArticle
 from streaming_pipeline.qdrant import QdrantVectorOutput
 
 
-def build(in_memory: bool = False) -> Dataflow:
-    model = EmbeddingModelSingleton()
+def build(in_memory: bool = False, model_cache_dir: Optional[Path] = None,) -> Dataflow:
+    model = EmbeddingModelSingleton(cache_dir=model_cache_dir)
 
     flow = Dataflow()
     flow.input("input", AlpacaNewsInput(tickers=["*"]))
