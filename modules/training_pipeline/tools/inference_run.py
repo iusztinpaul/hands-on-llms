@@ -1,15 +1,12 @@
-import fire
-
 from pathlib import Path
 
-from beam import App, Runtime, Image, Volume, VolumeType, Output
-
+import fire
+from beam import App, Image, Output, Runtime, Volume, VolumeType
 from training_pipeline import configs, utils
-
 
 requirements = utils.read_requirements("requirements.txt")
 inference_app = App(
-    name="inference_finqa",
+    name="inference_qa",
     runtime=Runtime(
         cpu=4,
         memory="64Gi",
@@ -17,7 +14,7 @@ inference_app = App(
         image=Image(python_version="python3.10", python_packages=requirements),
     ),
     volumes=[
-        Volume(path="./dataset", name="finqa_dataset"),
+        Volume(path="./dataset", name="qa_dataset"),
         Volume(
             path="./model_cache", name="model_cache", volume_type=VolumeType.Persistent
         ),

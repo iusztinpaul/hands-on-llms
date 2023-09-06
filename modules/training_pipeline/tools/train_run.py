@@ -6,7 +6,7 @@ from training_pipeline import configs, utils
 
 requirements = utils.read_requirements("requirements.txt")
 training_app = App(
-    name="train_finqa",
+    name="train_qa",
     runtime=Runtime(
         cpu=4,
         memory="64Gi",
@@ -15,10 +15,10 @@ training_app = App(
         image=Image(python_version="python3.10", python_packages=requirements),
     ),
     volumes=[
-        Volume(path="./dataset", name="finqa_dataset"),
+        Volume(path="./dataset", name="qa_dataset"),
         Volume(
             path="./output",
-            name="train_finqa_output",
+            name="train_qa_output",
             volume_type=VolumeType.Persistent,
         ),
         Volume(
