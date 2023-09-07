@@ -37,7 +37,7 @@ class InferenceAPI:
         debug: bool = False,
         device: str = "cuda:0",
     ):
-        self._template = get_llm_template(template_name).raw_template
+        self._prompt_template = get_llm_template(template_name)
         self._peft_model_id = peft_model_id
         self._model_id = model_id
         self._name = name
@@ -131,7 +131,7 @@ class InferenceAPI:
                 project=f"{comet_project_name}-{self._name}",
                 prompt=infer_prompt,
                 output=answer,
-                prompt_template=self._template,
+                prompt_template=self._prompt_template.to_comet_llm(),
                 prompt_template_variables=payload_for_template,
                 metadata={
                     "usage.prompt_tokens": len(infer_prompt),
