@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "financial-bot"
+version = "0.1.0"
+description = "Financial Bot (Falcon7B-LLM) with Langchain"
+authors = ["Joywalker <alexandrurazvant@gmail.com>"]
+readme = "README.md"
+packages = [{include = "financial_bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+ruff = "^0.0.285"
+
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "supplemental"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.isort]
+case-sensitive = true
