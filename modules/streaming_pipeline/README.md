@@ -41,6 +41,21 @@ cp .env.example .env
 ```
 --> and complete the `.env` file with your credentials.
 
+### 2.2 Bytewax - Waxctl
+
+Installing Waxctl is very simple. You just need to download the binary corresponding to your operating system and architecture [here](https://bytewax.io/downloads/).
+
+**Ubuntu:**
+```shell
+tar xvzf waxctl_0.9.2_linux_amd64.tar.gz
+mkdir ~/.local/bin
+mv waxctl ~/.local/bin
+
+echo "export PATH=~/.local/bin:$PATH" > ~/.bashrc
+source ~/.bashrc
+``````
+
+
 
 ## 3. Usage
 

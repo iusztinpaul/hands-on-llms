@@ -43,6 +43,8 @@ mocked_news = [
 
 if __name__ == "__main__":
     initialize()
+    
+    # TODO: Use TestingInput class for this dev scenario.
 
     model = EmbeddingModelSingleton()
 

@@ -30,18 +30,45 @@ export_requirements:
 
 ### Run ###
 run:
-	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run:run
-
-run_beam:
-	@echo "Running streaming pipeline on Beam..."
-
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/run.py:run -d '{"env_file_path": "env"}'
+	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run:build_flow
 
 run_dev:
 	export RUST_BACKTRACE=full; poetry run python -m tools.run_dev
 
 search:
 	poetry run python -m tools.search ${PARAMS}
+
+# generate a tar file with project files to send to AWS EC2 instance
+deployment-files:
+	tar \
+	--exclude={'__pycache__','.ruff_cache','logs','.beamignore','.env.example','Makefile','poetry.lock','poetry.toml','*.tar','.DS_Store','README.md','setup_ec2.sh'} \
+	-vzcf project-files.tar -C . .
+
+# deploy the feature-pipeline to an EC2 instance on AWS
+deploy: deployment-files
+	waxctl aws deploy project-files.tar \
+		--python-file-name tools/run.py \
+		--requirements-file-name requirements.txt \
+		--name "streaming_pipeline" \
+		--instance-type t2.small \
+		--region eu-central-1
+
+# list all bytewax deployments
+info:
+	waxctl aws ls --verbose --name "streaming_pipeline"
+
+
+clean_aws:
+	# https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_manage_delete.html
+	aws iam remove-role-from-instance-profile --instance-profile-name Waxctl-EC2-eu-central-1-streaming_pipeline-InstanceProfile --role-name Waxctl-EC2-eu-central-1-streaming_pipeline-Role
+	aws iam detach-role-policy --role-name Waxctl-EC2-eu-central-1-streaming_pipeline-Role --policy-arn arn:aws:iam::994231256807:policy/Waxctl-EC2-eu-central-1-streaming_pipeline-Policy
+	aws iam delete-role --role-name Waxctl-EC2-eu-central-1-streaming_pipeline-Role
+	aws iam delete-policy --policy-arn arn:aws:iam::994231256807:policy/Waxctl-EC2-eu-central-1-streaming_pipeline-Policy
+	aws iam delete-instance-profile --instance-profile-name Waxctl-EC2-eu-central-1-streaming_pipeline-InstanceProfile
+
+# stop the feature-pipeline and delete the EC2 instance
+undeploy:
+	waxctl aws delete --name "streaming_pipeline" --yes
 
 
 ### PEP 8 ###
