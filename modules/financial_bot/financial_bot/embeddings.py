@@ -2,14 +2,15 @@ import logging
 import traceback
 from typing import Union
 
-import constants
 import numpy as np
+from financial_bot import constants
+from financial_bot.base import SingletonMeta
 from transformers import AutoModel, AutoTokenizer
 
 logger = logging.getLogger(__name__)
 
 
-class EmbeddingModel:
+class EmbeddingModelSingleton(metaclass=SingletonMeta):
     def __init__(
         self,
         model_id: str = constants.EMBEDDING_MODEL_ID,
