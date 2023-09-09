@@ -3,11 +3,17 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 
-import constants
 import torch
 from comet_ml import API
+from financial_bot import constants
+from langchain.llms import HuggingFacePipeline
 from peft import LoraConfig, PeftConfig, PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+    pipeline,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +42,16 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
     logger.info(f"Model {model_id=} downloaded from the registry to: {model_dir}")
 
     return model_dir
+
+
+def build_huggingface_pipeline():
+    """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
+    model, tokenizer, _ = build_qlora_model()
+    pipe = pipeline(
+        "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=15
+    )
+    hf = HuggingFacePipeline(pipeline=pipe)
+    return hf
 
 
 def build_qlora_model(
