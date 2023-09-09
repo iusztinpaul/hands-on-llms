@@ -30,13 +30,6 @@ def log_available_ram():
     )  # convert bytes to GB
 
 
-def read_requirements(file_path):
-    with open(file_path, "r") as file:
-        requirements = [line.strip() for line in file if line.strip()]
-
-    return requirements
-
-
 def log_files_and_subdirs(directory_path: str):
     # Check if the directory exists
     if os.path.exists(directory_path) and os.path.isdir(directory_path):
