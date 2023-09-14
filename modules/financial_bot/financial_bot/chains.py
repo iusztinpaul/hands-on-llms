@@ -28,31 +28,30 @@ class PreparePromptChain(Chain):
         return [self.output_key]
 
     def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        # Get question text
+        # TODO: handle that None, without the need to enter chain
         question_str = inputs.get("question", None)
 
-        # Embed the question
+        # TODO: maybe async embed?
         embeddings = self.embedding_model(question_str)
 
-        # Search vector store for closest top-k embeddings
+        # TODO: get rid of hardcoded collection_name, specify 1 top_k or adjust multiple context insertions
         matches = self.vector_store.search(
             query_vector=embeddings, k=self.top_k, collection_name="test_collection"
         )
 
-        # Extract content
         content = matches[0].payload["summary"]
 
-        # Build prompt
         prompt = self.template.infer_raw_template.format(
             user_context=inputs["about_me"], news_context=content, question=question_str
         )
 
-        # Return content
+        # TODO: this input_keys,output_keys looks like a factory?
         return {self.output_key: prompt}
 
 
 class FinancialBotQAChain(Chain):
-    top_k: int = 1
+    """This custom chain handles LLM generation upon given prompt"""
+
     hf_pipeline: HuggingFacePipeline
     input_key: str = "prompt"
     output_key: str = "response"
@@ -66,7 +65,8 @@ class FinancialBotQAChain(Chain):
         return [self.output_key]
 
     def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        # TODO: this chain looks too simple, maybe make a single chain, or extend this one to
+        # be more complex
         response = self.hf_pipeline(inputs[self.input_key])
 
-        # Return content
         return {self.output_key: response}
