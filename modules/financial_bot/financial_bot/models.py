@@ -48,7 +48,7 @@ def build_huggingface_pipeline():
     """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
     model, tokenizer, _ = build_qlora_model()
     pipe = pipeline(
-        "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=15
+        "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=100
     )
     hf = HuggingFacePipeline(pipeline=pipe)
     return hf

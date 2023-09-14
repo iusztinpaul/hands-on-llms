@@ -28,12 +28,13 @@ def main():
         verbose=True,
     )
 
-    seq_chain.run(
+    response = seq_chain.run(
         {
             "about_me": "I'm a 27 years old IT programmer.",
             "question": "Is it a good time to invest in Microsoft stock?",
         }
     )
+    print(response)
 
 
 if __name__ == "__main__":

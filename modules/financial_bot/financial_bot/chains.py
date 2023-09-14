@@ -36,11 +36,11 @@ class PreparePromptChain(Chain):
 
         # Search vector store for closest top-k embeddings
         matches = self.vector_store.search(
-            query_vector=embeddings, k=self.top_k, collection_name="test"
+            query_vector=embeddings, k=self.top_k, collection_name="test_collection"
         )
 
         # Extract content
-        content = matches[0].page_content
+        content = matches[0].payload["summary"]
 
         # Build prompt
         prompt = self.template.infer_raw_template.format(
