@@ -180,6 +180,7 @@ output/
 model_cache/
 output.txt
 output.json
+user_data.sh
 
 set_env_variables.sh
 logs/

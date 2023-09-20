@@ -69,9 +69,27 @@ Run dev streaming pipeline:
 make run_dev
 ```
 
+Run docker:
+```shell
+make build
+source .env && make run_docker
+```
+
 Run a query in your vector DB:
 ```shell
 make search PARAMS='--query_string "Should I invest in Tesla?"'
+```
+
+### 3.1 Deploy AWS
+Configure your AWS CLI and run:
+```shell
+make deploy-aws
+```
+**NOTE:** [Here](https://stackoverflow.com/questions/15904095/how-to-check-whether-my-user-data-passing-to-ec2-instance-is-working) is how you can check the **output of the instance**.
+
+To undeploy
+```shell
+make undeploy-aws
 ```
 
 ...

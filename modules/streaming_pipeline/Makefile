@@ -6,6 +6,10 @@ install:
 	poetry env use $(shell which python3.10) && \
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install
 
+	# Other dependencies
+	# TODO: Extract to a separate script
+	sudo apt-get install jq
+
 install_dev: install
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
 
@@ -19,15 +23,6 @@ add_dev:
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
 
 
-### Beam ###
-
-export_requirements:
-	@echo "Exporting requirements..."
-
-	if [ -f requirements.txt ]; then rm requirements.txt; fi
-	poetry export -f requirements.txt --output requirements.txt --without-hashes
-
-
 ### Run ###
 run:
 	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run:build_flow
@@ -38,25 +33,93 @@ run_dev:
 search:
 	poetry run python -m tools.search ${PARAMS}
 
+### Run Docker ###
+
+build:
+	@echo "Build docker image"
+
+	docker build -t streaming_pipeline -f deploy/Dockerfile .
+
+run_docker: 
+	@echo "Run docker image"
+	
+	docker run --rm \
+		-e BYTEWAX_PYTHON_FILE_PATH=tools.run:build_flow \
+		-e ALPACA_API_KEY=${ALPACA_API_KEY} \
+		-e ALPACA_API_SECRET=${ALPACA_API_SECRET} \
+		-e QDRANT_API_KEY=${QDRANT_API_KEY} \
+		-e QDRANT_URL=${QDRANT_URL} \
+		--name streaming_pipeline \
+		streaming_pipeline
+
+run_docker_dev:
+	@echo "Run docker image"
+
+	docker run -it --rm \
+		--env-file .env \
+		-e DEBUG=true \
+		--name streaming_pipeline \
+		streaming_pipeline
+
+### Deploy AWS ###
+
+deploy-aws:
+	bash deploy/create_user_data.sh
+	bash deploy/launch_ec2.sh
+
+
+undeploy-aws:
+	bash deploy/terminate_ec2.sh
+
+
+### Deploy Waxctl ###
+
+NAME := streaming_pipeline_test
+
 # generate a tar file with project files to send to AWS EC2 instance
 deployment-files:
+	if [ -d test ]; then rm -rf test; fi
+
 	tar \
-	--exclude={'__pycache__','.ruff_cache','logs','.beamignore','.env.example','Makefile','poetry.lock','poetry.toml','*.tar','.DS_Store','README.md','setup_ec2.sh'} \
-	-vzcf project-files.tar -C . .
+	--exclude __pycache__ \
+	--exclude .ruff_cache \
+	--exclude logs \
+	--exclude .beamignore \
+	--exclude .env.example \
+	--exclude .env \
+	--exclude Makefile \
+	--exclude *.tar \
+	--exclude .DS_Store \
+	--exclude setup_ec2.sh \
+	--exclude README.md \
+	--exclude requirements.txt \
+	--exclude poetry.lock \
+	--exclude user-data \
+	--exclude tools \
+	--warning=no-file-changed \
+	-cvzf project-files.tar -C . .
+
+	mkdir test; cp project-files.tar test; cd test; tar -xvzf project-files.tar 
+
 
 # deploy the feature-pipeline to an EC2 instance on AWS
-deploy: deployment-files
+deploy-waxctl: deployment-files
+	# --requirements-file-name requirements.txt \
+	# --python-package \
+
+	# Export env vars
+	export $(cat .env | xargs)
+
 	waxctl aws deploy project-files.tar \
-		--python-file-name tools/run.py \
+		--python-file-name streaming_pipeline/run.py \
 		--requirements-file-name requirements.txt \
-		--name "streaming_pipeline" \
+		--name ${NAME} \
+		--system-setup-file-name ./setup_ec2.sh \
 		--instance-type t2.small \
-		--region eu-central-1
-
-# list all bytewax deployments
-info:
-	waxctl aws ls --verbose --name "streaming_pipeline"
-
+		--region eu-central-1 \
+		--save-cloud-config \
+		--debug \
+		-E ALPACA_API_KEY=${ALPACA_API_KEY},ALPACA_API_SECRET=${ALPACA_API_SECRET},QDRANT_API_KEY=${QDRANT_API_KEY},QDRANT_URL=${QDRANT_URL}
 
 clean_aws:
 	# https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_manage_delete.html
@@ -66,9 +129,13 @@ clean_aws:
 	aws iam delete-policy --policy-arn arn:aws:iam::994231256807:policy/Waxctl-EC2-eu-central-1-streaming_pipeline-Policy
 	aws iam delete-instance-profile --instance-profile-name Waxctl-EC2-eu-central-1-streaming_pipeline-InstanceProfile
 
+# list all bytewax deployments
+info:
+	waxctl aws ls --verbose --name ${NAME}
+
 # stop the feature-pipeline and delete the EC2 instance
-undeploy:
-	waxctl aws delete --name "streaming_pipeline" --yes
+undeploy-waxctl:
+	waxctl aws delete --name ${NAME} --yes
 
 
 ### PEP 8 ###
