@@ -19,8 +19,8 @@ sudo usermod -aG docker ubuntu
 newgrp docker
 
 # Clone the repo.
-git clone -b sp-3-deploy-streaming-pipeline https://github.com/iusztinpaul/hands-on-llms.git ~/hands-on-llms
-cd ~/hands-on-llms/modules/streaming_pipeline
+git clone -b sp-3-deploy-streaming-pipeline https://github.com/iusztinpaul/hands-on-llms.git /home/ubuntu/hands-on-llms
+cd /home/ubuntu/hands-on-llms/modules/streaming_pipeline
 
 # Build & run the Docker image.
 sudo apt update
