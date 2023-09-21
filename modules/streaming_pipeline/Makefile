@@ -1,14 +1,13 @@
 ### Install ###
 
+install-debian:
+	sudo apt-get install jq
+
 install:
 	@echo "Installing streaming pipeline..."
 	
 	poetry env use $(shell which python3.10) && \
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install
-
-	# Other dependencies
-	# TODO: Extract to a separate script
-	sudo apt-get install jq
 
 install_dev: install
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev

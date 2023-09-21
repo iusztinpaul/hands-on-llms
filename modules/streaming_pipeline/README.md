@@ -27,6 +27,7 @@ Main dependencies you have to install yourself:
 
 Installing all the other dependencies is as easy as running:
 ```shell
+make install-debian # if you run a debian based OS (e.g., Ubuntu)
 make install
 ```
 
@@ -83,13 +84,13 @@ make search PARAMS='--query_string "Should I invest in Tesla?"'
 ### 3.1 Deploy AWS
 Configure your AWS CLI and run:
 ```shell
-make deploy-aws
+make deploy_aws
 ```
 **NOTE:** [Here](https://stackoverflow.com/questions/15904095/how-to-check-whether-my-user-data-passing-to-ec2-instance-is-working) is how you can check the **output of the instance**.
 
 To undeploy
 ```shell
-make undeploy-aws
+make undeploy_aws
 ```
 
 ...
