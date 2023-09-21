@@ -101,7 +101,7 @@ register_llm_template(
     PromptTemplate(
         name="falcon",
         system_template=">>INTRODUCTION<< {system_message}",
-        system_message="You are a helpful assistant, with financial expertise.",
+        system_message="You are a financial expert. Based on the context I provide, respond in a helpful manner",
         context_template=">>CONTEXT<< {user_context}{news_context}",
         question_template=">>QUESTION<< {question}",
         answer_template=">>ANSWER<< {answer}",

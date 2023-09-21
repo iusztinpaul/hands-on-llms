@@ -34,6 +34,7 @@ def main():
             "question": "Is it a good time to invest in Microsoft stock?",
         }
     )
+
     print(response)
 
 
