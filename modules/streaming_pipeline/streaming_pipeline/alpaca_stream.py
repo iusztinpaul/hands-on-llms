@@ -10,7 +10,7 @@ from websocket import create_connection
 logger = logging.getLogger()
 
 
-class AlpacaNewsInput(DynamicInput):
+class AlpacaNewsStreamInput(DynamicInput):
     """Input class to receive streaming news data
     from the Alpaca real-time news API.
 
@@ -32,10 +32,10 @@ class AlpacaNewsInput(DynamicInput):
             )
         ]
 
-        return AlpacaSource(tickers=worker_tickers)
+        return AlpacaNewsStreamSource(tickers=worker_tickers)
 
 
-class AlpacaSource(StatelessSource):
+class AlpacaNewsStreamSource(StatelessSource):
     def __init__(self, tickers: List[str]):
         self._alpaca_client = build_alpaca_client(tickers=tickers)
         self._alpaca_client.start()

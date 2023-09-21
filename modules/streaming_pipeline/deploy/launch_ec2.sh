@@ -51,7 +51,7 @@ aws ec2 create-key-pair --key-name ${KEY_NAME} --query 'KeyMaterial' --output te
 aws ec2 run-instances \
     --image-id ${AMI_IMAGE} \
     --count 1 \
-    --instance-type t2.micro \
+    --instance-type t2.small \
     --key-name ${KEY_NAME} \
     --security-group-ids ${SECURITY_GROUP_ID} \
     --subnet-id ${DEFAULT_SUBNET_ID} \

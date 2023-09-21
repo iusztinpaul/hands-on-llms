@@ -5,7 +5,7 @@ from bytewax.dataflow import Dataflow
 from pydantic import parse_obj_as
 from qdrant_client import QdrantClient
 
-from streaming_pipeline.alpaca import AlpacaNewsInput
+from streaming_pipeline.alpaca_stream import AlpacaNewsStreamInput
 from streaming_pipeline.embeddings import EmbeddingModelSingleton
 from streaming_pipeline.models import NewsArticle
 from streaming_pipeline.qdrant import QdrantVectorOutput
@@ -18,7 +18,7 @@ def build(
     model = EmbeddingModelSingleton(cache_dir=model_cache_dir)
 
     flow = Dataflow()
-    flow.input("input", AlpacaNewsInput(tickers=["*"]))
+    flow.input("input", AlpacaNewsStreamInput(tickers=["*"]))
     flow.flat_map(lambda messages: parse_obj_as(List[NewsArticle], messages))
     flow.inspect(print)
     flow.map(lambda article: article.to_document())
