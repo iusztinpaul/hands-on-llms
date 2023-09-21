@@ -1,44 +1,86 @@
 import logging
-import os
 
-import constants
-import models
-import qdrant
-from embeddings import EmbeddingModelSingleton
-from langchain.chains import RetrievalQA
-from langchain.chains.base import Chain
-from langchain.llms import HuggingFacePipeline
-from template import get_llm_template
+from financial_bot import constants
+from financial_bot.chains import ContextExtractorChain, FinancialBotQAChain
+from financial_bot.embeddings import EmbeddingModelSingleton
+from financial_bot.models import build_huggingface_pipeline
+from financial_bot.qdrant import build_qdrant_client
+from financial_bot.template import get_llm_template
+from langchain import chains
 
 logger = logging.getLogger(__name__)
 
 
 class FinancialBot:
-    def __init__(self, template_name: str = constants.TEMPLATE_NAME):
-        self._hf_pipeline = models.build_huggingface_pipeline()
-        self._qdrant = qdrant.build_qdrant_client(
-            url=os.environ["QDRANT_URL"], api_key=os.environ["QDRANT_API_KEY"]
-        )
-        self._embeddings_model = EmbeddingModelSingleton()
-        self._prompt_template = get_llm_template(template_name)
-        self.qa_chain = self.build_context_chain()
+    def __init__(self):
+        self._qdrant_client = build_qdrant_client()
+        self._embd_model = EmbeddingModelSingleton()
+        self._llm_agent = build_huggingface_pipeline()
 
-    def build_context_chain(self):
-        retriever = self._qdrant.as_retriever()
-        qa_chain = RetrievalQA.from_chain_type(
-            llm=self._hf_pipeline,
-            retriever=retriever,
-            chain_type="stuff",
-            chain_type_kwargs={"prompt": self._prompt_template.infer_raw_template},
+        self.finbot_chain = self.build_chain()
+
+    def build_chain(self) -> chains.SequentialChain:
+        """
+        Constructs and returns a financial bot chain.
+        This chain is designed to take as input the user description, `about_me` and a `question` and it will
+        connect to the VectorDB, searches the financial news that rely on the user's question and injects them into the
+        payload that is further passed as a prompt to a financial fine-tuned LLM that will provide answers.
+
+        The chain consists of two primary stages:
+        1. Context Extractor: This stage is responsible for embedding the user's question,
+        which means converting the textual question into a numerical representation.
+        This embedded question is then used to retrieve relevant context from the VectorDB.
+        The output of this chain will be a dict payload.
+
+        2. LLM Generator: Once the context is extracted,
+        this stage uses it to format a full prompt for the LLM and
+        then feed it to the model to get a response that is relevant to the user's question.
+
+        Returns
+        -------
+        chains.SequentialChain
+            The constructed financial bot chain.
+
+        Notes
+        -----
+        The actual processing flow within the chain can be visualized as:
+        [about: str][question: str] > ContextChain > [about: str][question:str] + [context: str] > FinancialChain > LLM Response
+        """
+
+        logger.info("Building 1/3 - ContextExtractorChain")
+        context_retrieval_chain = ContextExtractorChain(
+            embedding_model=self._embd_model,
+            vector_store=self._qdrant_client,
+            vector_collection=constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
+            top_k=constants.VECTOR_DB_SEARCH_TOPK,
         )
-        return qa_chain
+
+        logger.info("Building 2/3 - FinancialBotQAChain")
+        llm_generator_chain = FinancialBotQAChain(
+            hf_pipeline=self._llm_agent,
+            template=get_llm_template(name=constants.TEMPLATE_NAME),
+        )
+
+        logger.info("Connecting chains into SequentialChain")
+        seq_chain = chains.SequentialChain(
+            chains=[context_retrieval_chain, llm_generator_chain],
+            input_variables=["about_me", "question"],
+            output_variables=["response"],
+            verbose=True,
+        )
+        logger.info("Done building SequentialChain.")
+        logger.info("Workflow:")
+        logger.info(
+            "> [about: str][question: str])\
+            >>> ContextChain > [about: str] + [[question :str] -> VectorDB -> TopK -> + [context: str]] > [about: str][question: str][context: str]\
+            >>> FinancialChain > LLM Response"
+        )
+        return seq_chain
 
     def answer(self, about_me: str, question: str):
         try:
-            result = self.qa_chain({"query": question})
+            inputs = {"about_me": about_me, "question": question}
+            response = self.finbot_chain.run(inputs)
+            return response
         except Exception as e:
             pass
-
-
-if __name__ == "__main__":
-    pass
