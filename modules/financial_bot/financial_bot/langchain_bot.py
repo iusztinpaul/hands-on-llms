@@ -77,10 +77,28 @@ class FinancialBot:
         )
         return seq_chain
 
-    def answer(self, about_me: str, question: str):
+    def answer(self, about_me: str, question: str) -> str:
+        """
+        Given a short description about the user and a question make the LLM
+        generate a response.
+
+        Parameters
+        ----------
+        about_me : str
+            Short user description.
+        question : str
+            User question.
+
+        Returns
+        -------
+        str
+            LLM generated response.
+        """
         try:
             inputs = {"about_me": about_me, "question": question}
             response = self.finbot_chain.run(inputs)
             return response
+        except KeyError as e:
+            logger.error(f"Caught key error {e}")
         except Exception as e:
-            pass
+            logger.error(f"Caught {e}")
