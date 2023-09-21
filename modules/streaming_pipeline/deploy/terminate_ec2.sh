@@ -1,15 +1,44 @@
 #!/bin/bash
 
-# Terminate EC2 instances.
+### Terminate EC2 instances. ###
 EC2_INSTANCE_IDS=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=streaming-pipeline-server" | jq -r '.Reservations[].Instances[] | .InstanceId')
-aws ec2 terminate-instances --instance-ids ${EC2_INSTANCE_IDS}
+aws ec2 terminate-instances --instance-ids ${EC2_INSTANCE_IDS} > /dev/null 2>&1
 
-# Delete key pair.
+# Loop until all instances are terminated
+while true; do
+  # Query the status of instances with the tag "Name=streaming-pipeline-server"
+  STATUS=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=streaming-pipeline-server" --query "Reservations[].Instances[].State.Name" --output text)
+
+  # Check if the result is empty, which means all instances are terminated
+  if [ -z "$STATUS" ]; then
+    echo "All instances are terminated."
+    break
+  fi
+
+  # Check if all instances are terminated
+  ALL_TERMINATED=true
+  for state in $STATUS; do
+    if [ "$state" != "terminated" ]; then
+      ALL_TERMINATED=false
+      break
+    fi
+  done
+
+  if [ "$ALL_TERMINATED" = true ]; then
+    echo "All instances are terminated."
+    break
+  else
+    echo "Waiting for instances to terminate. Current statuses: $STATUS"
+    sleep 10  # wait for 10 seconds before checking again
+  fi
+done
+
+
+### Delete key pair. ###
 aws ec2 delete-key-pair --key-name AWSHandsOnLLmsKey
 
-# TODO: Add a while loop to wait for the instances to terminate.
 
-# Delete security groups.
+### Delete security groups. ###
 SECURITY_GROUP_IDS=$(aws ec2 describe-security-groups --query 'SecurityGroups[?GroupName==`hands-on-llms-sg`].GroupId' --output text)
 # Loop through each Security Group ID and attempt to delete it
 for sg_id in $SECURITY_GROUP_IDS; do

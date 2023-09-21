@@ -29,7 +29,6 @@ class EmbeddingModelSingleton(metaclass=SingletonMeta):
             model_id,
             cache_dir=str(cache_dir) if cache_dir else None,
         ).to(self._device)
-        a = 2
 
     @property
     def max_input_length(self) -> int:

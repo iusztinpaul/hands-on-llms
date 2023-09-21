@@ -24,6 +24,7 @@ add_dev:
 
 
 ### Run ###
+
 run:
 	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run:build_flow
 
@@ -32,6 +33,7 @@ run_dev:
 
 search:
 	poetry run python -m tools.search ${PARAMS}
+
 
 ### Run Docker ###
 
@@ -61,15 +63,20 @@ run_docker_dev:
 		--name streaming_pipeline \
 		streaming_pipeline
 
+
 ### Deploy AWS ###
 
 deploy-aws:
-	bash deploy/create_user_data.sh
-	bash deploy/launch_ec2.sh
+	chmod +x deploy/create_user_data.sh
+	chmod +x deploy/launch_ec2.sh 
 
+	bash deploy/launch_ec2.sh
 
 undeploy-aws:
 	bash deploy/terminate_ec2.sh
+
+info-aws:
+	aws ec2 describe-instances --filters "Name=tag:Name,Values=streaming-pipeline-server"
 
 
 ### Deploy Waxctl ###

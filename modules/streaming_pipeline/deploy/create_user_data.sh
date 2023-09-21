@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Source the environment variables
+source .env
+
 # Extract all variables from the template
 variables=$(grep -oP '\$\{\K[^}]*' deploy/user_data_template.sh)
 
@@ -17,6 +20,10 @@ done
 # Only run envsubst if all variables are set
 if $all_set; then
   envsubst < deploy/user_data_template.sh > deploy/user_data.sh
+
+  exit 0
 else
   echo "Not all variables are set in your '.env' file. Aborting."
+
+  exit 1
 fi
