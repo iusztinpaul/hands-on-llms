@@ -6,9 +6,6 @@ echo "export ALPACA_API_SECRET=${ALPACA_API_SECRET}" >> /etc/environment
 echo "export QDRANT_API_KEY=${QDRANT_API_KEY}" >> /etc/environment
 echo "export QDRANT_URL=${QDRANT_URL}" >> /etc/environment
 
-# Clone the repo.
-git clone https://github.com/iusztinpaul/hands-on-llms.git
-
 # Install Docker.
 sudo apt update
 sudo apt install ca-certificates curl gnupg lsb-release -y

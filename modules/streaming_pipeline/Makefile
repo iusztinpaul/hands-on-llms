@@ -66,20 +66,20 @@ run_docker_dev:
 
 ### Deploy AWS ###
 
-deploy-aws:
+deploy_aws:
 	chmod +x deploy/create_user_data.sh
 	chmod +x deploy/launch_ec2.sh 
 
 	bash deploy/launch_ec2.sh
 
-undeploy-aws:
+undeploy_aws:
 	bash deploy/terminate_ec2.sh
 
-info-aws:
+info_aws:
 	aws ec2 describe-instances --filters "Name=tag:Name,Values=streaming-pipeline-server"
 
 
-### Deploy Waxctl ###
+### Deploy AWS [Waxctl] ###
 
 NAME := streaming_pipeline_test
 
@@ -108,15 +108,7 @@ deployment-files:
 
 	mkdir test; cp project-files.tar test; cd test; tar -xvzf project-files.tar 
 
-
-# deploy the feature-pipeline to an EC2 instance on AWS
 deploy-waxctl: deployment-files
-	# --requirements-file-name requirements.txt \
-	# --python-package \
-
-	# Export env vars
-	export $(cat .env | xargs)
-
 	waxctl aws deploy project-files.tar \
 		--python-file-name streaming_pipeline/run.py \
 		--requirements-file-name requirements.txt \
@@ -128,6 +120,12 @@ deploy-waxctl: deployment-files
 		--debug \
 		-E ALPACA_API_KEY=${ALPACA_API_KEY},ALPACA_API_SECRET=${ALPACA_API_SECRET},QDRANT_API_KEY=${QDRANT_API_KEY},QDRANT_URL=${QDRANT_URL}
 
+info:
+	waxctl aws ls --verbose --name ${NAME}
+
+undeploy-waxctl:
+	waxctl aws delete --name ${NAME} --yes
+
 clean_aws:
 	# https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_manage_delete.html
 	aws iam remove-role-from-instance-profile --instance-profile-name Waxctl-EC2-eu-central-1-streaming_pipeline-InstanceProfile --role-name Waxctl-EC2-eu-central-1-streaming_pipeline-Role
@@ -136,13 +134,6 @@ clean_aws:
 	aws iam delete-policy --policy-arn arn:aws:iam::994231256807:policy/Waxctl-EC2-eu-central-1-streaming_pipeline-Policy
 	aws iam delete-instance-profile --instance-profile-name Waxctl-EC2-eu-central-1-streaming_pipeline-InstanceProfile
 
-# list all bytewax deployments
-info:
-	waxctl aws ls --verbose --name ${NAME}
-
-# stop the feature-pipeline and delete the EC2 instance
-undeploy-waxctl:
-	waxctl aws delete --name ${NAME} --yes
 
 
 ### PEP 8 ###
