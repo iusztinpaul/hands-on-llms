@@ -2,8 +2,6 @@ from bytewax.testing import run_main
 
 from streaming_pipeline import initialize
 from streaming_pipeline.flow import build as flow_builder
-  
-
 
 
 def build_flow(
@@ -12,12 +10,12 @@ def build_flow(
     model_cache_dir: str = None,
 ):
     initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
-    
+
     flow = flow_builder(model_cache_dir)
 
     return flow
 
 
 if __name__ == "__main__":
-    flow = build_flow()    
+    flow = build_flow()
     run_main(flow)
