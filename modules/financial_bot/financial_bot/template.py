@@ -27,7 +27,7 @@ class PromptTemplate:
     system_message: str = ""
     # Separator
     sep: str = "\n"
-    sep2: str = ""
+    eos: str = ""
 
     def to_comet_llm(self):
         """Template format for cometml-llm logging"""
@@ -106,6 +106,6 @@ register_llm_template(
         question_template=">>QUESTION<< {question}",
         answer_template=">>ANSWER<< {answer}",
         sep="\n",
-        sep2="<|endoftext|>",
+        eos="<|endoftext|>",
     )
 )

@@ -3,8 +3,6 @@ import os
 from typing import Optional
 
 import qdrant_client
-from financial_bot import constants
-from langchain.vectorstores import Qdrant
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +10,6 @@ logger = logging.getLogger(__name__)
 def build_qdrant_client(
     url: Optional[str] = None,
     api_key: Optional[str] = None,
-    collection_name: str = constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
 ):
     logger.info("Building QDrant Client")
     if url is None:
@@ -32,6 +29,5 @@ def build_qdrant_client(
             )
 
     client = qdrant_client.QdrantClient(url, api_key=api_key)
-    # retriever = Qdrant(client=client, collection_name=collection_name)
 
     return client
