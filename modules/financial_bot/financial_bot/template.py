@@ -29,15 +29,6 @@ class PromptTemplate:
     sep: str = "\n"
     eos: str = ""
 
-    def to_comet_llm(self):
-        """Template format for cometml-llm logging"""
-        system = self.system_template
-        context = f"{self.sep}{self.context_template}"
-        question = f"{self.sep}{self.question_template}"
-        answer = f"{self.sep}{self.answer_template}"
-
-        return f"{system}{context}{question}{answer}{self.sep2}"
-
     @property
     def input_variables(self) -> List[str]:
         return ["user_context", "news_context", "question", "answer"]
@@ -50,7 +41,7 @@ class PromptTemplate:
         question = f"{self.sep}{self.question_template}"
         answer = f"{self.sep}{self.answer_template}"
 
-        return f"{system}{context}{question}{answer}{self.sep2}"
+        return f"{system}{context}{question}{answer}{self.eos}"
 
     @property
     def infer_raw_template(self):
@@ -59,7 +50,7 @@ class PromptTemplate:
         context = f"{self.sep}{self.context_template}"
         question = f"{self.sep}{self.question_template}"
 
-        return f"{system}{context}{question}{self.sep2}"
+        return f"{system}{context}{question}{self.eos}"
 
     def format_train(self, sample: Dict[str, str]) -> Dict[str, Union[str, Dict]]:
         """Formats the data sample to a training sample"""
