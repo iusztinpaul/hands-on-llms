@@ -1,10 +1,9 @@
 from dataclasses import dataclass
-from typing import Any, Dict
 from pathlib import Path
+from typing import Any, Dict
 
-
-from transformers import TrainingArguments
 from training_pipeline.data.utils import load_yaml
+from transformers import TrainingArguments
 
 
 @dataclass
@@ -72,6 +71,7 @@ class InferenceConfig:
     model: Dict[str, Any]
     peft_model: Dict[str, Any]
     setup: Dict[str, Any]
+    dataset: Dict[str, str]
 
     @classmethod
     def from_yaml(cls, config_path: Path):
