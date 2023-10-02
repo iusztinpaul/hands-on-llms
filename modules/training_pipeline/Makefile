@@ -27,7 +27,7 @@ add_dev:
 export_requirements:
 	@echo "Exporting requirements..."
 
-	rm requirements.txt
+	if [ -f requirements.txt ]; then rm requirements.txt; fi
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 upload_dataset_to_beam:
@@ -49,12 +49,12 @@ train_local:
 dev_train_beam:
 	@echo "Running training pipeline on Beam using the development config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 train_beam:
 	@echo "Running training pipeline on Beam using the production config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 
 ### Inference ###
@@ -72,12 +72,12 @@ infer_local:
 dev_infer_beam:
 	@echo "Running inference pipeline on Beam using the development config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/inference_finqa.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 infer_beam:
 	@echo "Running inference pipeline on Beam using the production config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/inference_finqa.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 
 ### PEP 8 ###

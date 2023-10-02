@@ -21,12 +21,11 @@ def initialize(logging_config_path: str = "logging.yaml", env_file_path: str = "
 
     logger.info("Initializing env vars...")
     if env_file_path is None:
-        env_file_path = find_dotenv(raise_error_if_not_found=True, usecwd=False)
+        env_file_path = find_dotenv(raise_error_if_not_found=False, usecwd=False)
 
-    logger.info(f"Loading environment variables from: {env_file_path}")
-    found_env_file = load_dotenv(env_file_path, verbose=True, override=True)
-    if found_env_file is False:
-        raise RuntimeError(f"Could not find environment file at: {env_file_path}")
+    if env_file_path is not None:
+        logger.info(f"Loading environment variables from: {env_file_path}")
+        load_dotenv(env_file_path, verbose=True, override=True)
 
 
 def initialize_logger(

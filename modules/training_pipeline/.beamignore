@@ -1,8 +1,9 @@
-# Training artifacts
+# Running artifacts
 model_cache/*
 results/*
 output/*
 logs/*
+.ruff_cache/
 
 # Datasets
 dataset/*

@@ -1,6 +1,7 @@
 import logging
 import traceback
-from typing import Union
+from pathlib import Path
+from typing import Optional, Union
 
 import numpy as np
 from transformers import AutoModel, AutoTokenizer
@@ -17,13 +18,17 @@ class EmbeddingModelSingleton(metaclass=SingletonMeta):
         model_id: str = constants.EMBEDDING_MODEL_ID,
         max_input_length: int = constants.EMBEDDING_MODEL_MAX_INPUT_LENGTH,
         device: str = constants.EMBEDDING_MODEL_DEVICE,
+        cache_dir: Optional[Path] = None,
     ):
         self._model_id = model_id
         self._device = device
         self._max_input_length = max_input_length
 
         self._tokenizer = AutoTokenizer.from_pretrained(model_id)
-        self._model = AutoModel.from_pretrained(model_id).to(self._device)
+        self._model = AutoModel.from_pretrained(
+            model_id,
+            cache_dir=str(cache_dir) if cache_dir else None,
+        ).to(self._device)
 
     @property
     def max_input_length(self) -> int:

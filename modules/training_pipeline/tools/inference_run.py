@@ -2,16 +2,16 @@ from pathlib import Path
 
 import fire
 from beam import App, Image, Output, Runtime, Volume, VolumeType
-from training_pipeline import configs, utils
 
-requirements = utils.read_requirements("requirements.txt")
+from training_pipeline import configs
+
 inference_app = App(
     name="inference_qa",
     runtime=Runtime(
         cpu=4,
         memory="64Gi",
         gpu="A10G",
-        image=Image(python_version="python3.10", python_packages=requirements),
+        image=Image(python_version="python3.10", python_packages="requirements.txt"),
     ),
     volumes=[
         Volume(path="./dataset", name="qa_dataset"),

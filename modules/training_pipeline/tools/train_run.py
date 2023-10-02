@@ -2,9 +2,9 @@ from pathlib import Path
 
 import fire
 from beam import App, Image, Runtime, Volume, VolumeType
-from training_pipeline import configs, utils
 
-requirements = utils.read_requirements("requirements.txt")
+from training_pipeline import configs
+
 training_app = App(
     name="train_qa",
     runtime=Runtime(
@@ -12,7 +12,7 @@ training_app = App(
         memory="64Gi",
         gpu="A10G",
         # TODO: Install requirements using Poetry & custom commands.
-        image=Image(python_version="python3.10", python_packages=requirements),
+        image=Image(python_version="python3.10", python_packages="requirements.txt"),
     ),
     volumes=[
         Volume(path="./dataset", name="qa_dataset"),
