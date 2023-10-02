@@ -39,12 +39,12 @@ upload_dataset_to_beam:
 dev_train_local:
 	@echo "Running training pipeline locally using the development config..."
 	
-	poetry run python -m tools.train_finqa --config_file configs/dev_training_config.yaml --output_dir ./output --dataset_dir ./dataset
+	poetry run python -m tools.train_run --config_file configs/dev_training_config.yaml --output_dir ./output --dataset_dir ./dataset
 
 train_local:
 	@echo "Running training pipeline locally using the production config..."
 	
-	poetry run python -m tools.train_finqa --config_file configs/training_config.yaml --output_dir ./output --dataset_dir ./dataset
+	poetry run python -m tools.train_run --config_file configs/training_config.yaml --output_dir ./output --dataset_dir ./dataset
 
 dev_train_beam:
 	@echo "Running training pipeline on Beam using the development config..."
@@ -62,12 +62,12 @@ train_beam:
 dev_infer_local:
 	@echo "Running inference pipeline locally using the production config..."
 
-	poetry run python -m tools.inference_finqa --config_file configs/dev_inference_config.yaml --dataset_dir ./dataset
+	poetry run python -m tools.inference_run --config_file configs/dev_inference_config.yaml --dataset_dir ./dataset
 
 infer_local:
 	@echo "Running inference pipeline locally using the production config..."
 
-	poetry run python -m tools.inference_finqa --config_file configs/inference_config.yaml --dataset_dir ./dataset
+	poetry run python -m tools.inference_run --config_file configs/inference_config.yaml --dataset_dir ./dataset
 
 dev_infer_beam:
 	@echo "Running inference pipeline on Beam using the development config..."
