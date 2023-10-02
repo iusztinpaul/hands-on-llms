@@ -30,7 +30,7 @@ class NewsArticle(BaseModel):
         source (str): Source where the news originated from (e.g. Benzinga)
     """
 
-    id: float
+    id: int
     headline: str
     summary: str
     author: str

@@ -81,7 +81,18 @@
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [
-                "tools.run:run"
+                "tools.run:build_flow"
+            ]
+        },
+        {
+            "name": "Batch Pipeline Local",
+            "type": "python",
+            "request": "launch",
+            "module": "bytewax.run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+                "tools.run_batch:build_flow"
             ]
         },
         {

@@ -19,14 +19,14 @@ class AlpacaNewsStreamInput(DynamicInput):
     """
 
     def __init__(self, tickers):
-        self.TICKERS = tickers
+        self._tickers = tickers
 
     # distribute the tickers to the workers. If parallelized
     # workers will establish their own websocket connection and
     # subscribe to the tickers they are allocated
     def build(self, worker_index, worker_count):
-        prods_per_worker = int(len(self.TICKERS) / worker_count)
-        worker_tickers = self.TICKERS[
+        prods_per_worker = int(len(self._tickers) / worker_count)
+        worker_tickers = self._tickers[
             int(worker_index * prods_per_worker) : int(
                 worker_index * prods_per_worker + prods_per_worker
             )
@@ -80,10 +80,16 @@ def build_alpaca_client(
 
 
 class AlpacaNewsStreamClient:
-    NEWS_STREAM_URL = "wss://stream.data.alpaca.markets/v1beta1/news"
-
-    # Alpaca Docs: https://alpaca.markets/docs/api-references/market-data-api/news-data/realtime/
-    # Source of implementation inspiration: https://github.com/alpacahq/alpaca-py/blob/master/alpaca/common/websocket.py
+    """
+    Alpaca News Stream Client that uses a web socket to stream news data.
+    
+    References used to implement this class:
+    * Alpaca Docs: https://alpaca.markets/docs/api-references/market-data-api/news-data/realtime/
+    * Source of implementation inspiration: https://github.com/alpacahq/alpaca-py/blob/master/alpaca/common/websocket.py
+    """
+    
+    
+    NEWS_URL = "wss://stream.data.alpaca.markets/v1beta1/news"
 
     def __init__(self, api_key: str, api_secret: str, tickers: List[str]):
         self._api_key = api_key
@@ -96,7 +102,7 @@ class AlpacaNewsStreamClient:
         self._auth()
 
     def _connect(self):
-        self._ws = create_connection(self.NEWS_STREAM_URL)
+        self._ws = create_connection(self.NEWS_URL)
 
         msg = self.recv()
 
