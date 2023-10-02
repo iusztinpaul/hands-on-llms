@@ -21,49 +21,43 @@ def build(
     to_datetime: Optional[datetime.datetime] = None,
 ) -> Dataflow:
     model = EmbeddingModelSingleton(cache_dir=model_cache_dir)
-    input_connector = _build_input_connector(is_batch, from_datetime, to_datetime)
 
     flow = Dataflow()
-    flow.input("input", input_connector)
+    flow.input("input", _build_input(is_batch, from_datetime, to_datetime))
     flow.flat_map(lambda messages: parse_obj_as(List[NewsArticle], messages))
     flow.inspect(print)
     flow.map(lambda article: article.to_document())
     flow.map(lambda document: document.compute_chunks(model))
     flow.map(lambda document: document.compute_embeddings(model))
-
-    if in_memory:
-        flow.output(
-            "output",
-            QdrantVectorOutput(
-                vector_size=model.max_input_length,
-                client=QdrantClient(":memory:"),
-            ),
-        )
-    else:
-        flow.output(
-            "output",
-            QdrantVectorOutput(
-                vector_size=model.max_input_length,
-            ),
-        )
+    flow.output("output", _build_output(model, in_memory))
 
     return flow
 
 
-def _build_input_connector(
+def _build_input(
     is_batch: bool = False,
     from_datetime: Optional[datetime.datetime] = None,
     to_datetime: Optional[datetime.datetime] = None,
 ):
     if is_batch:
-        assert from_datetime is not None and to_datetime is not None, (
-            "from_datetime and to_datetime must be provided when is_batch is True"
-        )
-        
+        assert (
+            from_datetime is not None and to_datetime is not None
+        ), "from_datetime and to_datetime must be provided when is_batch is True"
+
         return AlpacaNewsBatchInput(
-            from_datetime=from_datetime,
-            to_datetime=to_datetime,
-            tickers=["*"]
+            from_datetime=from_datetime, to_datetime=to_datetime, tickers=["*"]
         )
     else:
         return AlpacaNewsStreamInput(tickers=["*"])
+
+
+def _build_output(model: EmbeddingModelSingleton, in_memory: bool = False):
+    if in_memory:
+        return QdrantVectorOutput(
+            vector_size=model.max_input_length,
+            client=QdrantClient(":memory:"),
+        )
+    else:
+        return QdrantVectorOutput(
+            vector_size=model.max_input_length,
+        )
