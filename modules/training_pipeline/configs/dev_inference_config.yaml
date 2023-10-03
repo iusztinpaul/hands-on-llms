@@ -6,3 +6,5 @@ model:
 setup:
   device: cuda:0
   debug: True
+dataset:
+  evaluation: "testing_data.json"

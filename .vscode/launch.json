@@ -17,7 +17,7 @@
             "name": "Training Pipeline [Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.train_finqa",
+            "module": "tools.train_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
@@ -33,7 +33,7 @@
             "name": "Training Pipeline",
             "type": "python",
             "request": "launch",
-            "module": "tools.train_finqa",
+            "module": "tools.train_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
@@ -49,7 +49,7 @@
             "name": "Training Pipeline [Inference Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.inference_finqa",
+            "module": "tools.inference_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
@@ -63,7 +63,7 @@
             "name": "Training Pipeline [Inference]",
             "type": "python",
             "request": "launch",
-            "module": "tools.inference_finqa",
+            "module": "tools.inference_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [

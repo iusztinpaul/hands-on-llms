@@ -82,6 +82,12 @@ Run the development streaming pipeline in `batch` mode:
 make run_batch_dev
 ```
 
+Run docker:
+```shell
+make build
+source .env && make run_docker
+```
+
 Run a query in your vector DB:
 ```shell
 make search PARAMS='--query_string "Should I invest in Tesla?"'
