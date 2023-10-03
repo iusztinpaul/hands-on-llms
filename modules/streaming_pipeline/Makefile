@@ -24,11 +24,17 @@ add_dev:
 
 ### Run ###
 
-run:
-	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run:build_flow
+run_real_time:
+	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run_real_time:build_flow
 
-run_dev:
-	export RUST_BACKTRACE=full; poetry run python -m tools.run_dev
+run_real_time_dev:
+	export RUST_BACKTRACE=full; poetry run python -m tools.run_real_time_dev
+
+run_batch:
+	export RUST_BACKTRACE=full; poetry run python -m bytewax.run -p4 tools.run_batch:build_flow(latest_n_days=12)
+
+run_batch_dev:
+	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run_batch_dev:build_flow(latest_n_days=4)
 
 search:
 	poetry run python -m tools.search ${PARAMS}
@@ -45,7 +51,7 @@ run_docker:
 	@echo "Run docker image"
 	
 	docker run --rm \
-		-e BYTEWAX_PYTHON_FILE_PATH=tools.run:build_flow \
+		-e BYTEWAX_PYTHON_FILE_PATH=tools.run_real_time:build_flow \
 		-e ALPACA_API_KEY=${ALPACA_API_KEY} \
 		-e ALPACA_API_SECRET=${ALPACA_API_SECRET} \
 		-e QDRANT_API_KEY=${QDRANT_API_KEY} \
@@ -71,11 +77,11 @@ deploy_aws:
 
 	bash deploy/launch_ec2.sh
 
-undeploy_aws:
-	bash deploy/terminate_ec2.sh
-
 info_aws:
 	aws ec2 describe-instances --filters "Name=tag:Name,Values=streaming-pipeline-server"
+
+undeploy_aws:
+	bash deploy/terminate_ec2.sh
 
 
 ### Deploy AWS [Waxctl] ###

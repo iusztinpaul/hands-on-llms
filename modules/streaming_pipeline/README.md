@@ -60,20 +60,26 @@ source ~/.bashrc
 
 ## 3. Usage
 
-Run production streaming pipeline:
+### 3.1 Local
+
+Run production streaming pipeline in `real-time` mode:
 ```shell
-make run
+make run_real_time
 ```
 
-Run dev streaming pipeline:
+To populate the vector DB you can ingest historical data by running the streaming pipeline in `batch` mode:
 ```shell
-make run_dev
+make run_batch
 ```
 
-Run docker:
+Run the development streaming pipeline in `real-time`:
 ```shell
-make build
-source .env && make run_docker
+make run_real_time_dev
+```
+
+Run the development streaming pipeline in `batch` mode:
+```shell
+make run_batch_dev
 ```
 
 Run a query in your vector DB:
@@ -81,12 +87,31 @@ Run a query in your vector DB:
 make search PARAMS='--query_string "Should I invest in Tesla?"'
 ```
 
+### 3.2 Docker
+
+Build the Docker image:
+```shell
+make build
+
+```
+
+Run the streaming pipeline in `real-time` mode inside the Docker image:
+```shell
+source .env && make run_docker
+```
+
+
 ### 3.1 Deploy AWS
 Configure your AWS CLI and run:
 ```shell
 make deploy_aws
 ```
 **NOTE:** [Here](https://stackoverflow.com/questions/15904095/how-to-check-whether-my-user-data-passing-to-ec2-instance-is-working) is how you can check the **output of the instance**.
+
+Check the state of the deployment:
+```shell
+make info_aws
+```
 
 To undeploy
 ```shell

@@ -14,7 +14,7 @@ def build_flow(
     latest_n_days: int = 4,
 ):
     initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
-    
+
     logger = logging.getLogger(__name__)
 
     to_datetime = datetime.datetime.now()
@@ -22,7 +22,7 @@ def build_flow(
     logger.info(f"Extracting news from {from_datetime} to {to_datetime} [n_days={latest_n_days}]")
     
     flow = flow_builder(
-        in_memory=False,
+        in_memory=True,
         model_cache_dir=model_cache_dir,
         is_batch=True,
         from_datetime=from_datetime,
