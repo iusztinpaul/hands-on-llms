@@ -14,7 +14,7 @@
             "cwd": "${workspaceFolder}/modules",
         },
         {
-            "name": "Dev Train Local",
+            "name": "Training Pipeline [Dev]",
             "type": "python",
             "request": "launch",
             "module": "tools.train_finqa",
@@ -30,7 +30,7 @@
             ]
         },
         {
-            "name": "Train Local",
+            "name": "Training Pipeline",
             "type": "python",
             "request": "launch",
             "module": "tools.train_finqa",
@@ -46,7 +46,7 @@
             ]
         },
         {
-            "name": "Dev Inference Local",
+            "name": "Training Pipeline [Inference Dev]",
             "type": "python",
             "request": "launch",
             "module": "tools.inference_finqa",
@@ -60,7 +60,7 @@
             ]
         },
         {
-            "name": "Inference Local",
+            "name": "Training Pipeline [Inference]",
             "type": "python",
             "request": "launch",
             "module": "tools.inference_finqa",
@@ -74,18 +74,27 @@
             ]
         },
         {
-            "name": "Streaming Pipeline Local",
+            "name": "Streaming Pipeline [Real-Time]",
             "type": "python",
             "request": "launch",
             "module": "bytewax.run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [
-                "tools.run:build_flow"
+                "tools.run_real_time:build_flow"
             ]
         },
         {
-            "name": "Batch Pipeline Local",
+            "name": "Streaming Pipeline [Real-Time Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.run_real_time_dev",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": []
+        },
+        {
+            "name": "Streaming Pipeline [Batch]",
             "type": "python",
             "request": "launch",
             "module": "bytewax.run",
@@ -97,13 +106,15 @@
             ]
         },
         {
-            "name": "Dev Streaming Pipeline Local",
+            "name": "Streaming Pipeline [Batch Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.run_dev",
+            "module": "bytewax.run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
-            "args": []
-        }
+            "args": [
+                "tools.run_batch_dev:build_flow(latest_n_days=4)"
+            ]
+        },
     ]
 }
