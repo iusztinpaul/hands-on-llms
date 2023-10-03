@@ -14,8 +14,3 @@ def build_flow(
     flow = flow_builder(model_cache_dir)
 
     return flow
-
-
-if __name__ == "__main__":
-    flow = build_flow()
-    run_main(flow)

@@ -63,9 +63,9 @@ class AlpacaNewsBatchSource(StatelessSource):
         )
 
     def next(self):
-        news = self._alpaca_client.recv()
+        news = self._alpaca_client.list()
 
-        if news is None:
+        if news is None or len(news) == 0:
             raise StopIteration()
 
         return news
@@ -135,7 +135,7 @@ class AlpacaNewsBatchClient:
     def try_request(self) -> bool:
         return self._first_request or self._page_token is not None
 
-    def recv(self):
+    def list(self):
         """
         Convenience function to fetch a batch of news from Alpaca API
         """
@@ -180,14 +180,3 @@ class AlpacaNewsBatchClient:
         self._page_token = next_page_token
 
         return news_json["news"]
-
-
-if __name__ == "__main__":
-    from streaming_pipeline import initialize
-
-    initialize()
-
-    client = build_alpaca_client(
-        datetime.datetime.now() - datetime.timedelta(days=10), datetime.datetime.now()
-    )
-    client.recv()
