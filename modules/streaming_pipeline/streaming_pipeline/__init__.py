@@ -1,10 +1,9 @@
 import logging
 import logging.config
-import yaml
-
-from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
 
+import yaml
+from dotenv import find_dotenv, load_dotenv
 
 logger = logging.getLogger(__name__)
 

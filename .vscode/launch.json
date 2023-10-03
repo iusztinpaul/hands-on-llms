@@ -92,7 +92,8 @@
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [
-                "tools.run_batch:build_flow"
+                "-p4",
+                "tools.run_batch:build_flow(latest_n_days=12)"
             ]
         },
         {
@@ -102,8 +103,7 @@
             "module": "tools.run_dev",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
-            "args": [
-            ]
+            "args": []
         }
     ]
 }

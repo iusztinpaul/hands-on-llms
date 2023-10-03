@@ -25,7 +25,6 @@ def build(
     flow = Dataflow()
     flow.input("input", _build_input(is_batch, from_datetime, to_datetime))
     flow.flat_map(lambda messages: parse_obj_as(List[NewsArticle], messages))
-    flow.inspect(print)
     flow.map(lambda article: article.to_document())
     flow.map(lambda document: document.compute_chunks(model))
     flow.map(lambda document: document.compute_embeddings(model))

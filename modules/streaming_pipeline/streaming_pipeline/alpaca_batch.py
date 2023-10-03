@@ -3,8 +3,10 @@ import logging
 import os
 from typing import List, Optional
 
-from bytewax.inputs import DynamicInput, StatelessSource
 import requests
+from bytewax.inputs import DynamicInput, StatelessSource
+
+from streaming_pipeline import utils
 
 logger = logging.getLogger()
 
@@ -17,48 +19,58 @@ class AlpacaNewsBatchInput(DynamicInput):
         tickers: list - should be a list of tickers, use "*" for all
     """
 
-    def __init__(self, tickers: List[str], from_datetime: datetime.datetime, to_datetime: datetime.datetime):
+    def __init__(
+        self,
+        tickers: List[str],
+        from_datetime: datetime.datetime,
+        to_datetime: datetime.datetime,
+    ):
         self._tickers = tickers
         self._from_datetime = from_datetime
         self._to_datetime = to_datetime
 
-    # distribute the tickers to the workers. If parallelized
-    # workers will establish their own websocket connection and
-    # subscribe to the tickers they are allocated
     def build(self, worker_index, worker_count):
-        prods_per_worker = int(len(self._tickers) / worker_count)
-        worker_tickers = self._tickers[
-            int(worker_index * prods_per_worker) : int(
-                worker_index * prods_per_worker + prods_per_worker
-            )
-        ]
-
-        return AlpacaNewsBatchSource(
-            tickers=worker_tickers,
+        # Distribute different time ranges to different workers,
+        # based on the total number of workers.
+        datetime_intervals = utils.split_time_range_into_intervals(
             from_datetime=self._from_datetime,
             to_datetime=self._to_datetime,
-            )
+            n=worker_count,
+        )
+        worker_datetime_interval = datetime_intervals[worker_index]
+        worker_from_datetime, worker_to_datetime = worker_datetime_interval
+        
+        logger.info(f"woker_index: {worker_index} start from {worker_from_datetime} to {worker_to_datetime}")
+
+        return AlpacaNewsBatchSource(
+            tickers=self._tickers,
+            from_datetime=worker_from_datetime,
+            to_datetime=worker_to_datetime,
+        )
 
 
 class AlpacaNewsBatchSource(StatelessSource):
-    def __init__(self, tickers: List[str], from_datetime: datetime.datetime, to_datetime: datetime.datetime):
+    def __init__(
+        self,
+        tickers: List[str],
+        from_datetime: datetime.datetime,
+        to_datetime: datetime.datetime,
+    ):
         self._alpaca_client = build_alpaca_client(
-            from_datetime=from_datetime,
-            to_datetime=to_datetime,
-            tickers=tickers
-            )
+            from_datetime=from_datetime, to_datetime=to_datetime, tickers=tickers
+        )
 
     def next(self):
         news = self._alpaca_client.recv()
-        
+
         if news is None:
             raise StopIteration()
-        
+
         return news
 
     def close(self):
         pass
-    
+
 
 def build_alpaca_client(
     from_datetime: datetime.datetime,
@@ -87,7 +99,11 @@ def build_alpaca_client(
         tickers = ["*"]
 
     return AlpacaNewsBatchClient(
-        from_datetime=from_datetime, to_datetime=to_datetime, api_key=api_key, api_secret=api_secret, tickers=tickers
+        from_datetime=from_datetime,
+        to_datetime=to_datetime,
+        api_key=api_key,
+        api_secret=api_secret,
+        tickers=tickers,
     )
 
 
@@ -109,30 +125,32 @@ class AlpacaNewsBatchClient:
         self._api_key = api_key
         self._api_secret = api_secret
         self._tickers = tickers
-        
+
         self._page_token = None
         self._first_request = True
-        
+
     @property
     def try_request(self) -> bool:
-        return self._first_request or self._page_token is not None 
-        
+        return self._first_request or self._page_token is not None
+
     def recv(self):
         """
         Convenience function to fetch a batch of news from Alpaca API
         """
-        
+
         if not self.try_request:
             return None
-        
+
         self._first_request = False
-        
+
         # prepare the request URL
         headers = {
             "Apca-Api-Key-Id": self._api_key,
             "Apca-Api-Secret-Key": self._api_secret,
         }
-        
+
+        # Look at all the parameters here: https://alpaca.markets/docs/api-references/market-data-api/news-data/historical/ 
+        # or here: https://github.com/alpacahq/alpaca-py/blob/master/alpaca/data/requests.py#L357
         params = {
             "start": self._from_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "end": self._to_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -156,7 +174,7 @@ class AlpacaNewsBatchClient:
 
         else:
             logger.error("Request failed with status code:", response.status_code)
-            
+
         self._page_token = next_page_token
 
         return news_json["news"]
@@ -164,7 +182,10 @@ class AlpacaNewsBatchClient:
 
 if __name__ == "__main__":
     from streaming_pipeline import initialize
+
     initialize()
-    
-    client = build_alpaca_client(datetime.datetime.now() - datetime.timedelta(days=10), datetime.datetime.now())
+
+    client = build_alpaca_client(
+        datetime.datetime.now() - datetime.timedelta(days=10), datetime.datetime.now()
+    )
     client.recv()
