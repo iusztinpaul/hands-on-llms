@@ -16,7 +16,6 @@ class FinancialBot:
         self._qdrant_client = build_qdrant_client()
         self._embd_model = EmbeddingModelSingleton()
         self._llm_agent = build_huggingface_pipeline()
-
         self.finbot_chain = self.build_chain()
 
     def build_chain(self) -> chains.SequentialChain:

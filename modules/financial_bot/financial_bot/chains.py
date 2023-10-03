@@ -42,7 +42,9 @@ class ContextExtractorChain(Chain):
             collection_name=self.vector_collection,
         )
 
-        content = matches[0].payload["summary"]
+        content = ""
+        for match in matches:
+            content += match.payload["summary"] + "\n"
 
         payload = {
             about_key: inputs[about_key],

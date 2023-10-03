@@ -16,3 +16,4 @@ CACHE_DIR = Path.home() / ".cache" / "hands-on-llms"
 
 # == Prompt Template ==
 TEMPLATE_NAME = "falcon"
+SYSTEM_MESSAGE = "You are a financial expert. Based on the context I provide, respond in a helpful manner"
