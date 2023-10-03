@@ -82,13 +82,12 @@ def build_alpaca_client(
 class AlpacaNewsStreamClient:
     """
     Alpaca News Stream Client that uses a web socket to stream news data.
-    
+
     References used to implement this class:
     * Alpaca Docs: https://alpaca.markets/docs/api-references/market-data-api/news-data/realtime/
     * Source of implementation inspiration: https://github.com/alpacahq/alpaca-py/blob/master/alpaca/common/websocket.py
     """
-    
-    
+
     NEWS_URL = "wss://stream.data.alpaca.markets/v1beta1/news"
 
     def __init__(self, api_key: str, api_secret: str, tickers: List[str]):

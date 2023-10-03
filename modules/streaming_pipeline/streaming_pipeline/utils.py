@@ -34,11 +34,11 @@ def split_time_range_into_intervals(
     intervals = []
     for i in range(n):
         interval_start = from_datetime + (i * interval_length)
-        interval_end = from_datetime + ((i + 1) * interval_length) 
+        interval_end = from_datetime + ((i + 1) * interval_length)
         if i + 1 != n:
             # Subtract 1 microsecond from the end of each interval to avoid overlapping.
             interval_end = interval_end - datetime.timedelta(minutes=1)
-            
+
         intervals.append((interval_start, interval_end))
 
     return intervals

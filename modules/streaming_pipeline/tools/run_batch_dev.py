@@ -1,7 +1,5 @@
 import datetime
 import logging
-from typing import Optional
-from bytewax.testing import run_main
 
 from streaming_pipeline import initialize
 from streaming_pipeline.flow import build as flow_builder
@@ -19,14 +17,16 @@ def build_flow(
 
     to_datetime = datetime.datetime.now()
     from_datetime = to_datetime - datetime.timedelta(days=latest_n_days)
-    logger.info(f"Extracting news from {from_datetime} to {to_datetime} [n_days={latest_n_days}]")
-    
+    logger.info(
+        f"Extracting news from {from_datetime} to {to_datetime} [n_days={latest_n_days}]"
+    )
+
     flow = flow_builder(
         in_memory=True,
         model_cache_dir=model_cache_dir,
         is_batch=True,
         from_datetime=from_datetime,
         to_datetime=to_datetime,
-        )
+    )
 
     return flow

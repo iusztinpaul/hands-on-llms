@@ -39,8 +39,10 @@ class AlpacaNewsBatchInput(DynamicInput):
         )
         worker_datetime_interval = datetime_intervals[worker_index]
         worker_from_datetime, worker_to_datetime = worker_datetime_interval
-        
-        logger.info(f"woker_index: {worker_index} start from {worker_from_datetime} to {worker_to_datetime}")
+
+        logger.info(
+            f"woker_index: {worker_index} start from {worker_from_datetime} to {worker_to_datetime}"
+        )
 
         return AlpacaNewsBatchSource(
             tickers=self._tickers,
@@ -149,7 +151,7 @@ class AlpacaNewsBatchClient:
             "Apca-Api-Secret-Key": self._api_secret,
         }
 
-        # Look at all the parameters here: https://alpaca.markets/docs/api-references/market-data-api/news-data/historical/ 
+        # Look at all the parameters here: https://alpaca.markets/docs/api-references/market-data-api/news-data/historical/
         # or here: https://github.com/alpacahq/alpaca-py/blob/master/alpaca/data/requests.py#L357
         params = {
             "start": self._from_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
