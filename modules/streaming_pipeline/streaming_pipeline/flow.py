@@ -8,8 +8,8 @@ from bytewax.outputs import Output
 from bytewax.testing import TestingInput
 from pydantic import parse_obj_as
 from qdrant_client import QdrantClient
-from streaming_pipeline import mocked
 
+from streaming_pipeline import mocked
 from streaming_pipeline.alpaca_batch import AlpacaNewsBatchInput
 from streaming_pipeline.alpaca_stream import AlpacaNewsStreamInput
 from streaming_pipeline.embeddings import EmbeddingModelSingleton
@@ -25,9 +25,15 @@ def build(
     debug: bool = False,
 ) -> Dataflow:
     model = EmbeddingModelSingleton(cache_dir=model_cache_dir)
+    is_input_mocked = debug is True and is_batch is False
 
     flow = Dataflow()
-    flow.input("input", _build_input(is_batch, from_datetime, to_datetime, dummy_input=debug))
+    flow.input(
+        "input",
+        _build_input(
+            is_batch, from_datetime, to_datetime, is_input_mocked=is_input_mocked
+        ),
+    )
     flow.flat_map(lambda messages: parse_obj_as(List[NewsArticle], messages))
     if debug:
         flow.inspect(print)
@@ -43,11 +49,11 @@ def _build_input(
     is_batch: bool = False,
     from_datetime: Optional[datetime.datetime] = None,
     to_datetime: Optional[datetime.datetime] = None,
-    dummy_input: bool = False
+    is_input_mocked: bool = False,
 ) -> Input:
-    if dummy_input is True and is_batch is False:
-        return TestingInput(mocked.news)
-        
+    if is_input_mocked is True:
+        return TestingInput(mocked.financial_news)
+
     if is_batch:
         assert (
             from_datetime is not None and to_datetime is not None

@@ -104,7 +104,7 @@
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [
                 "-p4",
-                "tools.run_batch:build_flow(latest_n_days=12)"
+                "tools.run_batch:build_flow(latest_n_days=8)"
             ]
         },
         {

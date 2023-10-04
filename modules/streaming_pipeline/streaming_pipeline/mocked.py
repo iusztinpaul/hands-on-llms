@@ -1,4 +1,4 @@
-news = [
+financial_news = [
     [
         {
             "T": "n",
