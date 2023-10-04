@@ -1,7 +1,6 @@
 import hashlib
 from datetime import datetime
 from typing import List, Optional, Tuple
-import uuid
 
 from pydantic import BaseModel
 from unstructured.cleaners.core import (
