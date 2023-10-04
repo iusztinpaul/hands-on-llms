@@ -23,6 +23,7 @@ class EmbeddingModelSingleton(metaclass=SingletonMeta):
 
         self._tokenizer = AutoTokenizer.from_pretrained(model_id)
         self._model = AutoModel.from_pretrained(model_id).to(self._device)
+        self._movel.eval()
 
     @property
     def max_input_length(self) -> int:

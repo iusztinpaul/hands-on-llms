@@ -5,7 +5,6 @@ from typing import Optional, Tuple
 
 import torch
 from comet_ml import API
-from financial_bot import constants
 from langchain.llms import HuggingFacePipeline
 from peft import LoraConfig, PeftConfig, PeftModel
 from transformers import (
@@ -14,6 +13,8 @@ from transformers import (
     BitsAndBytesConfig,
     pipeline,
 )
+
+from financial_bot import constants
 
 logger = logging.getLogger(__name__)
 
@@ -47,10 +48,13 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
 def build_huggingface_pipeline():
     """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
     model, tokenizer, _ = build_qlora_model()
+    model.eval()
+
     pipe = pipeline(
         "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=100
     )
     hf = HuggingFacePipeline(pipeline=pipe)
+
     return hf
 
 

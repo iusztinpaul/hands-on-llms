@@ -1,0 +1,43 @@
+### Install ###
+
+install:
+	@echo "Installing streaming pipeline..."
+	
+	poetry env use $(shell which python3.10) && \
+	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install
+
+install_dev: install
+	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
+
+install_only_dev:
+	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
+
+add:
+	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add $(package)
+
+add_dev:
+	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
+
+
+### PEP 8 ###
+# Be sure to install the dev dependencies first #
+
+lint_check:
+	@echo "Checking for linting issues..."
+
+	poetry run ruff check .
+
+lint_fix:
+	@echo "Fixing linting issues..."
+
+	poetry run ruff check --fix .
+
+format_check:
+	@echo "Checking for formatting issues..."
+
+	poetry run black --check .
+
+format_fix:
+	@echo "Formatting code..."
+
+	poetry run black .
