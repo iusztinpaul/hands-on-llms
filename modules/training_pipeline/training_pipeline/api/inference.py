@@ -8,11 +8,12 @@ import comet_llm
 from datasets import Dataset
 from peft import PeftConfig
 from tqdm import tqdm
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from training_pipeline import constants, models
 from training_pipeline.configs import InferenceConfig
 from training_pipeline.data import qa, utils
 from training_pipeline.prompt_templates.prompter import get_llm_template
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
 try:
     comet_project_name = os.environ["COMET_PROJECT_NAME"]
@@ -99,6 +100,7 @@ class InferenceAPI:
             gradient_checkpointing=False,
             cache_dir=self._model_cache_dir,
         )
+        model.eval()
 
         return model, tokenizer, peft_config
 

@@ -5,9 +5,6 @@ from typing import Optional, Tuple
 import comet_ml
 from datasets import Dataset
 from peft import PeftConfig
-from training_pipeline import constants, metrics, models
-from training_pipeline.configs import TrainingConfig
-from training_pipeline.data import qa
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -15,6 +12,10 @@ from transformers import (
     TrainingArguments,
 )
 from trl import SFTTrainer
+
+from training_pipeline import constants, metrics, models
+from training_pipeline.configs import TrainingConfig
+from training_pipeline.data import qa
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +116,6 @@ class TrainingAPI:
             packing=True,
             compute_metrics=self.compute_metrics,
         )
-
         trainer.train()
 
         best_model_checkpoint = trainer.state.best_model_checkpoint
