@@ -10,6 +10,7 @@ def build_flow(
     logging_config_path: str = "logging.yaml",
     model_cache_dir: str = None,
     latest_n_days: int = 4,
+    debug: bool = False,
 ):
     initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
 
@@ -22,11 +23,11 @@ def build_flow(
     )
 
     flow = flow_builder(
-        in_memory=False,
-        model_cache_dir=model_cache_dir,
         is_batch=True,
         from_datetime=from_datetime,
         to_datetime=to_datetime,
+        model_cache_dir=model_cache_dir,
+        debug=debug,
     )
 
     return flow

@@ -14,22 +14,6 @@
             "cwd": "${workspaceFolder}/modules",
         },
         {
-            "name": "Training Pipeline [Dev]",
-            "type": "python",
-            "request": "launch",
-            "module": "tools.train_run",
-            "justMyCode": false,
-            "cwd": "${workspaceFolder}/modules/training_pipeline",
-            "args": [
-                "--config_file",
-                "configs/dev_training_config.yaml",
-                "--output_dir",
-                "./output",
-                "--dataset_dir",
-                "./dataset"
-            ]
-        },
-        {
             "name": "Training Pipeline",
             "type": "python",
             "request": "launch",
@@ -46,15 +30,17 @@
             ]
         },
         {
-            "name": "Training Pipeline [Inference Dev]",
+            "name": "Training Pipeline [Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.inference_run",
+            "module": "tools.train_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
                 "--config_file",
-                "configs/dev_inference_config.yaml",
+                "configs/dev_training_config.yaml",
+                "--output_dir",
+                "./output",
                 "--dataset_dir",
                 "./dataset"
             ]
@@ -74,6 +60,20 @@
             ]
         },
         {
+            "name": "Training Pipeline [Inference Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.inference_run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/training_pipeline",
+            "args": [
+                "--config_file",
+                "configs/dev_inference_config.yaml",
+                "--dataset_dir",
+                "./dataset"
+            ]
+        },
+        {
             "name": "Streaming Pipeline [Real-Time]",
             "type": "python",
             "request": "launch",
@@ -88,10 +88,12 @@
             "name": "Streaming Pipeline [Real-Time Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.run_real_time_dev",
+            "module": "bytewax.run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
-            "args": []
+            "args": [
+                "tools.run_real_time:build_flow(debug=True)"
+            ]
         },
         {
             "name": "Streaming Pipeline [Batch]",
@@ -113,7 +115,7 @@
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [
-                "tools.run_batch_dev:build_flow(latest_n_days=4)"
+                "tools.run_batch:build_flow(latest_n_days=2, debug=True)"
             ]
         },
     ]
