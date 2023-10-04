@@ -1,4 +1,4 @@
-name: pep8_training_pipeline
+name: pep8_financial_bot
 
 on: [push]
 
