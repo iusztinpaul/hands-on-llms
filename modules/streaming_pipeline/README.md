@@ -10,7 +10,13 @@ Real-time feature pipeline that:
 - [1. Motivation](#1-motivation)
 - [2. Install](#2-install)
     - [2.1 Dependencies](#21-dependencies)
+    - [2.2. Alpaca](#22-alpaca)
+    - [2.3. Qdrant](#23-qdrant)
+    - [2.4. AWS CLI](#24-aws-cli)
 - [3. Usage](#3-usage)
+    - [3.1. Local](#31-local)
+    - [3.2. Docker](#32-docker)
+    - [3.3. Deploy to AWS](#33-deploy-to-aws)
 
 
 ---
@@ -70,7 +76,7 @@ Secondly, configure the [credentials of your AWS CLI](https://docs.aws.amazon.co
 
 ## 3. Usage
 
-### 3.1 Local
+### 3.1. Local
 
 Run production streaming pipeline in `real-time` mode:
 ```shell
@@ -98,7 +104,7 @@ make search PARAMS='--query_string "Should I invest in Tesla?"'
 ```
 You can replace the `--query_string` with any question you want.
 
-### 3.1 Docker
+### 3.2. Docker
 
 Build the Docker image:
 ```shell
@@ -111,7 +117,7 @@ source .env && make run_docker
 ```
 
 
-### 3.2 Deploy to AWS
+### 3.3. Deploy to AWS
 First, be sure that the `credentials` of your AWS CLI are configured.
 
 After, run the following to deploy the streaming pipeline to an AWS EC2 machine: 
