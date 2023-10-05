@@ -35,12 +35,24 @@
 ## 2. Setup External Services
 
 Before diving into the modules, you have to set up a couple of additional tools for the course.
-### 2.1. Comet ML
+
+### 2.1. Alpaca
+`financial news data source`
+
+Follow this [document](https://alpaca.markets/docs/market-data/getting-started/), showing you how to create a FREE account, generate the API Keys, and put them somewhere safe.
+
+### 2.1. Qdrant
+`vector DB`
+
+Go to [Qdrant], create an account, and follow [this document](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github) on how to generate the API Keys.
+
+
+### 2.2. Comet ML
 `ML platform`
 
 Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github), create an account, a project, and an API KEY. We will show you in every module how to add these credentials.
 
-### 2.2. Beam
+### 2.3. Beam
 `cloud compute`
 
 Go to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and follow their quick setup/get started tutorial. You must install their CLI and configure your credentials on your local machine.
@@ -50,6 +62,14 @@ When using Poetry, we had issues locating the Beam CLI when using the Poetry vir
  export POETRY_ENV_NAME=<your-poetry-env-name>
   ln -s /usr/local/bin/beam ~/.cache/pypoetry/virtualenvs/${POETRY_ENV_NAME}/bin/beam
  ```
+
+ ### 2.4. AWS
+ `cloud compute`
+
+ Go to AWS, create an account, and generate a pair of credentials.
+
+ After, download their AWS CLI and configure it with your credentials.
+
 
 ## 3. Install & Usage
 Every module has its dependencies and scripts. In a production setup, every module would have its repository, but in this use case, for learning purposes, we put everything in one place:
