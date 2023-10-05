@@ -46,13 +46,13 @@ Follow this [document](https://alpaca.markets/docs/market-data/getting-started/)
 ### 2.1. Qdrant
 `vector DB`
 
-Go to [Qdrant], create an account, and follow [this document](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github) on how to generate the API Keys.
+Go to [Qdrant](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github), create a FREE account, and follow [this document](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github) on how to generate the API Keys.
 
 
 ### 2.2. Comet ML
 `ML platform`
 
-Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github), create an account, a project, and an API KEY. We will show you in every module how to add these credentials.
+Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github), create a FREE account, a project, and an API KEY. We will show you in every module how to add these credentials.
 
 
 ### 2.3. Beam
@@ -70,9 +70,9 @@ When using Poetry, we had issues locating the Beam CLI when using the Poetry vir
  ### 2.4. AWS
  `cloud compute`
 
- Go to AWS, create an account, and generate a pair of credentials.
+ Go to [AWS](https://aws.amazon.com/console/), create an account, and generate a pair of credentials.
 
- After, download their AWS CLI and configure it with your credentials.
+ After, download and install their [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [configure it](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) with your credentials.
 
 
 ## 3. Install & Usage

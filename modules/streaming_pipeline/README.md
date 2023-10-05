@@ -38,6 +38,7 @@ Main dependencies you have to install yourself:
 * Python 3.10
 * Poetry 1.5.1
 * GNU Make 4.3
+* AWS CLI 2.11.22
 
 Installing all the other dependencies is as easy as running:
 ```shell
