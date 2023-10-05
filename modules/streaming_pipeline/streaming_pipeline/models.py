@@ -1,7 +1,6 @@
 import hashlib
 from datetime import datetime
 from typing import List, Optional, Tuple
-import uuid
 
 from pydantic import BaseModel
 from unstructured.cleaners.core import (
@@ -30,7 +29,7 @@ class NewsArticle(BaseModel):
         source (str): Source where the news originated from (e.g. Benzinga)
     """
 
-    id: float
+    id: int
     headline: str
     summary: str
     author: str
@@ -81,7 +80,8 @@ class Document(BaseModel):
         for chunk in self.chunks:
             payload = self.metadata
             payload.update({"text": chunk})
-            chunk_id = str(uuid.uuid4())
+            # Create the chunk ID using the hash of the chunk to avoid storing duplicates.
+            chunk_id = hashlib.md5(chunk.encode()).hexdigest()
 
             payloads.append(payload)
             ids.append(chunk_id)

@@ -1,14 +1,4 @@
-from typing import List
-
-from pydantic import parse_obj_as
-from qdrant_client import QdrantClient
-
-from streaming_pipeline import initialize
-from streaming_pipeline.embeddings import EmbeddingModelSingleton
-from streaming_pipeline.models import NewsArticle
-from streaming_pipeline.qdrant import QdrantVectorOutput
-
-mocked_news = [
+financial_news = [
     [
         {
             "T": "n",
@@ -40,30 +30,3 @@ mocked_news = [
         }
     ],
 ]
-
-if __name__ == "__main__":
-    initialize()
-
-    # TODO: Use TestingInput class for this dev scenario.
-
-    model = EmbeddingModelSingleton()
-
-    for articles in mocked_news:
-        articles = parse_obj_as(List[NewsArticle], articles)
-        for article in articles:
-            document = article.to_document()
-            document = document.compute_chunks(model)
-            document = document.compute_embeddings(model)
-
-            print("-" * 100)
-            print("Document: ")
-            print()
-            print(document)
-            print("-" * 100)
-            print()
-
-            output = QdrantVectorOutput(
-                vector_size=model.max_input_length, client=QdrantClient(":memory:")
-            )
-            output_sink = output.build(1, 1)
-            output_sink.write(document)

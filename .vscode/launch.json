@@ -14,23 +14,7 @@
             "cwd": "${workspaceFolder}/modules",
         },
         {
-            "name": "Dev Train Local",
-            "type": "python",
-            "request": "launch",
-            "module": "tools.train_run",
-            "justMyCode": false,
-            "cwd": "${workspaceFolder}/modules/training_pipeline",
-            "args": [
-                "--config_file",
-                "configs/dev_training_config.yaml",
-                "--output_dir",
-                "./output",
-                "--dataset_dir",
-                "./dataset"
-            ]
-        },
-        {
-            "name": "Train Local",
+            "name": "Training Pipeline",
             "type": "python",
             "request": "launch",
             "module": "tools.train_run",
@@ -46,21 +30,23 @@
             ]
         },
         {
-            "name": "Dev Inference Local",
+            "name": "Training Pipeline [Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.inference_run",
+            "module": "tools.train_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
                 "--config_file",
-                "configs/dev_inference_config.yaml",
+                "configs/dev_training_config.yaml",
+                "--output_dir",
+                "./output",
                 "--dataset_dir",
                 "./dataset"
             ]
         },
         {
-            "name": "Inference Local",
+            "name": "Training Pipeline [Inference]",
             "type": "python",
             "request": "launch",
             "module": "tools.inference_run",
@@ -74,25 +60,63 @@
             ]
         },
         {
-            "name": "Streaming Pipeline Local",
+            "name": "Training Pipeline [Inference Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.inference_run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/training_pipeline",
+            "args": [
+                "--config_file",
+                "configs/dev_inference_config.yaml",
+                "--dataset_dir",
+                "./dataset"
+            ]
+        },
+        {
+            "name": "Streaming Pipeline [Real-Time]",
             "type": "python",
             "request": "launch",
             "module": "bytewax.run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [
-                "tools.run:run"
+                "tools.run_real_time:build_flow"
             ]
         },
         {
-            "name": "Dev Streaming Pipeline Local",
+            "name": "Streaming Pipeline [Real-Time Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.run_dev",
+            "module": "bytewax.run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/streaming_pipeline",
             "args": [
+                "tools.run_real_time:build_flow(debug=True)"
             ]
-        }
+        },
+        {
+            "name": "Streaming Pipeline [Batch]",
+            "type": "python",
+            "request": "launch",
+            "module": "bytewax.run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+                "-p4",
+                "tools.run_batch:build_flow(latest_n_days=8)"
+            ]
+        },
+        {
+            "name": "Streaming Pipeline [Batch Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "bytewax.run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+                "tools.run_batch:build_flow(latest_n_days=2, debug=True)"
+            ]
+        },
     ]
 }
