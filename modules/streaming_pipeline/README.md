@@ -17,7 +17,7 @@ Real-time feature pipeline that:
     - [3.1. Local](#31-local)
     - [3.2. Docker](#32-docker)
     - [3.3. Deploy to AWS](#33-deploy-to-aws)
-
+    - [3.4. PEP8 Linting & Formatting](#34-pep8-linting--formatting)
 
 ---
 
@@ -28,6 +28,7 @@ The best way to ingest real-time knowledge into an LLM without retraining the LL
 To implement RAG at inference time, you need a vector DB always synced with the latest available data.
 
 The role of this streaming pipeline is to listen 24/7 to available financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/), process the news in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github), and store the news in the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) to make the information available for RAG.
+
 
 ## 2. Install
 
@@ -54,17 +55,20 @@ cp .env.example .env
 ```
 --> and complete the `.env` file with your credentials. We will show you below how to generate the credentials for **Alpaca** and **Qdrant** ↓ . 
 
+
 ### 2.2. Alpaca
 
 All you have to do for Alpaca is create a FREE account and generate the `ALPACA_API_KEY` and `ALPACA_API_SECRET` API Keys. After, be sure to add them to your `.env` file. 
 
 -> [Check out this document for step-by-step instructions.](https://alpaca.markets/docs/market-data/getting-started/)
 
+
 ### 2.3. Qdrant
 
 Same as for Alpaca, you must create a FREE account in Qdrant and generate the `QDRANT_API_KEY` and `QDRANT_URL` environment variables. After, be sure to add them to your `.env` file.
 
 -> [Check out this document to see how.](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github)
+
 
 ### 2.4. AWS CLI
 `optional step in case you want to deploy the streaming pipeline to AWS`
@@ -104,6 +108,7 @@ make search PARAMS='--query_string "Should I invest in Tesla?"'
 ```
 You can replace the `--query_string` with any question you want.
 
+
 ### 3.2. Docker
 
 Build the Docker image:
@@ -135,4 +140,27 @@ make info_aws
 To remove the EC2 machine, run:
 ```shell
 make undeploy_aws
+```
+
+
+### 3.4. PEP8 Linting & Formatting
+
+**Check** the code for **linting** issues:
+```shell
+make lint_check
+```
+
+**Fix** the code for **linting** issues (note that some issues can't automatically be fixed, so you might need to solve them manually):
+```shell
+make lint_fix
+```
+
+**Check** the code for **formatting** issues:
+```shell
+make format_check
+```
+
+**Fix** the code for **formatting** issues:
+```shell
+make format_fix
 ```
