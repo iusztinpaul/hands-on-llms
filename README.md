@@ -12,6 +12,7 @@
 
 ------
 
+
 ## 1. Building Blocks
 
 ### Training pipeline
@@ -41,6 +42,7 @@ Before diving into the modules, you have to set up a couple of additional tools 
 
 Follow this [document](https://alpaca.markets/docs/market-data/getting-started/), showing you how to create a FREE account, generate the API Keys, and put them somewhere safe.
 
+
 ### 2.1. Qdrant
 `vector DB`
 
@@ -52,6 +54,7 @@ Go to [Qdrant], create an account, and follow [this document](https://qdrant.tec
 
 Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github), create an account, a project, and an API KEY. We will show you in every module how to add these credentials.
 
+
 ### 2.3. Beam
 `cloud compute`
 
@@ -62,6 +65,7 @@ When using Poetry, we had issues locating the Beam CLI when using the Poetry vir
  export POETRY_ENV_NAME=<your-poetry-env-name>
   ln -s /usr/local/bin/beam ~/.cache/pypoetry/virtualenvs/${POETRY_ENV_NAME}/bin/beam
  ```
+
 
  ### 2.4. AWS
  `cloud compute`
