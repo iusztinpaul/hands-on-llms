@@ -2,7 +2,7 @@
 
 if [ "$DEBUG" = true ]
 then
-    poetry run python -m tools.run_dev
+    poetry run python -m bytewax.run "tools.run_real_time:build_flow(debug=True)"
 else
     if [ "$BYTEWAX_PYTHON_FILE_PATH" = "" ]
     then

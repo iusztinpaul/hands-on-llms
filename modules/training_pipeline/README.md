@@ -51,14 +51,9 @@ cp .env.example .env
 ### 2.2. Beam
 `optional step in case you want to use Beam` 
 
--> [Docs](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
+-> [Create a Beam account & configure it.](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
 
-Export the Poetry Python dependencies into a `requirements.txt` file that will be used by Beam to recreate the same environment:
-```shell
-make export_requirements
-```
-
-Upload the dataset to a Beam volume:
+After you have to upload the dataset to a Beam volume:
 ```shell
 make upload_dataset_to_beam
 ```

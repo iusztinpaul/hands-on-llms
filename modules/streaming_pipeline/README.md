@@ -1,6 +1,9 @@
 # Streaming Pipeline
 
-Real-time feature pipeline, that ingests data from Alpaca, computes the embeddings from the documents, and stores them into a serverless Vector DB.
+Real-time feature pipeline that:
+- ingests financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/)
+- transforms the news documents into embeddings in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github)
+- stores the embeddings into the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github)
 
 ## Table of Contents
 
@@ -14,7 +17,11 @@ Real-time feature pipeline, that ingests data from Alpaca, computes the embeddin
 
 ## 1. Motivation
 
-...
+The best way to ingest real-time knowledge into an LLM without retraining the LLM too often is by using RAG.
+
+To implement RAG at inference time, you need a vector DB always synced with the latest available data.
+
+The role of this streaming pipeline is to listen 24/7 to available financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/), process the news in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github), and store the news in the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) to make the information available for RAG.
 
 ## 2. Install
 
@@ -27,11 +34,10 @@ Main dependencies you have to install yourself:
 
 Installing all the other dependencies is as easy as running:
 ```shell
-make install-debian # if you run a debian based OS (e.g., Ubuntu)
 make install
 ```
 
-For developing run:
+When developing run:
 ```shell
 make install_dev
 ```
@@ -40,22 +46,26 @@ Prepare credentials:
 ```shell
 cp .env.example .env
 ```
---> and complete the `.env` file with your credentials.
+--> and complete the `.env` file with your credentials. We will show you below how to generate the credentials for **Alpaca** and **Qdrant** ↓ . 
 
-### 2.2 Bytewax - Waxctl
+### 2.2. Alpaca
 
-Installing Waxctl is very simple. You just need to download the binary corresponding to your operating system and architecture [here](https://bytewax.io/downloads/).
+All you have to do for Alpaca is create a FREE account and generate the `ALPACA_API_KEY` and `ALPACA_API_SECRET` API Keys. After, be sure to add them to your `.env` file. 
 
-**Ubuntu:**
-```shell
-tar xvzf waxctl_0.9.2_linux_amd64.tar.gz
-mkdir ~/.local/bin
-mv waxctl ~/.local/bin
+--> [Check out this document for step-by-step instructions.](https://alpaca.markets/docs/market-data/getting-started/)
 
-echo "export PATH=~/.local/bin:$PATH" > ~/.bashrc
-source ~/.bashrc
-``````
+### 2.3. Qdrant
 
+Same as for Alpaca, you must create a FREE account in Qdrant and generate the `QDRANT_API_KEY` and `QDRANT_URL` environment variables. After, be sure to add them to your `.env` file.
+
+--> [Check out this document to see how.](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github)
+
+### 2.4. AWS CLI
+`optional step in case you want to deploy the streaming pipeline to AWS`
+
+First, install [AWS CLI 2.11.22](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+
+Secondly, configure the [credentials of your AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html). 
 
 
 ## 3. Usage
@@ -72,33 +82,27 @@ To populate the vector DB you can ingest historical data by running the streamin
 make run_batch
 ```
 
-Run the development streaming pipeline in `real-time`:
+Run the streaming pipeline in `real-time` and `development` modes:
 ```shell
 make run_real_time_dev
 ```
 
-Run the development streaming pipeline in `batch` mode:
+Run the streaming pipeline in `batch` and `development` modes:
 ```shell
 make run_batch_dev
-```
-
-Run docker:
-```shell
-make build
-source .env && make run_docker
 ```
 
 Run a query in your vector DB:
 ```shell
 make search PARAMS='--query_string "Should I invest in Tesla?"'
 ```
+You can replace the `--query_string` with any question you want.
 
-### 3.2 Docker
+### 3.1 Docker
 
 Build the Docker image:
 ```shell
 make build
-
 ```
 
 Run the streaming pipeline in `real-time` mode inside the Docker image:
@@ -107,21 +111,22 @@ source .env && make run_docker
 ```
 
 
-### 3.1 Deploy AWS
-Configure your AWS CLI and run:
+### 3.2 Deploy to AWS
+First, be sure that the `credentials` of your AWS CLI are configured.
+
+After, run the following to deploy the streaming pipeline to an AWS EC2 machine: 
 ```shell
 make deploy_aws
 ```
-**NOTE:** [Here](https://stackoverflow.com/questions/15904095/how-to-check-whether-my-user-data-passing-to-ec2-instance-is-working) is how you can check the **output of the instance**.
 
-Check the state of the deployment:
+**NOTE:** You can log in to the AWS console, go to the EC2s section, and you can see your machine running.
+
+To check the state of the deployment, run:
 ```shell
 make info_aws
 ```
 
-To undeploy
+To remove the EC2 machine, run:
 ```shell
 make undeploy_aws
 ```
-
-...
