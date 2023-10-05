@@ -1,7 +1,7 @@
 ### Install ###
 
 install:
-	@echo "Installing streaming pipeline..."
+	@echo "Installing financial bot..."
 	
 	poetry env use $(shell which python3.10) && \
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install
@@ -17,6 +17,14 @@ add:
 
 add_dev:
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
+
+
+# === Run ===
+
+run:
+	@echo "Running financial_bot..."
+
+	poetry run python -m tools.run_chain
 
 
 ### PEP 8 ###
