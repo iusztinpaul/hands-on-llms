@@ -58,13 +58,13 @@ cp .env.example .env
 
 All you have to do for Alpaca is create a FREE account and generate the `ALPACA_API_KEY` and `ALPACA_API_SECRET` API Keys. After, be sure to add them to your `.env` file. 
 
---> [Check out this document for step-by-step instructions.](https://alpaca.markets/docs/market-data/getting-started/)
+-> [Check out this document for step-by-step instructions.](https://alpaca.markets/docs/market-data/getting-started/)
 
 ### 2.3. Qdrant
 
 Same as for Alpaca, you must create a FREE account in Qdrant and generate the `QDRANT_API_KEY` and `QDRANT_URL` environment variables. After, be sure to add them to your `.env` file.
 
---> [Check out this document to see how.](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github)
+-> [Check out this document to see how.](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github)
 
 ### 2.4. AWS CLI
 `optional step in case you want to deploy the streaming pipeline to AWS`
