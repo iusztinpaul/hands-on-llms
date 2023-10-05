@@ -27,6 +27,11 @@
     2. finds the most relevant documents in the VectorDB (aka context)
     3. sends a prompt with question and context to our fine-tuned Falcon and return response.
 
+<br/>
+
+![architecture](media/architecture.png)
+
+
 ## 2. Setup External Services
 
 Before diving into the modules, you have to set up a couple of additional tools for the course.
