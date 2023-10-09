@@ -11,6 +11,7 @@ def main():
     input_payload = {
         "about_me": "I'm a student and I have some money that I want to invest.",
         "question": "Should I consider investing in stocks from the Tech Sector?",
+        "context": ""
     }
 
     response = bot.answer(**input_payload)

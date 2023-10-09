@@ -1,21 +1,26 @@
 import logging
 
+from langchain import chains
+
 from financial_bot import constants
 from financial_bot.chains import ContextExtractorChain, FinancialBotQAChain
 from financial_bot.embeddings import EmbeddingModelSingleton
 from financial_bot.models import build_huggingface_pipeline
 from financial_bot.qdrant import build_qdrant_client
 from financial_bot.template import get_llm_template
-from langchain import chains
 
 logger = logging.getLogger(__name__)
 
 
 class FinancialBot:
-    def __init__(self):
+    def __init__(
+        self,
+        llm_model_id: str = constants.LLM_MODEL_ID,
+        llm_lora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
+    ):
         self._qdrant_client = build_qdrant_client()
         self._embd_model = EmbeddingModelSingleton()
-        self._llm_agent = build_huggingface_pipeline()
+        self._llm_agent = build_huggingface_pipeline(llm_model_id=llm_model_id, llm_lora_model_id=llm_lora_model_id)
         self.finbot_chain = self.build_chain()
 
     def build_chain(self) -> chains.SequentialChain:
@@ -63,7 +68,7 @@ class FinancialBot:
         logger.info("Connecting chains into SequentialChain")
         seq_chain = chains.SequentialChain(
             chains=[context_retrieval_chain, llm_generator_chain],
-            input_variables=["about_me", "question"],
+            input_variables=["about_me", "question", "context"],
             output_variables=["response"],
             verbose=True,
         )
@@ -76,7 +81,7 @@ class FinancialBot:
         )
         return seq_chain
 
-    def answer(self, about_me: str, question: str) -> str:
+    def answer(self, about_me: str, question: str, context: str) -> str:
         """
         Given a short description about the user and a question make the LLM
         generate a response.
@@ -94,7 +99,7 @@ class FinancialBot:
             LLM generated response.
         """
         try:
-            inputs = {"about_me": about_me, "question": question}
+            inputs = {"about_me": about_me, "question": question, "context": context}
             response = self.finbot_chain.run(inputs)
             return response
         except KeyError as e:

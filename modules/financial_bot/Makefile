@@ -4,25 +4,28 @@ install:
 	@echo "Installing financial bot..."
 	
 	poetry env use $(shell which python3.10) && \
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install && \
+	poetry run pip install torch==2.0.1
 
 install_dev: install
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --only dev
 
 install_only_dev:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --only dev
 
 add:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add $(package)
 
 add_dev:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add --group dev $(package)
 
 
 # === Run ===
 
 run:
 	@echo "Running financial_bot..."
+
+	@echo "LD_LIBRARY_PATH: $(LD_LIBRARY_PATH)"
 
 	poetry run python -m tools.run_chain
 

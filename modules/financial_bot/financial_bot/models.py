@@ -45,9 +45,20 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
     return model_dir
 
 
-def build_huggingface_pipeline():
+def build_huggingface_pipeline(
+    llm_model_id: str,
+    llm_lora_model_id: str,
+    gradient_checkpointing: bool = False,
+    cache_dir: Optional[Path] = None,
+):
     """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
-    model, tokenizer, _ = build_qlora_model()
+    
+    model, tokenizer, _ = build_qlora_model(
+        pretrained_model_name_or_path=llm_model_id,
+        peft_pretrained_model_name_or_path=llm_lora_model_id,
+        gradient_checkpointing=gradient_checkpointing,
+        cache_dir=cache_dir
+    )
     model.eval()
 
     pipe = pipeline(
