@@ -20,7 +20,9 @@ class PromptTemplate:
     # The template of the system prompt
     system_template: str = "{system_message}"
     # The template for the system context
-    context_template: str = "{user_context}{news_context}"
+    context_template: str = "{user_context}\n{news_context}"
+    # The template for the conversation history
+    chat_history_template: str = "{chat_history}"
     # The template of the user question
     question_template: str = "{question}"
     # The template of the system answer
@@ -38,27 +40,33 @@ class PromptTemplate:
     @property
     def train_raw_template(self):
         """Training prompt template format"""
+
         system = self.system_template.format(system_message=self.system_message)
         context = f"{self.sep}{self.context_template}"
+        chat_history = f"{self.sep}{self.chat_history_template}"
         question = f"{self.sep}{self.question_template}"
         answer = f"{self.sep}{self.answer_template}"
 
-        return f"{system}{context}{question}{answer}{self.eos}"
+        return f"{system}{context}{chat_history}{question}{answer}{self.eos}"
 
     @property
     def infer_raw_template(self):
         """Inference prompt template format"""
+
         system = self.system_template.format(system_message=self.system_message)
         context = f"{self.sep}{self.context_template}"
+        chat_history = f"{self.sep}{self.chat_history_template}"
         question = f"{self.sep}{self.question_template}"
 
-        return f"{system}{context}{question}{self.eos}"
+        return f"{system}{context}{chat_history}{question}{self.eos}"
 
     def format_train(self, sample: Dict[str, str]) -> Dict[str, Union[str, Dict]]:
         """Formats the data sample to a training sample"""
+
         prompt = self.train_raw_template.format(
-            user_context=sample["about_me"],
-            news_context=sample["context"],
+            user_context=sample["user_context"],
+            news_context=sample["news_context"],
+            chat_history=sample.get("chat_history", ""),
             question=sample["question"],
             answer=sample["response"],
         )
@@ -66,9 +74,11 @@ class PromptTemplate:
 
     def format_infer(self, sample: Dict[str, str]) -> Dict[str, Union[str, Dict]]:
         """Formats the data sample to a testing sample"""
+
         prompt = self.infer_raw_template.format(
-            user_context=sample["about_me"],
-            news_context=sample["context"],
+            user_context=sample["user_context"],
+            news_context=sample["news_context"],
+            chat_history=sample.get("chat_history", ""),
             question=sample["question"],
         )
         return {"prompt": prompt, "payload": sample}
@@ -95,7 +105,8 @@ register_llm_template(
         name="falcon",
         system_template=">>INTRODUCTION<< {system_message}",
         system_message=constants.SYSTEM_MESSAGE,
-        context_template=">>CONTEXT<< {user_context}{news_context}",
+        context_template=">>DOMAIN<< {user_context}\n{news_context}",
+        chat_history_template=">>SUMMARY<< {chat_history}",
         question_template=">>QUESTION<< {question}",
         answer_template=">>ANSWER<< {answer}",
         sep="\n",

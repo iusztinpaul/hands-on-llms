@@ -30,11 +30,12 @@ class ContextExtractorChain(Chain):
 
     def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         _, quest_key = self.input_keys
-        question_str = inputs.get[quest_key]
+        question_str = inputs[quest_key]
 
         # TODO: maybe async embed?
         embeddings = self.embedding_model(question_str)
 
+        # TODO: Using the metadata filter the news from the latest week (or other timeline).
         matches = self.vector_store.search(
             query_vector=embeddings,
             k=self.top_k,
@@ -66,13 +67,13 @@ class FinancialBotQAChain(Chain):
         return [self.output_key]
 
     def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        about_me = inputs["about_me"]
-        question = inputs["question"]
-        news_context = inputs.get("context")
-
-        prompt = self.template.infer_raw_template.format(
-            user_context=about_me, news_context=news_context, question=question
-        )
+        prompt = self.template.format_infer({
+            "user_context": inputs["about_me"],
+            "news_context": inputs["question"],
+            "chat_history": inputs["chat_history"],
+            "question": inputs.get("context"),
+            
+        })["prompt"]
         response = self.hf_pipeline(prompt)
 
         return {self.output_key: response}

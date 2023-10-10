@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 from typing import Optional, Tuple
+from financial_bot.utils import MockedPipeline
 
 import torch
 from comet_ml import API
@@ -50,8 +51,12 @@ def build_huggingface_pipeline(
     llm_lora_model_id: str,
     gradient_checkpointing: bool = False,
     cache_dir: Optional[Path] = None,
+    debug: bool = False,
 ):
     """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
+    
+    if debug is True:
+        return HuggingFacePipeline(pipeline=MockedPipeline(f=lambda _: "You are doing great!"))
     
     model, tokenizer, _ = build_qlora_model(
         pretrained_model_name_or_path=llm_model_id,
