@@ -25,8 +25,6 @@ add_dev:
 run:
 	@echo "Running financial_bot..."
 
-	@echo "LD_LIBRARY_PATH: $(LD_LIBRARY_PATH)"
-
 	poetry run python -m tools.run_chain
 
 

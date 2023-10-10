@@ -68,7 +68,7 @@ class FinancialBot:
         logger.info("Connecting chains into SequentialChain")
         seq_chain = chains.SequentialChain(
             chains=[context_retrieval_chain, llm_generator_chain],
-            input_variables=["about_me", "question", "context"],
+            input_variables=["about_me", "question"],
             output_variables=["response"],
             verbose=True,
         )
@@ -81,7 +81,7 @@ class FinancialBot:
         )
         return seq_chain
 
-    def answer(self, about_me: str, question: str, context: str) -> str:
+    def answer(self, about_me: str, question: str) -> str:
         """
         Given a short description about the user and a question make the LLM
         generate a response.
@@ -99,7 +99,7 @@ class FinancialBot:
             LLM generated response.
         """
         try:
-            inputs = {"about_me": about_me, "question": question, "context": context}
+            inputs = {"about_me": about_me, "question": question}
             response = self.finbot_chain.run(inputs)
             return response
         except KeyError as e:
