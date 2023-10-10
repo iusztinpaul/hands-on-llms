@@ -35,7 +35,7 @@ class PromptTemplate:
 
     @property
     def input_variables(self) -> List[str]:
-        return ["user_context", "news_context", "question", "answer"]
+        return ["user_context", "news_context", "chat_history", "question", "answer"]
 
     @property
     def train_raw_template(self):
@@ -68,7 +68,7 @@ class PromptTemplate:
             news_context=sample["news_context"],
             chat_history=sample.get("chat_history", ""),
             question=sample["question"],
-            answer=sample["response"],
+            answer=sample["answer"],
         )
         return {"prompt": prompt, "payload": sample}
 

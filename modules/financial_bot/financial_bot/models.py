@@ -54,15 +54,17 @@ def build_huggingface_pipeline(
     debug: bool = False,
 ):
     """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
-    
+
     if debug is True:
-        return HuggingFacePipeline(pipeline=MockedPipeline(f=lambda _: "You are doing great!"))
-    
+        return HuggingFacePipeline(
+            pipeline=MockedPipeline(f=lambda _: "You are doing great!")
+        )
+
     model, tokenizer, _ = build_qlora_model(
         pretrained_model_name_or_path=llm_model_id,
         peft_pretrained_model_name_or_path=llm_lora_model_id,
         gradient_checkpointing=gradient_checkpointing,
-        cache_dir=cache_dir
+        cache_dir=cache_dir,
     )
     model.eval()
 

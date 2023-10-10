@@ -56,7 +56,7 @@ class FinancialBotQAChain(Chain):
 
     hf_pipeline: HuggingFacePipeline
     template: PromptTemplate
-    output_key: str = "response"
+    output_key: str = "answer"
 
     @property
     def input_keys(self) -> List[str]:
@@ -67,13 +67,14 @@ class FinancialBotQAChain(Chain):
         return [self.output_key]
 
     def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        prompt = self.template.format_infer({
-            "user_context": inputs["about_me"],
-            "news_context": inputs["question"],
-            "chat_history": inputs["chat_history"],
-            "question": inputs.get("context"),
-            
-        })["prompt"]
+        prompt = self.template.format_infer(
+            {
+                "user_context": inputs["about_me"],
+                "news_context": inputs["question"],
+                "chat_history": inputs["chat_history"],
+                "question": inputs.get("context"),
+            }
+        )["prompt"]
         response = self.hf_pipeline(prompt)
 
         return {self.output_key: response}

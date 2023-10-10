@@ -52,7 +52,9 @@ class FinancialBot:
         Notes
         -----
         The actual processing flow within the chain can be visualized as:
-        [about: str][question: str] > ContextChain > [about: str][question:str] + [context: str] > FinancialChain > LLM Response
+        [about: str][question: str] > ContextChain >
+        [about: str][question:str] + [context: str] > FinancialChain >
+        [answer: str]
         """
 
         logger.info("Building 1/3 - ContextExtractorChain")
@@ -70,20 +72,25 @@ class FinancialBot:
         )
 
         logger.info("Building 3/3 - Connecting chains into SequentialChain")
+        # TODO: Change memory to keep TOP k messages or a summary of the conversation.
         seq_chain = chains.SequentialChain(
-            memory=ConversationBufferMemory(memory_key="chat_history", input_key="question"),
+            memory=ConversationBufferMemory(
+                memory_key="chat_history", input_key="question"
+            ),
             chains=[context_retrieval_chain, llm_generator_chain],
             input_variables=["about_me", "question"],
-            output_variables=["response"],
+            output_variables=["answer"],
             verbose=True,
         )
 
         logger.info("Done building SequentialChain.")
         logger.info("Workflow:")
         logger.info(
-            "> [about: str][question: str]) \
-            >>> ContextChain > [about: str] + [[question :str] -> VectorDB -> TopK -> + [context: str]] > [about: str][question: str][context: str] \
-            >>> FinancialChain > LLM Response"
+            """
+            [about: str][question: str] > ContextChain > 
+            [about: str][question:str] + [context: str] > FinancialChain > 
+            [answer: str]
+            """
         )
 
         return seq_chain
