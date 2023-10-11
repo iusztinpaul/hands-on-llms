@@ -10,7 +10,7 @@ inference_app = App(
     runtime=Runtime(
         cpu=4,
         memory="64Gi",
-        gpu="A10G",
+        gpu="T4",
         image=Image(python_version="python3.10", python_packages="requirements.txt"),
     ),
     volumes=[

@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from langchain import chains
 from langchain.memory import ConversationBufferMemory
@@ -18,12 +19,16 @@ class FinancialBot:
         self,
         llm_model_id: str = constants.LLM_MODEL_ID,
         llm_lora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
+        model_cache_dir: Path = constants.CACHE_DIR,
         debug: bool = constants.DEBUG,
     ):
         self._qdrant_client = build_qdrant_client()
         self._embd_model = EmbeddingModelSingleton()
         self._llm_agent = build_huggingface_pipeline(
-            llm_model_id=llm_model_id, llm_lora_model_id=llm_lora_model_id, debug=debug
+            llm_model_id=llm_model_id,
+            llm_lora_model_id=llm_lora_model_id,
+            cache_dir=model_cache_dir,
+            debug=debug,
         )
         self.finbot_chain = self.build_chain()
 

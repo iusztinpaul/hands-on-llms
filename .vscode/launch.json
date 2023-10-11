@@ -123,7 +123,7 @@
             "name": "Financial Bot [Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.run_chain",
+            "module": "tools.bot",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/financial_bot",
         },

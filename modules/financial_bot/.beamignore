@@ -3,4 +3,3 @@ results/*
 output/*
 logs/*
 .ruff_cache/
-dataset/*

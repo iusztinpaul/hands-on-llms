@@ -1,4 +1,4 @@
-### Install ###
+# === Install ===
 
 install:
 	@echo "Installing financial bot..."
@@ -25,10 +25,38 @@ add_dev:
 run:
 	@echo "Running financial_bot..."
 
-	poetry run python -m tools.run_chain
+	poetry run python -m tools.bot
 
 
-### PEP 8 ###
+# === Beam ===
+
+export_requirements:
+	@echo "Exporting requirements..."
+
+	if [ -f requirements.txt ]; then rm requirements.txt; fi
+	poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+run_beam: export_requirements
+	@echo "Running financial_bot on Beam..."
+
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/bot.py:run -d '{"env_file_path": "env", "model_cache_dir": "./model_cache"}'
+
+deploy_beam: export_requirements
+	@echo "Deploying financial_bot on Beam..."
+
+	BEAM_IGNORE_IMPORTS_OFF=true beam deploy ./tools/bot.py:run
+
+call_restful_api:
+	curl -X POST  \
+	--compressed 'https://apps.beam.cloud/${DEPLOYMENT_ID}' \
+	-H 'Accept: */*' \
+	-H 'Accept-Encoding: gzip, deflate' \
+	-H 'Authorization: Basic ${TOKEN}' \
+	-H 'Connection: keep-alive' \
+	-H 'Content-Type: application/json' \
+	-d '{"about_me": "I am a student and I have some money that I want to invest.", "question": "Should I consider investing in stocks from the Tech Sector?"}'
+
+# === Formatting & Linting ===
 # Be sure to install the dev dependencies first #
 
 lint_check:
