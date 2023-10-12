@@ -16,11 +16,11 @@
 ## 1. Building Blocks
 
 ### Training pipeline
-- [ ] Fine-tune Falcon 7B using our own [Q&A generated dataset](/modules/q_and_a_dataset_generator/) containing investing questions and answers based on Alpaca News.
+- [x] Fine-tune Falcon 7B using our own [Q&A generated dataset](/modules/q_and_a_dataset_generator/) containing investing questions and answers based on Alpaca News.
     - It seems that 1 GPU is enough if we use [Lit-Parrot](https://lightning.ai/pages/blog/falcon-a-guide-to-finetune-and-inference/)
 
 ### Real-time data pipeline
-- [ ] Build real-time feature pipeline, that ingests data form Alpaca, computes embeddings, and stores them into a serverless Vector DB.
+- [x] Build real-time feature pipeline, that ingests data form Alpaca, computes embeddings, and stores them into a serverless Vector DB.
 
 ### Inference pipeline
 - [ ] REST API for inference, that
@@ -43,19 +43,19 @@ Before diving into the modules, you have to set up a couple of additional tools 
 Follow this [document](https://alpaca.markets/docs/market-data/getting-started/), showing you how to create a FREE account, generate the API Keys, and put them somewhere safe.
 
 
-### 2.1. Qdrant
+### 2.2. Qdrant
 `vector DB`
 
 Go to [Qdrant](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github), create a FREE account, and follow [this document](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github) on how to generate the API Keys.
 
 
-### 2.2. Comet ML
+### 2.3. Comet ML
 `ML platform`
 
 Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github), create a FREE account, a project, and an API KEY. We will show you in every module how to add these credentials.
 
 
-### 2.3. Beam
+### 2.4. Beam
 `cloud compute`
 
 Go to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and follow their quick setup/get started tutorial. You must install their CLI and configure your credentials on your local machine.
@@ -67,7 +67,7 @@ When using Poetry, we had issues locating the Beam CLI when using the Poetry vir
  ```
 
 
- ### 2.4. AWS
+ ### 2.5. AWS
  `cloud compute`
 
  Go to [AWS](https://aws.amazon.com/console/), create an account, and generate a pair of credentials.
