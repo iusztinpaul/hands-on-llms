@@ -2,5 +2,6 @@ model_cache/*
 results/*
 output/*
 logs/*
-.ruff_cache/
+.ruff_cache/*
 dataset/*
+__pycache__/**
