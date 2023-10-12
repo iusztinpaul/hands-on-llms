@@ -4,9 +4,6 @@ from pathlib import Path
 from langchain import chains
 from langchain.memory import ConversationBufferMemory
 
-from langchain import chains
-from langchain.memory import ConversationBufferMemory
-
 from financial_bot import constants
 from financial_bot.chains import ContextExtractorChain, FinancialBotQAChain
 from financial_bot.embeddings import EmbeddingModelSingleton
