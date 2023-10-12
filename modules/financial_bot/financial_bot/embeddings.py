@@ -1,11 +1,12 @@
 import logging
 import traceback
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
+from transformers import AutoModel, AutoTokenizer
+
 from financial_bot import constants
 from financial_bot.base import SingletonMeta
-from transformers import AutoModel, AutoTokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -15,14 +16,18 @@ class EmbeddingModelSingleton(metaclass=SingletonMeta):
         self,
         model_id: str = constants.EMBEDDING_MODEL_ID,
         max_input_length: int = constants.EMBEDDING_MODEL_MAX_INPUT_LENGTH,
-        device: str = constants.EMBEDDING_MODEL_DEVICE,
+        device: str = "cuda:0",
+        cache_dir: Optional[str] = None,
     ):
         self._model_id = model_id
         self._device = device
         self._max_input_length = max_input_length
 
         self._tokenizer = AutoTokenizer.from_pretrained(model_id)
-        self._model = AutoModel.from_pretrained(model_id).to(self._device)
+        self._model = AutoModel.from_pretrained(
+            model_id,
+            cache_dir=str(cache_dir) if cache_dir else None,
+        ).to(self._device)
         self._model.eval()
 
     @property

@@ -25,7 +25,18 @@ add_dev:
 run:
 	@echo "Running financial_bot..."
 
-	poetry run python -m tools.bot
+	poetry run python -m tools.bot \
+		--about_me "I am a student and I have some money that I want to invest." \
+		--question "Should I consider investing in stocks from the Tech Sector?" \
+		--debug False
+
+run_dev:
+	@echo "Running financial_bot [Dev Mode]..."
+
+	poetry run python -m tools.bot \
+		--about_me "I am a student and I have some money that I want to invest." \
+		--question "Should I consider investing in stocks from the Tech Sector?" \
+		--debug True
 
 
 # === Beam ===
@@ -36,15 +47,15 @@ export_requirements:
 	if [ -f requirements.txt ]; then rm requirements.txt; fi
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-run_beam: export_requirements
-	@echo "Running financial_bot on Beam..."
-
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/bot.py:run -d '{"env_file_path": "env", "model_cache_dir": "./model_cache"}'
-
 deploy_beam: export_requirements
 	@echo "Deploying financial_bot on Beam..."
 
 	BEAM_IGNORE_IMPORTS_OFF=true beam deploy ./tools/bot.py:run
+
+deploy_beam_dev: export_requirements
+	@echo "Deploying financial_bot on Beam [Dev Mode]..."
+
+	BEAM_IGNORE_IMPORTS_OFF=true beam deploy ./tools/bot.py:run_dev
 
 call_restful_api:
 	curl -X POST  \

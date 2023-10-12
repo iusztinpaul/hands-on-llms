@@ -20,10 +20,13 @@ class FinancialBot:
         llm_model_id: str = constants.LLM_MODEL_ID,
         llm_lora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
         model_cache_dir: Path = constants.CACHE_DIR,
-        debug: bool = constants.DEBUG,
+        embedding_model_device: str = "cuda:0",
+        debug: bool = False,
     ):
         self._qdrant_client = build_qdrant_client()
-        self._embd_model = EmbeddingModelSingleton()
+        self._embd_model = EmbeddingModelSingleton(
+            cache_dir=model_cache_dir, device=embedding_model_device
+        )
         self._llm_agent = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
             llm_lora_model_id=llm_lora_model_id,
