@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+from typing import Callable, Dict, List
 
 import psutil
 import torch
@@ -41,3 +42,15 @@ def log_files_and_subdirs(directory_path: str):
                 logger.info(f"Sub-directory: {os.path.join(dirpath, dirname)}")
     else:
         logger.info(f"The directory '{directory_path}' does not exist")
+
+
+class MockedPipeline:
+    task: str = "text-generation"
+
+    def __init__(self, f: Callable[[str], str]):
+        self.f = f
+
+    def __call__(self, prompt: str) -> List[Dict[str, str]]:
+        result = self.f(prompt)
+
+        return [{"generated_text": f"{prompt}{result}"}]

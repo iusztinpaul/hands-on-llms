@@ -2,10 +2,10 @@ import logging
 import os
 from pathlib import Path
 from typing import Optional, Tuple
+from financial_bot.utils import MockedPipeline
 
 import torch
 from comet_ml import API
-from financial_bot import constants
 from langchain.llms import HuggingFacePipeline
 from peft import LoraConfig, PeftConfig, PeftModel
 from transformers import (
@@ -14,6 +14,8 @@ from transformers import (
     BitsAndBytesConfig,
     pipeline,
 )
+
+from financial_bot import constants
 
 logger = logging.getLogger(__name__)
 
@@ -44,13 +46,33 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
     return model_dir
 
 
-def build_huggingface_pipeline():
+def build_huggingface_pipeline(
+    llm_model_id: str,
+    llm_lora_model_id: str,
+    gradient_checkpointing: bool = False,
+    cache_dir: Optional[Path] = None,
+    debug: bool = False,
+):
     """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
-    model, tokenizer, _ = build_qlora_model()
+
+    if debug is True:
+        return HuggingFacePipeline(
+            pipeline=MockedPipeline(f=lambda _: "You are doing great!")
+        )
+
+    model, tokenizer, _ = build_qlora_model(
+        pretrained_model_name_or_path=llm_model_id,
+        peft_pretrained_model_name_or_path=llm_lora_model_id,
+        gradient_checkpointing=gradient_checkpointing,
+        cache_dir=cache_dir,
+    )
+    model.eval()
+
     pipe = pipeline(
         "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=100
     )
     hf = HuggingFacePipeline(pipeline=pipe)
+
     return hf
 
 

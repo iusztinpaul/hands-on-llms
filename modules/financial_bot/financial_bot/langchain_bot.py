@@ -1,21 +1,30 @@
 import logging
 
+from langchain import chains
+from langchain.memory import ConversationBufferMemory
+
 from financial_bot import constants
 from financial_bot.chains import ContextExtractorChain, FinancialBotQAChain
 from financial_bot.embeddings import EmbeddingModelSingleton
 from financial_bot.models import build_huggingface_pipeline
 from financial_bot.qdrant import build_qdrant_client
 from financial_bot.template import get_llm_template
-from langchain import chains
 
 logger = logging.getLogger(__name__)
 
 
 class FinancialBot:
-    def __init__(self):
+    def __init__(
+        self,
+        llm_model_id: str = constants.LLM_MODEL_ID,
+        llm_lora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
+        debug: bool = constants.DEBUG,
+    ):
         self._qdrant_client = build_qdrant_client()
         self._embd_model = EmbeddingModelSingleton()
-        self._llm_agent = build_huggingface_pipeline()
+        self._llm_agent = build_huggingface_pipeline(
+            llm_model_id=llm_model_id, llm_lora_model_id=llm_lora_model_id, debug=debug
+        )
         self.finbot_chain = self.build_chain()
 
     def build_chain(self) -> chains.SequentialChain:
@@ -43,7 +52,9 @@ class FinancialBot:
         Notes
         -----
         The actual processing flow within the chain can be visualized as:
-        [about: str][question: str] > ContextChain > [about: str][question:str] + [context: str] > FinancialChain > LLM Response
+        [about: str][question: str] > ContextChain >
+        [about: str][question:str] + [context: str] > FinancialChain >
+        [answer: str]
         """
 
         logger.info("Building 1/3 - ContextExtractorChain")
@@ -60,20 +71,28 @@ class FinancialBot:
             template=get_llm_template(name=constants.TEMPLATE_NAME),
         )
 
-        logger.info("Connecting chains into SequentialChain")
+        logger.info("Building 3/3 - Connecting chains into SequentialChain")
+        # TODO: Change memory to keep TOP k messages or a summary of the conversation.
         seq_chain = chains.SequentialChain(
+            memory=ConversationBufferMemory(
+                memory_key="chat_history", input_key="question"
+            ),
             chains=[context_retrieval_chain, llm_generator_chain],
             input_variables=["about_me", "question"],
-            output_variables=["response"],
+            output_variables=["answer"],
             verbose=True,
         )
+
         logger.info("Done building SequentialChain.")
         logger.info("Workflow:")
         logger.info(
-            "> [about: str][question: str])\
-            >>> ContextChain > [about: str] + [[question :str] -> VectorDB -> TopK -> + [context: str]] > [about: str][question: str][context: str]\
-            >>> FinancialChain > LLM Response"
+            """
+            [about: str][question: str] > ContextChain > 
+            [about: str][question:str] + [context: str] > FinancialChain > 
+            [answer: str]
+            """
         )
+
         return seq_chain
 
     def answer(self, about_me: str, question: str) -> str:
@@ -93,11 +112,8 @@ class FinancialBot:
         str
             LLM generated response.
         """
-        try:
-            inputs = {"about_me": about_me, "question": question}
-            response = self.finbot_chain.run(inputs)
-            return response
-        except KeyError as e:
-            logger.error(f"Caught key error {e}")
-        except Exception as e:
-            logger.error(f"Caught {e}")
+
+        inputs = {"about_me": about_me, "question": question}
+        response = self.finbot_chain.run(inputs)
+
+        return response
