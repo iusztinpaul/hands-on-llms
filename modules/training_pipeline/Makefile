@@ -10,7 +10,7 @@ install:
 	poetry run pip install torch==2.0.1
 
 install_dev: install
-	poetry install --only dev
+	poetry install --with dev
 
 install_only_dev:
 	poetry install --only dev

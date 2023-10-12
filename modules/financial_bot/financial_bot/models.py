@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 from typing import Optional, Tuple
+from financial_bot.utils import MockedPipeline
 
 import torch
 from comet_ml import API

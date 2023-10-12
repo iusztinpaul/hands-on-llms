@@ -10,7 +10,7 @@ install:
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install
 
 install_dev: install
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
+	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --with dev
 
 install_only_dev:
 	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
