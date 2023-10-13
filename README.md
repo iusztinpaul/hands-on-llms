@@ -9,6 +9,7 @@
 - [1. Building Blocks](#1-building-blocks)
 - [2. Setup External Services](#2-setup-external-services)
 - [3. Install & Usage](#3-install--usage)
+- [4. Video lectures](#4-video-lectures)
 
 ------
 
@@ -96,3 +97,24 @@ Now run the notebook server:
 ```shell
 jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
 ```
+
+## 4. Video lectures
+
+### 4.0 Intro to the course
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=l4HTEf0_s70">
+      <p>Click here to watch the video 🎬</p>
+    <img src="media/youtube_thumbnails/00_intro.png" alt="Intro to the course" style="width:75%;">
+  </a>
+</div>
+
+
+### 4.1 Fine-tuning our open-source LLM
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=HcxwOYMmj40">
+      <p>Click here to watch the video 🎬</p>
+    <img src="media/youtube_thumbnails/01_fine_tuning_pipeline_overview.png" alt="Intro to the course" style="width:75%;">
+  </a>
+</div>
