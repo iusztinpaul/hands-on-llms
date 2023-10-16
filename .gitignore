@@ -184,4 +184,4 @@ user_data.sh
 
 set_env_variables.sh
 logs/
-# .DS_Store
+.DS_Store
