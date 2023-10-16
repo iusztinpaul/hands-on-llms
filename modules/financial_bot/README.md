@@ -7,6 +7,7 @@ Inference pipeline that uses LangChain to create a chain that:
 * calls the fine-tuned LLM for the final answer
 * persists the chat history into memory 
 
+
 ## Table of Contents
 
 - [1. Motivation](#1-motivation)
@@ -18,9 +19,6 @@ Inference pipeline that uses LangChain to create a chain that:
     - [3.1. Local](#31-local)
     - [3.2. Local](#32-deploy-to-beam)
     - [3.3. Linting & Formatting](#34-linting--formatting)
-
-[Finish table of contents]
-
 
 # 1. Motivation
 
