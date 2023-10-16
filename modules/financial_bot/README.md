@@ -1,9 +1,9 @@
 # Financial Assistant Bot
 
-Inference pipeline that uses LangChain to create a chain that:
-* downloads the fine-tuned model from Comet's model registry
+Inference pipeline that uses [LangChain](https://github.com/langchain-ai/langchain) to create a chain that:
+* downloads the fine-tuned model from [Comet's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) model registry
 * takes user questions as input
-* queries the Qdrant Vector DB and enhances the prompt with related financial news
+* queries the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) and enhances the prompt with related financial news
 * calls the fine-tuned LLM for the final answer
 * persists the chat history into memory 
 
@@ -24,14 +24,14 @@ Inference pipeline that uses LangChain to create a chain that:
 
 The inference pipeline defines how the user interacts with all the components we've built so far. We will combine all the components and make the actual financial assistant chatbot.
 
-Thus, using LangChain, we will create a series of chains that:
-* download & load the fine-tuned model from Comet's model registry
-* take the user's input, embed it, and query the Qdrant Vector DB to extract related financial news
+Thus, using [LangChain](https://github.com/langchain-ai/langchain), we will create a series of chains that:
+* download & load the fine-tuned model from [Comet's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) model registry
+* take the user's input, embed it, and query the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) to extract related financial news
 * build the prompt based on the user input, financial news context, and chat history
 * call the LLM
 * persist the history in memory
 
-Also, the final step is to put the financial assistant to good use and deploy it as a serverless RESTful API using Beam. 
+Also, the final step is to put the financial assistant to good use and deploy it as a serverless RESTful API using [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github). 
 
 # 2. Install 
 
