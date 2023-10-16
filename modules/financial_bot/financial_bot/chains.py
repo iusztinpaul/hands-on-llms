@@ -77,4 +77,10 @@ class FinancialBotQAChain(Chain):
         )["prompt"]
         response = self.hf_pipeline(prompt)
 
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.info("HISTORY")
+        logger.info(inputs["chat_history"])
+
         return {self.output_key: response}

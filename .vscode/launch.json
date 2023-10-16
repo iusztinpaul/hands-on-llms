@@ -120,12 +120,36 @@
             ]
         },
         {
+            "name": "Financial Bot",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.bot",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": [
+                "--about_me",
+                "I am a student and I have some money that I want to invest.",
+                "--question",
+                "Should I consider investing in stocks from the Tech Sector?",
+                "--debug",
+                "False"
+            ]
+        },
+        {
             "name": "Financial Bot [Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.run_chain",
+            "module": "tools.bot",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": [
+                "--about_me",
+                "I am a student and I have some money that I want to invest.",
+                "--question",
+                "Should I consider investing in stocks from the Tech Sector?",
+                "--debug",
+                "True"
+            ]
         },
     ]
 }

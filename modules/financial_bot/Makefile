@@ -1,4 +1,4 @@
-### Install ###
+# === Install ===
 
 install:
 	@echo "Installing financial bot..."
@@ -25,10 +25,49 @@ add_dev:
 run:
 	@echo "Running financial_bot..."
 
-	poetry run python -m tools.run_chain
+	poetry run python -m tools.bot \
+		--about_me "I am a student and I have some money that I want to invest." \
+		--question "Should I consider investing in stocks from the Tech Sector?" \
+		--debug False
+
+run_dev:
+	@echo "Running financial_bot [Dev Mode]..."
+
+	poetry run python -m tools.bot \
+		--about_me "I am a student and I have some money that I want to invest." \
+		--question "Should I consider investing in stocks from the Tech Sector?" \
+		--debug True
 
 
-### PEP 8 ###
+# === Beam ===
+
+export_requirements:
+	@echo "Exporting requirements..."
+
+	if [ -f requirements.txt ]; then rm requirements.txt; fi
+	poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+deploy_beam: export_requirements
+	@echo "Deploying financial_bot on Beam..."
+
+	BEAM_IGNORE_IMPORTS_OFF=true beam deploy ./tools/bot.py:run
+
+deploy_beam_dev: export_requirements
+	@echo "Deploying financial_bot on Beam [Dev Mode]..."
+
+	BEAM_IGNORE_IMPORTS_OFF=true beam deploy ./tools/bot.py:run_dev
+
+call_restful_api:
+	curl -X POST  \
+	--compressed 'https://apps.beam.cloud/${DEPLOYMENT_ID}' \
+	-H 'Accept: */*' \
+	-H 'Accept-Encoding: gzip, deflate' \
+	-H 'Authorization: Basic ${TOKEN}' \
+	-H 'Connection: keep-alive' \
+	-H 'Content-Type: application/json' \
+	-d '{"about_me": "I am a student and I have some money that I want to invest.", "question": "Should I consider investing in stocks from the Tech Sector?"}'
+
+# === Formatting & Linting ===
 # Be sure to install the dev dependencies first #
 
 lint_check:
