@@ -1,6 +1,12 @@
 # Financial Assistant Bot
 
-[Add a short description]
+Inference pipeline that uses LangChain to create a chain that:
+* downloads the fine-tuned model from Comet's model registry
+* takes user questions as input
+* queries the Qdrant Vector DB and enhances the prompt with related financial news
+* calls the fine-tuned LLM for the final answer
+* persists the chat history into memory 
+
 
 ## Table of Contents
 
@@ -14,13 +20,18 @@
     - [3.2. Local](#32-deploy-to-beam)
     - [3.3. Linting & Formatting](#34-linting--formatting)
 
-[Finish table of contents]
-
-
 # 1. Motivation
 
-[Add Motivation]
+The inference pipeline defines how the user interacts with all the components we've built so far. We will combine all the components and make the actual financial assistant chatbot.
 
+Thus, using LangChain, we will create a series of chains that:
+* download & load the fine-tuned model from Comet's model registry
+* take the user's input, embed it, and query the Qdrant Vector DB to extract related financial news
+* build the prompt based on the user input, financial news context, and chat history
+* call the LLM
+* persist the history in memory
+
+Also, the final step is to put the financial assistant to good use and deploy it as a serverless RESTful API using Beam. 
 
 # 2. Install 
 
@@ -30,7 +41,6 @@ Main dependencies you have to install yourself:
 * Python 3.10
 * Poetry 1.5.1
 * GNU Make 4.3
-
 
 Install dependencies:
 ```shell
@@ -58,12 +68,9 @@ You must create a FREE account in Qdrant and generate the `QDRANT_API_KEY` and `
 ### 2.3. Beam
 `optional step in case you want to use Beam` 
 
--> [Create a Beam account & configure it.](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
+Create and configure a free Beam account to deploy it as a serverless RESTful API and show it to your friends. You will pay only for what you use. 
 
-After you have to upload the dataset to a Beam volume:
-```shell
-make upload_dataset_to_beam
-```
+-> [Create a Beam account & configure it.](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
 
 
 # 3. Usage
