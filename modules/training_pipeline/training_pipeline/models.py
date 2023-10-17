@@ -44,7 +44,7 @@ def build_qlora_model(
         quantization_config=bnb_config,
         load_in_4bit=True,
         device_map="auto",
-        trust_remote_code=True,
+        trust_remote_code=False,
         cache_dir=str(cache_dir) if cache_dir else None,
     )
 
@@ -54,7 +54,7 @@ def build_qlora_model(
 
     tokenizer = AutoTokenizer.from_pretrained(
         pretrained_model_name_or_path,
-        trust_remote_code=True,
+        trust_remote_code=False,
         truncation=True,
         cache_dir=str(cache_dir) if cache_dir else None,
     )

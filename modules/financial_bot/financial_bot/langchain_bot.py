@@ -27,7 +27,7 @@ class FinancialBot:
         self._embd_model = EmbeddingModelSingleton(
             cache_dir=model_cache_dir, device=embedding_model_device
         )
-        self._llm_agent = build_huggingface_pipeline(
+        self._llm_agent, self._streamer = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
             llm_lora_model_id=llm_lora_model_id,
             cache_dir=model_cache_dir,

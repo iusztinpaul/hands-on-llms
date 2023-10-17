@@ -11,6 +11,9 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig,
+    StoppingCriteria,
+    StoppingCriteriaList,
+    TextIteratorStreamer,
     pipeline,
 )
 
@@ -46,6 +49,17 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
     return model_dir
 
 
+# class StopOnTokens(StoppingCriteria):
+#     def __call__(
+#         self, input_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs
+#     ) -> bool:
+#         stop_ids = [29, 0]
+#         for stop_id in stop_ids:
+#             if input_ids[0][-1] == stop_id:
+#                 return True
+#         return False
+
+
 def build_huggingface_pipeline(
     llm_model_id: str,
     llm_lora_model_id: str,
@@ -68,12 +82,21 @@ def build_huggingface_pipeline(
     )
     model.eval()
 
+    streamer = TextIteratorStreamer(
+        tokenizer, timeout=10.0, skip_prompt=True, skip_special_tokens=True
+    )
+
     pipe = pipeline(
-        "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=100
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=100,
+        streamer=streamer,
+        # stopping_criteria=StoppingCriteriaList([StopOnTokens()]),
     )
     hf = HuggingFacePipeline(pipeline=pipe)
 
-    return hf
+    return hf, streamer
 
 
 def build_qlora_model(
@@ -103,7 +126,7 @@ def build_qlora_model(
         quantization_config=bnb_config,
         load_in_4bit=True,
         device_map="auto",
-        trust_remote_code=True,
+        trust_remote_code=False,
         cache_dir=str(cache_dir) if cache_dir else None,
     )
 
@@ -113,7 +136,7 @@ def build_qlora_model(
 
     tokenizer = AutoTokenizer.from_pretrained(
         pretrained_model_name_or_path,
-        trust_remote_code=True,
+        trust_remote_code=False,
         truncation=True,
         cache_dir=str(cache_dir) if cache_dir else None,
     )
