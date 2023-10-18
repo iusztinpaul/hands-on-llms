@@ -8,42 +8,6 @@ from dotenv import find_dotenv, load_dotenv
 logger = logging.getLogger(__name__)
 
 
-def load_bot(
-    env_file_path: str = ".env",
-    logging_config_path: str = "logging.yaml",
-    model_cache_dir: str = "./model_cache",
-    embedding_model_device: str = "cuda:0",
-    debug: bool = False,
-):
-    """
-    Load the financial assistant bot in production or development mode based on the `debug` flag
-    
-    production: the embedding model runs on GPU and the fine-tuned LLM is used.
-    dev: the embedding model runs on CPU and the fine-tuned LLM is mocked.
-    """
-
-    from financial_bot import initialize
-
-    # Be sure to initialize the environment variables before importing any other modules.
-    initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
-
-    from financial_bot import utils
-    from financial_bot.langchain_bot import FinancialBot
-
-    logger.info("#" * 100)
-    utils.log_available_gpu_memory()
-    utils.log_available_ram()
-    logger.info("#" * 100)
-
-    bot = FinancialBot(
-        model_cache_dir=Path(model_cache_dir) if model_cache_dir else None,
-        embedding_model_device=embedding_model_device,
-        debug=debug,
-    )
-
-    return bot
-
-
 def initialize(logging_config_path: str = "logging.yaml", env_file_path: str = ".env"):
     logger.info("Initializing logger...")
     try:

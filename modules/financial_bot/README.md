@@ -17,8 +17,9 @@ Inference pipeline that uses [LangChain](https://github.com/langchain-ai/langcha
     - [2.3. Beam](#21-beam)
 - [3. Usage](#3-usage)
     - [3.1. Local](#31-local)
-    - [3.2. Local](#32-deploy-to-beam)
-    - [3.3. Linting & Formatting](#34-linting--formatting)
+    - [3.2. Deploy to Beam as a RESTful API](#32-deploy-to-beam)
+    - [3.3. Gradio UI](#33-gradio-ui)
+    - [3.4. Linting & Formatting](#34-linting--formatting)
 
 # 1. Motivation
 
@@ -35,7 +36,7 @@ Also, the final step is to put the financial assistant to good use and deploy it
 
 # 2. Install 
 
-# 2.1. Dependencies
+## 2.1. Dependencies
 
 Main dependencies you have to install yourself:
 * Python 3.10
@@ -58,14 +59,14 @@ cp .env.example .env
 ```
 --> and complete the `.env` file with your credentials.
 
-### 2.2. Qdrant
+## 2.2. Qdrant
 
 You must create a FREE account in Qdrant and generate the `QDRANT_API_KEY` and `QDRANT_URL` environment variables. After, be sure to add them to your `.env` file.
 
 -> [Check out this document to see how.](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github)
 
 
-### 2.3. Beam
+## 2.3. Beam
 `optional step in case you want to use Beam` 
 
 Create and configure a free Beam account to deploy it as a serverless RESTful API and show it to your friends. You will pay only for what you use. 
@@ -75,7 +76,7 @@ Create and configure a free Beam account to deploy it as a serverless RESTful AP
 
 # 3. Usage
 
-# 3.1. Local
+## 3.1. Local
 
 Run bot locally:
 ```shell
@@ -87,7 +88,7 @@ Run bot locally in dev mode:
 make run_dev
 ```
 
-# 3.2. Deploy to Beam
+## 3.2. Deploy to Beam as a RESTful API
 
 Deploy the bot under a RESTful API using Beam:
 ```shell
@@ -107,7 +108,21 @@ export BEAM_AUTH_TOKEN=<BEAM_AUTH_TOKEN>
 make call_restful_api DEPLOYMENT_ID=${BEAM_DEPLOYMENT_ID} TOKEN=${BEAM_AUTH_TOKEN} 
 ```
 
-# 3.3. Linting & Formatting
+## 3.3. Gradio UI
+
+Start the Gradio UI:
+```shell
+make run_ui
+```
+
+Start the Gradio UI in dev mode:
+```shell
+make run_ui_dev
+```
+
+**NOTE:** Running the commands from above will host the UI on your computer. To run them, **you need an Nvidia GPU with enough resources** (e.g., to run the inference using Falcon 7B, you need ~8 GB VRAM). If you don't have that available, you can deploy it to `Gradio Spaces` on HuggingFace. It is pretty straightforward to do so. [Here are some docs to get you started](https://huggingface.co/docs/hub/spaces-sdks-gradio).
+
+## 3.4. Linting & Formatting
 
 **Check** the code for **linting** issues:
 ```shell
