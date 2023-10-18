@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 # === Load Bot ===
 
+
 def load_bot(
     env_file_path: str = ".env",
     logging_config_path: str = "logging.yaml",
