@@ -11,11 +11,14 @@ VECTOR_DB_SEARCH_TOPK = 1
 # == LLM Model ==
 LLM_MODEL_ID = "tiiuae/falcon-7b-instruct"
 LLM_QLORA_CHECKPOINT = "joywalker/financial-assistant-falcon-7b:1.0.0"
-CACHE_DIR = Path.home() / ".cache" / "hands-on-llms"
+
+LLM_INFERNECE_MAX_NEW_TOKENS = 250
+LLM_INFERENCE_TEMPERATURE = 1.0
+
 
 # == Prompt Template ==
 TEMPLATE_NAME = "falcon"
 SYSTEM_MESSAGE = "You are a financial expert. Based on the context I provide, respond in a helpful manner"
 
 # === Misc ===
-DEBUG = True
+CACHE_DIR = Path.home() / ".cache" / "hands-on-llms"

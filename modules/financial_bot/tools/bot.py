@@ -1,8 +1,9 @@
 import logging
-from pathlib import Path
 
 import fire
 from beam import App, Image, Runtime, Volume, VolumeType
+
+from financial_bot import load_bot
 
 logger = logging.getLogger(__name__)
 
@@ -57,40 +58,9 @@ def load_bot_dev(
     )
 
 
-def load_bot(
-    env_file_path: str = ".env",
-    logging_config_path: str = "logging.yaml",
-    model_cache_dir: str = "./model_cache",
-    embedding_model_device: str = "cuda:0",
-    debug: bool = False,
-):
-    """Load the Financial Assistant Bot in production mode: the embedding model runs on GPU and the LLM is used."""
-
-    from financial_bot import initialize
-
-    # Be sure to initialize the environment variables before importing any other modules.
-    initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
-
-    from financial_bot import utils
-    from financial_bot.langchain_bot import FinancialBot
-
-    logger.info("#" * 100)
-    utils.log_available_gpu_memory()
-    utils.log_available_ram()
-    logger.info("#" * 100)
-
-    bot = FinancialBot(
-        model_cache_dir=Path(model_cache_dir) if model_cache_dir else None,
-        embedding_model_device=embedding_model_device,
-        debug=debug,
-    )
-
-    return bot
-
-
 # === Bot Runners ===
 
-
+# TODO: Test if the Beam decorator can use the "load_bot" function imported from the module.
 @financial_bot.rest_api(keep_warm_seconds=300, loader=load_bot)
 def run(**inputs):
     """Run the bot under the Beam RESTful API endpoint."""
