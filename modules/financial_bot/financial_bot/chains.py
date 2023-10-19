@@ -32,7 +32,6 @@ class ContextExtractorChain(Chain):
         _, quest_key = self.input_keys
         question_str = inputs[quest_key]
 
-        # TODO: maybe async embed?
         embeddings = self.embedding_model(question_str)
 
         # TODO: Using the metadata filter the news from the latest week (or other timeline).
@@ -76,11 +75,5 @@ class FinancialBotQAChain(Chain):
             }
         )["prompt"]
         response = self.hf_pipeline(prompt)
-
-        import logging
-
-        logger = logging.getLogger(__name__)
-        logger.info("HISTORY")
-        logger.info(inputs["chat_history"])
 
         return {self.output_key: response}

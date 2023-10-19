@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import Iterable
 
 from langchain import chains
 from langchain.memory import ConversationBufferMemory
@@ -19,17 +20,27 @@ class FinancialBot:
         self,
         llm_model_id: str = constants.LLM_MODEL_ID,
         llm_lora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
+        llm_template_name: str = constants.TEMPLATE_NAME,
+        vector_collection_name: str = constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
+        vector_db_search_topk: int = constants.VECTOR_DB_SEARCH_TOPK,
         model_cache_dir: Path = constants.CACHE_DIR,
         embedding_model_device: str = "cuda:0",
         debug: bool = False,
     ):
+        self._llm_template_name = llm_template_name
+        self._llm_template = get_llm_template(name=self._llm_template_name)
+
+        self._vector_collection_name = vector_collection_name
+        self._vector_db_search_topk = vector_db_search_topk
         self._qdrant_client = build_qdrant_client()
+
         self._embd_model = EmbeddingModelSingleton(
             cache_dir=model_cache_dir, device=embedding_model_device
         )
-        self._llm_agent = build_huggingface_pipeline(
+        self._llm_agent, self._streamer = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
             llm_lora_model_id=llm_lora_model_id,
+            use_streamer=True,
             cache_dir=model_cache_dir,
             debug=debug,
         )
@@ -69,14 +80,14 @@ class FinancialBot:
         context_retrieval_chain = ContextExtractorChain(
             embedding_model=self._embd_model,
             vector_store=self._qdrant_client,
-            vector_collection=constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
-            top_k=constants.VECTOR_DB_SEARCH_TOPK,
+            vector_collection=self._vector_collection_name,
+            top_k=self._vector_db_search_topk,
         )
 
         logger.info("Building 2/3 - FinancialBotQAChain")
         llm_generator_chain = FinancialBotQAChain(
             hf_pipeline=self._llm_agent,
-            template=get_llm_template(name=constants.TEMPLATE_NAME),
+            template=self._llm_template,
         )
 
         logger.info("Building 3/3 - Connecting chains into SequentialChain")
@@ -125,3 +136,17 @@ class FinancialBot:
         response = self.finbot_chain.run(inputs)
 
         return response
+
+    def stream_answer(self) -> Iterable[str]:
+        """Stream the answer from the LLM after each token is generated after calling `answer()`."""
+
+        assert (
+            self._streamer
+        ), "Stream answer not available. Build the bot with `use_streamer=True`."
+
+        partial_answer = ""
+        for new_token in self._streamer:
+            if new_token != self._llm_template.eos:
+                partial_answer += new_token
+
+                yield partial_answer

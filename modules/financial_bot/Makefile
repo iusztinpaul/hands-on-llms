@@ -38,6 +38,16 @@ run_dev:
 		--question "Should I consider investing in stocks from the Tech Sector?" \
 		--debug True
 
+run_ui:
+	@echo "Running financial_bot UI..."
+
+	poetry run python -m tools.ui
+
+run_ui_dev:
+	@echo "Running financial_bot UI [Dev Mode]..."
+
+	poetry run gradio tools/ui.py
+
 
 # === Beam ===
 

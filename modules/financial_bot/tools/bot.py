@@ -41,22 +41,6 @@ financial_bot_dev = App(
 # === Bot Loaders ===
 
 
-def load_bot_dev(
-    env_file_path: str = ".env",
-    logging_config_path: str = "logging.yaml",
-    model_cache_dir: str = "./model_cache",
-):
-    """Load the Financial Assistant Bot in dev mode: the embedding model runs on CPU and the LLM is mocked."""
-
-    return load_bot(
-        env_file_path=env_file_path,
-        logging_config_path=logging_config_path,
-        model_cache_dir=model_cache_dir,
-        embedding_model_device="cpu",
-        debug=True,
-    )
-
-
 def load_bot(
     env_file_path: str = ".env",
     logging_config_path: str = "logging.yaml",
@@ -64,7 +48,12 @@ def load_bot(
     embedding_model_device: str = "cuda:0",
     debug: bool = False,
 ):
-    """Load the Financial Assistant Bot in production mode: the embedding model runs on GPU and the LLM is used."""
+    """
+    Load the financial assistant bot in production or development mode based on the `debug` flag
+
+    production: the embedding model runs on GPU and the fine-tuned LLM is used.
+    dev: the embedding model runs on CPU and the fine-tuned LLM is mocked.
+    """
 
     from financial_bot import initialize
 
@@ -88,9 +77,26 @@ def load_bot(
     return bot
 
 
+def load_bot_dev(
+    env_file_path: str = ".env",
+    logging_config_path: str = "logging.yaml",
+    model_cache_dir: str = "./model_cache",
+):
+    """Load the Financial Assistant Bot in dev mode: the embedding model runs on CPU and the LLM is mocked."""
+
+    return load_bot(
+        env_file_path=env_file_path,
+        logging_config_path=logging_config_path,
+        model_cache_dir=model_cache_dir,
+        embedding_model_device="cpu",
+        debug=True,
+    )
+
+
 # === Bot Runners ===
 
 
+# TODO: Test if the Beam decorator can use the "load_bot" function imported from the module.
 @financial_bot.rest_api(keep_warm_seconds=300, loader=load_bot)
 def run(**inputs):
     """Run the bot under the Beam RESTful API endpoint."""

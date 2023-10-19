@@ -11,6 +11,7 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig,
+    TextIteratorStreamer,
     pipeline,
 )
 
@@ -49,7 +50,10 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
 def build_huggingface_pipeline(
     llm_model_id: str,
     llm_lora_model_id: str,
+    max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
+    temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
     gradient_checkpointing: bool = False,
+    use_streamer: bool = False,
     cache_dir: Optional[Path] = None,
     debug: bool = False,
 ):
@@ -68,10 +72,25 @@ def build_huggingface_pipeline(
     )
     model.eval()
 
+    if use_streamer:
+        streamer = TextIteratorStreamer(
+            tokenizer, timeout=10.0, skip_prompt=True, skip_special_tokens=True
+        )
+    else:
+        streamer = None
+
     pipe = pipeline(
-        "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=100
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=max_new_tokens,
+        temperature=temperature,
+        streamer=streamer,
     )
     hf = HuggingFacePipeline(pipeline=pipe)
+
+    if use_streamer:
+        return hf, streamer
 
     return hf
 
@@ -103,7 +122,7 @@ def build_qlora_model(
         quantization_config=bnb_config,
         load_in_4bit=True,
         device_map="auto",
-        trust_remote_code=True,
+        trust_remote_code=False,
         cache_dir=str(cache_dir) if cache_dir else None,
     )
 
@@ -113,7 +132,7 @@ def build_qlora_model(
 
     tokenizer = AutoTokenizer.from_pretrained(
         pretrained_model_name_or_path,
-        trust_remote_code=True,
+        trust_remote_code=False,
         truncation=True,
         cache_dir=str(cache_dir) if cache_dir else None,
     )

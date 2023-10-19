@@ -15,16 +15,16 @@ Training pipeline that supports fine-tuning an LLM on a proprietary Q&A dataset 
 
 -------
 
-## 1. Motivation
+# 1. Motivation
 
 The best way to specialize an LLM on your specific task is to fine-tune it on a small dataset coupled to your business use case.
 
 In this case, we will use the finance dataset generated using the `q_and_a_dataset_generator` to specialize the LLM in responding to investing questions.
 
 
-## 2. Install
+# 2. Install
 
-### 2.1. Dependencies
+## 2.1. Dependencies
 
 Main dependencies you have to install yourself:
 * Python 3.10
@@ -48,7 +48,7 @@ cp .env.example .env
 --> and complete the `.env` file with your credentials.
 
 
-### 2.2. Beam
+## 2.2. Beam
 `optional step in case you want to use Beam` 
 
 -> [Create a Beam account & configure it.](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
@@ -58,11 +58,11 @@ After you have to upload the dataset to a Beam volume:
 make upload_dataset_to_beam
 ```
 
-## 3. Usage
+# 3. Usage
 
-### 3.1. Train 
+## 3.1. Train 
 
-#### Local
+### Local
 
 For debugging or to test that everything is working fine, run the following to train the model on a small subset of the dataset:
 ```shell
@@ -74,7 +74,7 @@ For training on the whole dataset, run the following:
 make train_local
 ```
 
-#### Using Beam
+### Using Beam
 
 Similar to the local training, for debugging or testing, run:
 ```shell
@@ -86,9 +86,9 @@ For training on the whole dataset, run:
 make train_beam
 ```
 
-### 3.2. Inference
+## 3.2. Inference
 
-#### Local
+### Local
 
 Testing or debugging:
 ```shell
@@ -112,7 +112,7 @@ The whole deal:
 make infer_beam
 ```
 
-### 3.3. PEP8 Linting & Formatting
+## 3.3. PEP8 Linting & Formatting
 
 **Check** the code for **linting** issues:
 ```shell
