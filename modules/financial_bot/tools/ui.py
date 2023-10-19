@@ -61,7 +61,7 @@ def load_bot(
     logging_config_path: str = "logging.yaml",
     model_cache_dir: str = "./model_cache",
     embedding_model_device: str = "cuda:0",
-    debug: bool = True,
+    debug: bool = False,
 ):
     """
     Load the financial assistant bot in production or development mode based on the `debug` flag

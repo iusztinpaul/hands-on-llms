@@ -131,7 +131,7 @@ def run_local(
     inputs = {
         "about_me": about_me,
         "question": question,
-        "to_load_history": history,
+        "history": history,
         "context": bot,
     }
 
