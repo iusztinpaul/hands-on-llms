@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Iterable, List, Tuple, Union
+from typing import Iterable, List, Tuple
 
 from langchain import chains
 from langchain.memory import ConversationBufferWindowMemory
@@ -45,6 +45,7 @@ class FinancialBot:
         self._llm_agent, self._streamer = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
             llm_lora_model_id=llm_lora_model_id,
+            llm_template=self._llm_template,
             use_streamer=streaming,
             cache_dir=model_cache_dir,
             debug=debug,
@@ -130,8 +131,8 @@ class FinancialBot:
         self,
         about_me: str,
         question: str,
-        to_load_history,
-    ) -> Union[str, Tuple[str, List[str]]]:
+        to_load_history: List[Tuple[str, str]] = None,
+    ) -> str:
         """
         Given a short description about the user and a question make the LLM
         generate a response.
@@ -152,7 +153,7 @@ class FinancialBot:
         inputs = {
             "about_me": about_me,
             "question": question,
-            "to_load_history": to_load_history,
+            "to_load_history": to_load_history if to_load_history else [],
         }
         response = self.finbot_chain.run(inputs)
 

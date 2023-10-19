@@ -27,6 +27,8 @@ class StatelessMemorySequentialChain(chains.SequentialChain):
         memory_values = self.memory.load_memory_variables({})
         inputs.update(memory_values)
 
+        del inputs[self.history_input_key]
+
         return super()._call(inputs, **kwargs)
 
     def prep_outputs(
@@ -41,8 +43,8 @@ class StatelessMemorySequentialChain(chains.SequentialChain):
 
         # Clear the internal memory.
         self.memory.clear()
-        inputs[self.history_input_key] = []
-        inputs[self.memory.memory_key] = ""
+        if self.memory.memory_key in results:
+            results[self.memory.memory_key] = ""
 
         return results
 

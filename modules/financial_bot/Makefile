@@ -28,6 +28,7 @@ run:
 	poetry run python -m tools.bot \
 		--about_me "I am a student and I have some money that I want to invest." \
 		--question "Should I consider investing in stocks from the Tech Sector?" \
+		--history "[[\"What is your opinion on investing in startup companies?\", \"Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing.\"]]" \
 		--debug False
 
 run_dev:
@@ -36,6 +37,7 @@ run_dev:
 	poetry run python -m tools.bot \
 		--about_me "I am a student and I have some money that I want to invest." \
 		--question "Should I consider investing in stocks from the Tech Sector?" \
+		--history "[[\"What is your opinion on investing in startup companies?\", \"Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing.\"]]" \
 		--debug True
 
 run_ui:
@@ -69,13 +71,13 @@ deploy_beam_dev: export_requirements
 
 call_restful_api:
 	curl -X POST  \
-	--compressed 'https://apps.beam.cloud/${DEPLOYMENT_ID}' \
+	--compressed 'https://${DEPLOYMENT_ID}.apps.beam.cloud' \
 	-H 'Accept: */*' \
 	-H 'Accept-Encoding: gzip, deflate' \
 	-H 'Authorization: Basic ${TOKEN}' \
 	-H 'Connection: keep-alive' \
 	-H 'Content-Type: application/json' \
-	-d '{"about_me": "I am a student and I have some money that I want to invest.", "question": "Should I consider investing in stocks from the Tech Sector?"}'
+	-d '{"about_me": "I am a student and I have some money that I want to invest.", "question": "Should I consider investing in stocks from the Tech Sector?", "history": [["What is your opinion on investing in startup companies?", "Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing."]]}'
 
 # === Formatting & Linting ===
 # Be sure to install the dev dependencies first #

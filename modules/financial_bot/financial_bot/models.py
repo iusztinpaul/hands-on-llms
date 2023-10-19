@@ -1,16 +1,19 @@
 import logging
 import os
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import torch
 from comet_ml import API
+from langchain import PromptTemplate
 from langchain.llms import HuggingFacePipeline
 from peft import LoraConfig, PeftConfig, PeftModel
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig,
+    StoppingCriteria,
+    StoppingCriteriaList,
     TextIteratorStreamer,
     pipeline,
 )
@@ -47,9 +50,26 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
     return model_dir
 
 
+class StopOnTokens(StoppingCriteria):
+    def __init__(self, stop_ids: List[int]):
+        super().__init__()
+
+        self._stop_ids = stop_ids
+
+    def __call__(
+        self, input_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs
+    ) -> bool:
+        for stop_id in self._stop_ids:
+            if input_ids[0][-1] == stop_id:
+                return True
+
+        return False
+
+
 def build_huggingface_pipeline(
     llm_model_id: str,
     llm_lora_model_id: str,
+    llm_template: PromptTemplate,
     max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
     temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
     gradient_checkpointing: bool = False,
@@ -79,8 +99,11 @@ def build_huggingface_pipeline(
         streamer = TextIteratorStreamer(
             tokenizer, timeout=10.0, skip_prompt=True, skip_special_tokens=True
         )
+        stop_on_tokens = StopOnTokens(stop_ids=[tokenizer.eos_token_id])
+        stopping_criteria = StoppingCriteriaList([stop_on_tokens])
     else:
         streamer = None
+        stopping_criteria = []
 
     pipe = pipeline(
         "text-generation",
@@ -89,13 +112,11 @@ def build_huggingface_pipeline(
         max_new_tokens=max_new_tokens,
         temperature=temperature,
         streamer=streamer,
+        stopping_criteria=stopping_criteria,
     )
     hf = HuggingFacePipeline(pipeline=pipe)
 
-    if use_streamer:
-        return hf, streamer
-
-    return hf
+    return hf, streamer
 
 
 def build_qlora_model(
