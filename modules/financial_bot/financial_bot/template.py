@@ -112,6 +112,6 @@ register_llm_template(
         answer_template=">>ANSWER<< {answer}",
         sep="\n",
         eos="<|endoftext|>",
-        eos_token_id=11
+        eos_token_id=11,
     )
 )
