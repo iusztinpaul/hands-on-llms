@@ -1,3 +1,4 @@
+import argparse
 import logging
 from pathlib import Path
 from threading import Thread
@@ -6,6 +7,50 @@ from typing import List
 import gradio as gr
 
 logger = logging.getLogger(__name__)
+
+
+def parseargs() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Financial Assistant Bot")
+
+    parser.add_argument(
+        "--env-file-path",
+        type=str,
+        default=".env",
+        help="Path to the environment file",
+    )
+
+    parser.add_argument(
+        "--logging-config-path",
+        type=str,
+        default="logging.yaml",
+        help="Path to the logging configuration file",
+    )
+
+    parser.add_argument(
+        "--model-cache-dir",
+        type=str,
+        default="./model_cache",
+        help="Path to the directory where the model cache will be stored",
+    )
+
+    parser.add_argument(
+        "--embedding-model-device",
+        type=str,
+        default="cuda:0",
+        help="Device to use for the embedding model (e.g. 'cpu', 'cuda:0', etc.)",
+    )
+
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=False,
+        help="Enable debug mode",
+    )
+
+    return parser.parse_args()
+
+
+args = parseargs()
 
 
 # === Load Bot ===
@@ -41,29 +86,40 @@ def load_bot(
     bot = FinancialBot(
         model_cache_dir=Path(model_cache_dir) if model_cache_dir else None,
         embedding_model_device=embedding_model_device,
+        streaming=True,
         debug=debug,
     )
 
     return bot
 
 
-bot = load_bot()
+bot = load_bot(
+    env_file_path=args.env_file_path,
+    logging_config_path=args.logging_config_path,
+    model_cache_dir=args.model_cache_dir,
+    embedding_model_device=args.embedding_model_device,
+    debug=args.debug,
+)
 
 
 # === Gradio Interface ===
 
 
-def predict(message: str, history: List[List[str]], about_me: str):
+def predict(message: str, history: List[List[str]], about_me: str) -> str:
     generate_kwargs = {
         "about_me": about_me,
         "question": message,
+        "to_load_history": history,
     }
 
-    t = Thread(target=bot.answer, kwargs=generate_kwargs)
-    t.start()
+    if bot.is_streaming:
+        t = Thread(target=bot.answer, kwargs=generate_kwargs)
+        t.start()
 
-    for partial_answer in bot.stream_answer():
-        yield partial_answer
+        for partial_answer in bot.stream_answer():
+            yield partial_answer
+    else:
+        yield bot.answer(**generate_kwargs)
 
 
 demo = gr.ChatInterface(

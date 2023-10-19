@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import List, Tuple
 
 import fire
 from beam import App, Image, Runtime, Volume, VolumeType
@@ -96,7 +97,6 @@ def load_bot_dev(
 # === Bot Runners ===
 
 
-# TODO: Test if the Beam decorator can use the "load_bot" function imported from the module.
 @financial_bot.rest_api(keep_warm_seconds=300, loader=load_bot)
 def run(**inputs):
     """Run the bot under the Beam RESTful API endpoint."""
@@ -115,7 +115,12 @@ def run_dev(**inputs):
     return response
 
 
-def run_local(about_me: str, question: str, debug: bool = False):
+def run_local(
+    about_me: str,
+    question: str,
+    history: List[Tuple[str, str]] = None,
+    debug: bool = False,
+):
     """Run the bot locally in production or dev mode."""
 
     if debug is True:
@@ -123,7 +128,12 @@ def run_local(about_me: str, question: str, debug: bool = False):
     else:
         bot = load_bot(model_cache_dir=None)
 
-    inputs = {"about_me": about_me, "question": question, "context": bot}
+    inputs = {
+        "about_me": about_me,
+        "question": question,
+        "history": history,
+        "context": bot,
+    }
 
     response = _run(**inputs)
 
@@ -144,6 +154,7 @@ def _run(**inputs):
     input_payload = {
         "about_me": inputs["about_me"],
         "question": inputs["question"],
+        "to_load_history": inputs["history"] if "history" in inputs else [],
     }
     response = bot.answer(**input_payload)
 

@@ -131,6 +131,8 @@
                 "I am a student and I have some money that I want to invest.",
                 "--question",
                 "Should I consider investing in stocks from the Tech Sector?",
+                "--history",
+                "[[\"What is your opinion on investing in startup companies?\", \"Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing.\"]]",
                 "--debug",
                 "False"
             ]
@@ -147,8 +149,30 @@
                 "I am a student and I have some money that I want to invest.",
                 "--question",
                 "Should I consider investing in stocks from the Tech Sector?",
+                "--history",
+                "[[\"What is your opinion on investing in startup companies?\", \"Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing.\"]]",
                 "--debug",
                 "True"
+            ]
+        },
+        {
+            "name": "Financial Bot UI",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.ui",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": []
+        },
+        {
+            "name": "Financial Bot UI [Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.ui",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": [
+                "--debug"
             ]
         },
     ]
