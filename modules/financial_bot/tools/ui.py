@@ -115,12 +115,11 @@ def predict(message: str, history: List[List[str]], about_me: str) -> str:
     if bot.is_streaming:
         t = Thread(target=bot.answer, kwargs=generate_kwargs)
         t.start()
-    
+
         for partial_answer in bot.stream_answer():
             yield partial_answer
     else:
         yield bot.answer(**generate_kwargs)
-        
 
 
 demo = gr.ChatInterface(

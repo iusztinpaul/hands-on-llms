@@ -131,7 +131,6 @@ class FinancialBot:
         about_me: str,
         question: str,
         to_load_history,
-        return_history: bool = False,
     ) -> Union[str, Tuple[str, List[str]]]:
         """
         Given a short description about the user and a question make the LLM
@@ -143,8 +142,6 @@ class FinancialBot:
             Short user description.
         question : str
             User question.
-        return_history : bool, optional
-            Whether to return the conversation history or not, by default False
 
         Returns
         -------
@@ -158,9 +155,6 @@ class FinancialBot:
             "to_load_history": to_load_history,
         }
         response = self.finbot_chain.run(inputs)
-
-        if return_history:
-            return response["answer"], response["chat_history"]
 
         return response
 

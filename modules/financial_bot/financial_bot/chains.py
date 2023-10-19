@@ -14,7 +14,7 @@ class StatelessMemorySequentialChain(chains.SequentialChain):
 
     def _call(self, inputs: Dict[str, str], **kwargs) -> Dict[str, str]:
         """Override _call to load history before calling the chain."""
-        
+
         to_load_history = inputs[self.history_input_key]
         for (
             human,
@@ -26,8 +26,6 @@ class StatelessMemorySequentialChain(chains.SequentialChain):
             )
         memory_values = self.memory.load_memory_variables({})
         inputs.update(memory_values)
-        
-        del inputs[self.history_input_key]
 
         return super()._call(inputs, **kwargs)
 
@@ -37,11 +35,13 @@ class StatelessMemorySequentialChain(chains.SequentialChain):
         outputs: Dict[str, str],
         return_only_outputs: bool = False,
     ) -> Dict[str, str]:
-        """Override prep_outputs to clear memory after each call."""
-        
+        """Override prep_outputs to clear the internal memory after each call."""
+
         results = super().prep_outputs(inputs, outputs, return_only_outputs)
 
+        # Clear the internal memory.
         self.memory.clear()
+        inputs[self.history_input_key] = []
         inputs[self.memory.memory_key] = ""
 
         return results
