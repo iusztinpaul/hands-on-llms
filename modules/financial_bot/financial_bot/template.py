@@ -32,7 +32,6 @@ class PromptTemplate:
     # Separator
     sep: str = "\n"
     eos: str = ""
-    eos_token_id: int = -1
 
     @property
     def input_variables(self) -> List[str]:
@@ -112,6 +111,5 @@ register_llm_template(
         answer_template=">>ANSWER<< {answer}",
         sep="\n",
         eos="<|endoftext|>",
-        eos_token_id=11,
     )
 )

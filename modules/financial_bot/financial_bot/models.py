@@ -5,7 +5,6 @@ from typing import List, Optional, Tuple
 
 import torch
 from comet_ml import API
-from langchain import PromptTemplate
 from langchain.llms import HuggingFacePipeline
 from peft import LoraConfig, PeftConfig, PeftModel
 from transformers import (
@@ -69,7 +68,6 @@ class StopOnTokens(StoppingCriteria):
 def build_huggingface_pipeline(
     llm_model_id: str,
     llm_lora_model_id: str,
-    llm_template: PromptTemplate,
     max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
     temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
     gradient_checkpointing: bool = False,

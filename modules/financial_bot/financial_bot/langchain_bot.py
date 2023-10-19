@@ -45,7 +45,6 @@ class FinancialBot:
         self._llm_agent, self._streamer = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
             llm_lora_model_id=llm_lora_model_id,
-            llm_template=self._llm_template,
             use_streamer=streaming,
             cache_dir=model_cache_dir,
             debug=debug,
