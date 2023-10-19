@@ -46,7 +46,7 @@ run_ui:
 run_ui_dev:
 	@echo "Running financial_bot UI [Dev Mode]..."
 
-	poetry run gradio tools/ui.py
+	poetry run gradio tools/ui.py --debug
 
 
 # === Beam ===

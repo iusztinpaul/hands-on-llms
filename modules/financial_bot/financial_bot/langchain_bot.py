@@ -1,12 +1,16 @@
 import logging
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, List, Tuple, Union
 
 from langchain import chains
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 
 from financial_bot import constants
-from financial_bot.chains import ContextExtractorChain, FinancialBotQAChain
+from financial_bot.chains import (
+    ContextExtractorChain,
+    FinancialBotQAChain,
+    StatelessMemorySequentialChain,
+)
 from financial_bot.embeddings import EmbeddingModelSingleton
 from financial_bot.models import build_huggingface_pipeline
 from financial_bot.qdrant import build_qdrant_client
@@ -24,6 +28,7 @@ class FinancialBot:
         vector_collection_name: str = constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
         vector_db_search_topk: int = constants.VECTOR_DB_SEARCH_TOPK,
         model_cache_dir: Path = constants.CACHE_DIR,
+        streaming: bool = False,
         embedding_model_device: str = "cuda:0",
         debug: bool = False,
     ):
@@ -40,11 +45,15 @@ class FinancialBot:
         self._llm_agent, self._streamer = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
             llm_lora_model_id=llm_lora_model_id,
-            use_streamer=True,
+            use_streamer=streaming,
             cache_dir=model_cache_dir,
             debug=debug,
         )
         self.finbot_chain = self.build_chain()
+
+    @property
+    def is_streaming(self) -> bool:
+        return self._streamer is not None
 
     def build_chain(self) -> chains.SequentialChain:
         """
@@ -91,13 +100,16 @@ class FinancialBot:
         )
 
         logger.info("Building 3/3 - Connecting chains into SequentialChain")
-        # TODO: Change memory to keep TOP k messages or a summary of the conversation.
-        seq_chain = chains.SequentialChain(
-            memory=ConversationBufferMemory(
-                memory_key="chat_history", input_key="question"
+        seq_chain = StatelessMemorySequentialChain(
+            history_input_key="to_load_history",
+            memory=ConversationBufferWindowMemory(
+                memory_key="chat_history",
+                input_key="question",
+                output_key="answer",
+                k=3,
             ),
             chains=[context_retrieval_chain, llm_generator_chain],
-            input_variables=["about_me", "question"],
+            input_variables=["about_me", "question", "to_load_history"],
             output_variables=["answer"],
             verbose=True,
         )
@@ -114,7 +126,13 @@ class FinancialBot:
 
         return seq_chain
 
-    def answer(self, about_me: str, question: str) -> str:
+    def answer(
+        self,
+        about_me: str,
+        question: str,
+        to_load_history,
+        return_history: bool = False,
+    ) -> Union[str, Tuple[str, List[str]]]:
         """
         Given a short description about the user and a question make the LLM
         generate a response.
@@ -125,6 +143,8 @@ class FinancialBot:
             Short user description.
         question : str
             User question.
+        return_history : bool, optional
+            Whether to return the conversation history or not, by default False
 
         Returns
         -------
@@ -132,8 +152,15 @@ class FinancialBot:
             LLM generated response.
         """
 
-        inputs = {"about_me": about_me, "question": question}
+        inputs = {
+            "about_me": about_me,
+            "question": question,
+            "to_load_history": to_load_history,
+        }
         response = self.finbot_chain.run(inputs)
+
+        if return_history:
+            return response["answer"], response["chat_history"]
 
         return response
 
@@ -141,7 +168,7 @@ class FinancialBot:
         """Stream the answer from the LLM after each token is generated after calling `answer()`."""
 
         assert (
-            self._streamer
+            self.is_streaming
         ), "Stream answer not available. Build the bot with `use_streamer=True`."
 
         partial_answer = ""

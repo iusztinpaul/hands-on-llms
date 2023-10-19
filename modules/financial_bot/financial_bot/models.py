@@ -62,7 +62,7 @@ def build_huggingface_pipeline(
     if debug is True:
         return HuggingFacePipeline(
             pipeline=MockedPipeline(f=lambda _: "You are doing great!")
-        )
+        ), None
 
     model, tokenizer, _ = build_qlora_model(
         pretrained_model_name_or_path=llm_model_id,
