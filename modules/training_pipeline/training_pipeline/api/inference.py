@@ -133,7 +133,7 @@ class InferenceAPI:
                 project=f"{comet_project_name}-{self._name}",
                 prompt=infer_prompt,
                 output=answer,
-                prompt_template=self._prompt_template.train_raw_template,
+                prompt_template=self._prompt_template.infer_raw_template,
                 prompt_template_variables=payload_for_template,
                 metadata={
                     "usage.prompt_tokens": len(infer_prompt),

@@ -1,9 +1,12 @@
 import logging
 from pathlib import Path
-from typing import Iterable, List, Tuple
+from typing import Any, Dict, Iterable, List, Tuple
+import comet_llm
 
 from langchain import chains
+from langchain.callbacks import CometCallbackHandler
 from langchain.memory import ConversationBufferWindowMemory
+from langchain.schema import LLMResult
 
 from financial_bot import constants
 from financial_bot.chains import (
@@ -23,7 +26,7 @@ class FinancialBot:
     def __init__(
         self,
         llm_model_id: str = constants.LLM_MODEL_ID,
-        llm_lora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
+        llm_qlora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
         llm_template_name: str = constants.TEMPLATE_NAME,
         vector_collection_name: str = constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
         vector_db_search_topk: int = constants.VECTOR_DB_SEARCH_TOPK,
@@ -32,6 +35,8 @@ class FinancialBot:
         embedding_model_device: str = "cuda:0",
         debug: bool = False,
     ):
+        self._llm_model_id = llm_model_id
+        self._llm_qlora_model_id = llm_qlora_model_id
         self._llm_template_name = llm_template_name
         self._llm_template = get_llm_template(name=self._llm_template_name)
 
@@ -44,7 +49,7 @@ class FinancialBot:
         )
         self._llm_agent, self._streamer = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
-            llm_lora_model_id=llm_lora_model_id,
+            llm_lora_model_id=llm_qlora_model_id,
             use_streamer=streaming,
             cache_dir=model_cache_dir,
             debug=debug,
@@ -111,6 +116,7 @@ class FinancialBot:
             chains=[context_retrieval_chain, llm_generator_chain],
             input_variables=["about_me", "question", "to_load_history"],
             output_variables=["answer"],
+            callbacks=[CometMonitoringHandler()],
             verbose=True,
         )
 
@@ -171,3 +177,37 @@ class FinancialBot:
                 partial_answer += new_token
 
                 yield partial_answer
+
+
+class CometMonitoringHandler(CometCallbackHandler):
+    def __init__(
+        self,
+        llm_model_id: str = constants.LLM_MODEL_ID,
+        llm_qlora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
+        *args,
+        **kwargs,
+    ):
+        self._llm_model_id = llm_model_id
+        self._llm_qlora_model_id = llm_qlora_model_id
+
+        super().__init__(*args, **kwargs)
+
+    def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
+        super().on_chain_end(outputs=outputs, **kwargs)
+        
+        comet_llm.log_prompt(
+                project="test-prompt-monitoring",
+                prompt=outputs["prompt"],
+                output=outputs["response"],
+                prompt_template=self._prompt_template.train_raw_template,
+                prompt_template_variables=outputs["prompt_template_variables"],
+                metadata={
+                    "usage.prompt_tokens": outputs["metadata"]["usage.prompt_tokens"],
+                    "usage.total_tokens": outputs["metadata"]["usage.total_tokens"],
+                    # "usage.max_new_tokens": self._max_new_tokens,
+                    "usage.actual_new_tokens": outputs["metadata"]["usage.actual_new_tokens"],
+                    "model": self._llm_model_id,
+                    "peft_model": self._llm_qlora_model_id,
+                },
+                duration=outputs["metadata"]["duration_milliseconds"],
+            )
