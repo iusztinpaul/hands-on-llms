@@ -1,12 +1,12 @@
 import logging
+import os
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
-import comet_llm
 
+import comet_llm
 from langchain import chains
-from langchain.callbacks import CometCallbackHandler
+from langchain.callbacks.base import BaseCallbackHandler
 from langchain.memory import ConversationBufferWindowMemory
-from langchain.schema import LLMResult
 
 from financial_bot import constants
 from financial_bot.chains import (
@@ -28,6 +28,8 @@ class FinancialBot:
         llm_model_id: str = constants.LLM_MODEL_ID,
         llm_qlora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
         llm_template_name: str = constants.TEMPLATE_NAME,
+        llm_inference_max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
+        llm_inference_temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
         vector_collection_name: str = constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
         vector_db_search_topk: int = constants.VECTOR_DB_SEARCH_TOPK,
         model_cache_dir: Path = constants.CACHE_DIR,
@@ -39,6 +41,8 @@ class FinancialBot:
         self._llm_qlora_model_id = llm_qlora_model_id
         self._llm_template_name = llm_template_name
         self._llm_template = get_llm_template(name=self._llm_template_name)
+        self._llm_inference_max_new_tokens = llm_inference_max_new_tokens
+        self._llm_inference_temperature = llm_inference_temperature
 
         self._vector_collection_name = vector_collection_name
         self._vector_db_search_topk = vector_db_search_topk
@@ -50,6 +54,8 @@ class FinancialBot:
         self._llm_agent, self._streamer = build_huggingface_pipeline(
             llm_model_id=llm_model_id,
             llm_lora_model_id=llm_qlora_model_id,
+            max_new_tokens=llm_inference_max_new_tokens,
+            temperature=llm_inference_temperature,
             use_streamer=streaming,
             cache_dir=model_cache_dir,
             debug=debug,
@@ -99,9 +105,22 @@ class FinancialBot:
         )
 
         logger.info("Building 2/3 - FinancialBotQAChain")
+        try:
+            comet_project_name = os.environ["COMET_PROJECT_NAME"]
+        except KeyError:
+            raise RuntimeError("Please set the COMET_PROJECT_NAME environment variable.")
         llm_generator_chain = FinancialBotQAChain(
             hf_pipeline=self._llm_agent,
             template=self._llm_template,
+            callbacks=[
+                CometLLMMonitoringHandler(
+                    project_name=f"{comet_project_name}-monitor-prompts",
+                    llm_model_id=self._llm_model_id,
+                    llm_qlora_model_id=self._llm_qlora_model_id,
+                    llm_inference_max_new_tokens=self._llm_inference_max_new_tokens,
+                    llm_inference_temperature=self._llm_inference_temperature,
+                )
+            ],
         )
 
         logger.info("Building 3/3 - Connecting chains into SequentialChain")
@@ -116,7 +135,6 @@ class FinancialBot:
             chains=[context_retrieval_chain, llm_generator_chain],
             input_variables=["about_me", "question", "to_load_history"],
             output_variables=["answer"],
-            callbacks=[CometMonitoringHandler()],
             verbose=True,
         )
 
@@ -179,35 +197,40 @@ class FinancialBot:
                 yield partial_answer
 
 
-class CometMonitoringHandler(CometCallbackHandler):
+class CometLLMMonitoringHandler(BaseCallbackHandler):
     def __init__(
         self,
+        project_name: str = None,
         llm_model_id: str = constants.LLM_MODEL_ID,
         llm_qlora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
-        *args,
-        **kwargs,
+        llm_inference_max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
+        llm_inference_temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
     ):
+        self._project_name = project_name
         self._llm_model_id = llm_model_id
         self._llm_qlora_model_id = llm_qlora_model_id
-
-        super().__init__(*args, **kwargs)
-
-    def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
-        super().on_chain_end(outputs=outputs, **kwargs)
+        self._llm_inference_max_new_tokens = llm_inference_max_new_tokens
+        self._llm_inference_temperature = llm_inference_temperature
         
-        comet_llm.log_prompt(
-                project="test-prompt-monitoring",
-                prompt=outputs["prompt"],
-                output=outputs["response"],
-                prompt_template=self._prompt_template.train_raw_template,
-                prompt_template_variables=outputs["prompt_template_variables"],
+    def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
+        should_log_prompt = "metadata" in kwargs
+        if should_log_prompt:
+            metadata = kwargs["metadata"]
+
+            comet_llm.log_prompt(
+                project=self._project_name,
+                prompt=metadata["prompt"],
+                output=outputs["answer"],
+                prompt_template=metadata["prompt_template"],
+                prompt_template_variables=metadata["prompt_template_variables"],
                 metadata={
-                    "usage.prompt_tokens": outputs["metadata"]["usage.prompt_tokens"],
-                    "usage.total_tokens": outputs["metadata"]["usage.total_tokens"],
-                    # "usage.max_new_tokens": self._max_new_tokens,
-                    "usage.actual_new_tokens": outputs["metadata"]["usage.actual_new_tokens"],
+                    "usage.prompt_tokens": metadata["usage.prompt_tokens"],
+                    "usage.total_tokens": metadata["usage.total_tokens"],
+                    "usage.max_new_tokens": self._llm_inference_max_new_tokens,
+                    "usage.temperature": self._llm_inference_temperature,
+                    "usage.actual_new_tokens": metadata["usage.actual_new_tokens"],
                     "model": self._llm_model_id,
                     "peft_model": self._llm_qlora_model_id,
                 },
-                duration=outputs["metadata"]["duration_milliseconds"],
+                duration=metadata["duration_milliseconds"],
             )

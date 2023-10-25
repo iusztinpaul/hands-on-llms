@@ -6,7 +6,6 @@ from langchain import chains
 from langchain.callbacks.manager import CallbackManagerForChainRun
 from langchain.chains.base import Chain
 from langchain.llms import HuggingFacePipeline
-from langchain.schema import Generation, LLMResult, RunInfo
 
 from financial_bot.embeddings import EmbeddingModelSingleton
 from financial_bot.template import PromptTemplate
@@ -120,7 +119,7 @@ class FinancialBotQAChain(Chain):
                 "question": inputs.get("context"),
             }
         )
-        
+
         start_time = time.time()
         response = self.hf_pipeline(prompt["prompt"])
         end_time = time.time()
@@ -128,20 +127,19 @@ class FinancialBotQAChain(Chain):
 
         if run_manager:
             run_manager.on_chain_end(
-                outputs = {
+                outputs={
                     "answer": response,
                 },
-                financial_bot_metadata={
-                    "response": response,
+                # TODO: Compute tokens instead of using len().
+                metadata={
                     "prompt": prompt["prompt"],
-                        "prompt_template_variables": prompt["payload"],
-                        "metadata": {
-                            "usage.prompt_tokens": len(prompt["prompt"]),
-                            "usage.total_tokens": len(prompt["prompt"]) + len(response),
-                            "usage.actual_new_tokens": len(response),
-                            "duration_milliseconds": duration_milliseconds,
-                        }
-                }
+                    "prompt_template_variables": prompt["payload"],
+                    "prompt_template": self.template.infer_raw_template,
+                    "usage.prompt_tokens": len(prompt["prompt"]),
+                    "usage.total_tokens": len(prompt["prompt"]) + len(response),
+                    "usage.actual_new_tokens": len(response),
+                    "duration_milliseconds": duration_milliseconds,
+                },
             )
 
         return {"answer": response}

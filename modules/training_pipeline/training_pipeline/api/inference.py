@@ -29,7 +29,7 @@ class InferenceAPI:
         self,
         peft_model_id: str,
         model_id: str,
-        name: str = "inference-prompts",
+        name: str = "inference-api",
         template_name: str = "falcon",
         root_dataset_dir: Optional[Path] = None,
         test_dataset_file: Optional[Path] = None,
@@ -109,7 +109,6 @@ class InferenceAPI:
         # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
 
         start_time = time.time()
-
         answer = models.prompt(
             model=self._model,
             tokenizer=self._tokenizer,
@@ -119,7 +118,6 @@ class InferenceAPI:
             return_only_answer=True,
         )
         end_time = time.time()
-
         duration_milliseconds = (end_time - start_time) * 1000
 
         if self._debug:
@@ -130,11 +128,12 @@ class InferenceAPI:
             }
 
             comet_llm.log_prompt(
-                project=f"{comet_project_name}-{self._name}",
+                project=f"{comet_project_name}-{self._name}-monitor-prompts",
                 prompt=infer_prompt,
                 output=answer,
                 prompt_template=self._prompt_template.infer_raw_template,
                 prompt_template_variables=payload_for_template,
+                # TODO: Compute tokens instead of using len().
                 metadata={
                     "usage.prompt_tokens": len(infer_prompt),
                     "usage.total_tokens": len(infer_prompt) + len(answer),
