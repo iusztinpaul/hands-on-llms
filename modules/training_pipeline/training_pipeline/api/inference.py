@@ -133,7 +133,7 @@ class InferenceAPI:
                 output=answer,
                 prompt_template=self._prompt_template.infer_raw_template,
                 prompt_template_variables=payload_for_template,
-                # TODO: Compute tokens instead of using len().
+                # TODO: Count tokens instead of using len().
                 metadata={
                     "usage.prompt_tokens": len(infer_prompt),
                     "usage.total_tokens": len(infer_prompt) + len(answer),

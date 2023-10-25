@@ -130,7 +130,7 @@ class FinancialBotQAChain(Chain):
                 outputs={
                     "answer": response,
                 },
-                # TODO: Compute tokens instead of using len().
+                # TODO: Count tokens instead of using len().
                 metadata={
                     "prompt": prompt["prompt"],
                     "prompt_template_variables": prompt["payload"],
