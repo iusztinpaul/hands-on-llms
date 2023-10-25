@@ -108,7 +108,9 @@ class FinancialBot:
         try:
             comet_project_name = os.environ["COMET_PROJECT_NAME"]
         except KeyError:
-            raise RuntimeError("Please set the COMET_PROJECT_NAME environment variable.")
+            raise RuntimeError(
+                "Please set the COMET_PROJECT_NAME environment variable."
+            )
         llm_generator_chain = FinancialBotQAChain(
             hf_pipeline=self._llm_agent,
             template=self._llm_template,
@@ -211,7 +213,7 @@ class CometLLMMonitoringHandler(BaseCallbackHandler):
         self._llm_qlora_model_id = llm_qlora_model_id
         self._llm_inference_max_new_tokens = llm_inference_max_new_tokens
         self._llm_inference_temperature = llm_inference_temperature
-        
+
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
         should_log_prompt = "metadata" in kwargs
         if should_log_prompt:
