@@ -1,11 +1,9 @@
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Iterable, List, Tuple
 
-import comet_llm
 from langchain import chains
-from langchain.callbacks.base import BaseCallbackHandler
 from langchain.memory import ConversationBufferWindowMemory
 
 from financial_bot import constants
@@ -15,6 +13,7 @@ from financial_bot.chains import (
     StatelessMemorySequentialChain,
 )
 from financial_bot.embeddings import EmbeddingModelSingleton
+from financial_bot.handlers import CometLLMMonitoringHandler
 from financial_bot.models import build_huggingface_pipeline
 from financial_bot.qdrant import build_qdrant_client
 from financial_bot.template import get_llm_template
@@ -43,9 +42,10 @@ class FinancialBot:
         self._llm_template = get_llm_template(name=self._llm_template_name)
         self._llm_inference_max_new_tokens = llm_inference_max_new_tokens
         self._llm_inference_temperature = llm_inference_temperature
-
         self._vector_collection_name = vector_collection_name
         self._vector_db_search_topk = vector_db_search_topk
+        self._debug = debug
+
         self._qdrant_client = build_qdrant_client()
 
         self._embd_model = EmbeddingModelSingleton(
@@ -105,16 +105,16 @@ class FinancialBot:
         )
 
         logger.info("Building 2/3 - FinancialBotQAChain")
-        try:
-            comet_project_name = os.environ["COMET_PROJECT_NAME"]
-        except KeyError:
-            raise RuntimeError(
-                "Please set the COMET_PROJECT_NAME environment variable."
-            )
-        llm_generator_chain = FinancialBotQAChain(
-            hf_pipeline=self._llm_agent,
-            template=self._llm_template,
-            callbacks=[
+        if self._debug:
+            callabacks = []
+        else:
+            try:
+                comet_project_name = os.environ["COMET_PROJECT_NAME"]
+            except KeyError:
+                raise RuntimeError(
+                    "Please set the COMET_PROJECT_NAME environment variable."
+                )
+            callabacks = [
                 CometLLMMonitoringHandler(
                     project_name=f"{comet_project_name}-monitor-prompts",
                     llm_model_id=self._llm_model_id,
@@ -122,7 +122,11 @@ class FinancialBot:
                     llm_inference_max_new_tokens=self._llm_inference_max_new_tokens,
                     llm_inference_temperature=self._llm_inference_temperature,
                 )
-            ],
+            ]
+        llm_generator_chain = FinancialBotQAChain(
+            hf_pipeline=self._llm_agent,
+            template=self._llm_template,
+            callbacks=callabacks,
         )
 
         logger.info("Building 3/3 - Connecting chains into SequentialChain")
@@ -197,42 +201,3 @@ class FinancialBot:
                 partial_answer += new_token
 
                 yield partial_answer
-
-
-class CometLLMMonitoringHandler(BaseCallbackHandler):
-    def __init__(
-        self,
-        project_name: str = None,
-        llm_model_id: str = constants.LLM_MODEL_ID,
-        llm_qlora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
-        llm_inference_max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
-        llm_inference_temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
-    ):
-        self._project_name = project_name
-        self._llm_model_id = llm_model_id
-        self._llm_qlora_model_id = llm_qlora_model_id
-        self._llm_inference_max_new_tokens = llm_inference_max_new_tokens
-        self._llm_inference_temperature = llm_inference_temperature
-
-    def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
-        should_log_prompt = "metadata" in kwargs
-        if should_log_prompt:
-            metadata = kwargs["metadata"]
-
-            comet_llm.log_prompt(
-                project=self._project_name,
-                prompt=metadata["prompt"],
-                output=outputs["answer"],
-                prompt_template=metadata["prompt_template"],
-                prompt_template_variables=metadata["prompt_template_variables"],
-                metadata={
-                    "usage.prompt_tokens": metadata["usage.prompt_tokens"],
-                    "usage.total_tokens": metadata["usage.total_tokens"],
-                    "usage.max_new_tokens": self._llm_inference_max_new_tokens,
-                    "usage.temperature": self._llm_inference_temperature,
-                    "usage.actual_new_tokens": metadata["usage.actual_new_tokens"],
-                    "model": self._llm_model_id,
-                    "peft_model": self._llm_qlora_model_id,
-                },
-                duration=metadata["duration_milliseconds"],
-            )
