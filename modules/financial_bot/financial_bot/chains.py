@@ -1,7 +1,9 @@
-from typing import Any, Dict, List
+import time
+from typing import Any, Dict, List, Optional
 
 import qdrant_client
 from langchain import chains
+from langchain.callbacks.manager import CallbackManagerForChainRun
 from langchain.chains.base import Chain
 from langchain.llms import HuggingFacePipeline
 
@@ -104,7 +106,11 @@ class FinancialBotQAChain(Chain):
     def output_keys(self) -> List[str]:
         return ["answer"]
 
-    def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    def _call(
+        self,
+        inputs: Dict[str, Any],
+        run_manager: Optional[CallbackManagerForChainRun] = None,
+    ) -> Dict[str, Any]:
         prompt = self.template.format_infer(
             {
                 "user_context": inputs["about_me"],
@@ -112,7 +118,28 @@ class FinancialBotQAChain(Chain):
                 "chat_history": inputs["chat_history"],
                 "question": inputs.get("context"),
             }
-        )["prompt"]
-        response = self.hf_pipeline(prompt)
+        )
+
+        start_time = time.time()
+        response = self.hf_pipeline(prompt["prompt"])
+        end_time = time.time()
+        duration_milliseconds = (end_time - start_time) * 1000
+
+        if run_manager:
+            run_manager.on_chain_end(
+                outputs={
+                    "answer": response,
+                },
+                # TODO: Count tokens instead of using len().
+                metadata={
+                    "prompt": prompt["prompt"],
+                    "prompt_template_variables": prompt["payload"],
+                    "prompt_template": self.template.infer_raw_template,
+                    "usage.prompt_tokens": len(prompt["prompt"]),
+                    "usage.total_tokens": len(prompt["prompt"]) + len(response),
+                    "usage.actual_new_tokens": len(response),
+                    "duration_milliseconds": duration_milliseconds,
+                },
+            )
 
         return {"answer": response}
