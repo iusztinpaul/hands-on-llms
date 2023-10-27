@@ -29,15 +29,17 @@ class InferenceAPI:
         self,
         peft_model_id: str,
         model_id: str,
+        template_name: str,
+        root_dataset_dir: Path,
+        test_dataset_file: Path,
         name: str = "inference-api",
-        template_name: str = "falcon",
-        root_dataset_dir: Optional[Path] = None,
-        test_dataset_file: Optional[Path] = None,
         max_new_tokens: int = 50,
-        model_cache_dir: Optional[Path] = None,
+        temperature: float = 1.0,
+        model_cache_dir: Path = constants.CACHE_DIR,
         debug: bool = False,
         device: str = "cuda:0",
     ):
+        self._template_name = template_name
         self._prompt_template = get_llm_template(template_name)
         self._peft_model_id = peft_model_id
         self._model_id = model_id
@@ -45,6 +47,7 @@ class InferenceAPI:
         self._root_dataset_dir = root_dataset_dir
         self._test_dataset_file = test_dataset_file
         self._max_new_tokens = max_new_tokens
+        self._temperature = temperature
         self._model_cache_dir = model_cache_dir
         self._debug = debug
         self._device = device
@@ -59,22 +62,24 @@ class InferenceAPI:
     def from_config(
         cls,
         config: InferenceConfig,
-        root_dataset_dir: Optional[Path] = None,
-        model_cache_dir: Optional[Path] = None,
+        root_dataset_dir: Path,
+        model_cache_dir: Path = constants.CACHE_DIR,
     ):
         return cls(
             peft_model_id=config.peft_model["id"],
             model_id=config.model["id"],
+            template_name=config.model["template_name"],
             root_dataset_dir=root_dataset_dir,
-            test_dataset_file=config.dataset["evaluation"],
+            test_dataset_file=config.dataset["file"],
             max_new_tokens=config.model["max_new_tokens"],
+            temperature=config.model["temperature"],
             model_cache_dir=model_cache_dir,
             debug=config.setup.get("debug", False),
             device=config.setup.get("device", "cuda:0"),
         )
 
     def load_data(self) -> Dataset:
-        logger.info(f"Loading FinQA datasets from {self._root_dataset_dir=}")
+        logger.info(f"Loading QA dataset from {self._root_dataset_dir=}")
 
         if self._debug:
             max_samples = 3
@@ -83,6 +88,7 @@ class InferenceAPI:
 
         dataset = qa.FinanceDataset(
             data_path=self._root_dataset_dir / self._test_dataset_file,
+            template=self._template_name,
             scope=constants.Scope.INFERENCE,
             max_samples=max_samples,
         ).to_huggingface()
@@ -114,13 +120,14 @@ class InferenceAPI:
             tokenizer=self._tokenizer,
             input_text=infer_prompt,
             max_new_tokens=self._max_new_tokens,
+            temperature=self._temperature,
             device=self._device,
             return_only_answer=True,
         )
         end_time = time.time()
         duration_milliseconds = (end_time - start_time) * 1000
 
-        if self._debug:
+        if not self._debug:
             payload_for_template = {
                 "user_context": infer_payload["about_me"],
                 "news_context": infer_payload["context"],

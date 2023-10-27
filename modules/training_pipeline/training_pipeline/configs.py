@@ -2,8 +2,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict
 
-from training_pipeline.data.utils import load_yaml
 from transformers import TrainingArguments
+
+from training_pipeline.data.utils import load_yaml
 
 
 @dataclass

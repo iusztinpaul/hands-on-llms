@@ -10,16 +10,16 @@ install:
 	poetry run pip install torch==2.0.1
 
 install_dev: install
-	poetry install --with dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --with dev
 
 install_only_dev:
-	poetry install --only dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --only dev
 
 add:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add $(package)
 
 add_dev:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add --group dev $(package)
 
 
 ### Beam ###
@@ -31,7 +31,7 @@ export_requirements:
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 upload_dataset_to_beam:
-	beam volume upload finqa_dataset dataset
+	beam volume upload qa_dataset dataset
 
 
 ### Training ###
@@ -49,12 +49,12 @@ train_local:
 dev_train_beam:
 	@echo "Running training pipeline on Beam using the development config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 train_beam:
 	@echo "Running training pipeline on Beam using the production config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/train_finqa.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 
 ### Inference ###
@@ -72,12 +72,12 @@ infer_local:
 dev_infer_beam:
 	@echo "Running inference pipeline on Beam using the development config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/inference_finqa.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 infer_beam:
 	@echo "Running inference pipeline on Beam using the production config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/inference_finqa.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 
 ### PEP 8 ###

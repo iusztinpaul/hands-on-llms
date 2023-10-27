@@ -19,6 +19,7 @@ training:
   load_best_model_at_end: True
 model:
   id: tiiuae/falcon-7b-instruct
+  template: falcon
   max_seq_length: 1024
 setup:
   debug: True

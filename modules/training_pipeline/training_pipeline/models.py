@@ -58,7 +58,11 @@ def build_qlora_model(
         truncation=True,
         cache_dir=str(cache_dir) if cache_dir else None,
     )
-    tokenizer.pad_token = tokenizer.eos_token
+    if tokenizer.pad_token_id is None:
+        tokenizer.add_special_tokens({"pad_token": "<|pad|>"})
+        with torch.no_grad():
+            model.resize_token_embeddings(len(tokenizer))
+        model.config.pad_token_id = tokenizer.pad_token_id
 
     if peft_pretrained_model_name_or_path:
         is_model_name = not os.path.isdir(peft_pretrained_model_name_or_path)
@@ -130,6 +134,7 @@ def prompt(
     tokenizer,
     input_text: str,
     max_new_tokens: int = 40,
+    temperature: float = 1.0,
     device: str = "cuda:0",
     return_only_answer: bool = False,
 ):
@@ -137,7 +142,9 @@ def prompt(
         device
     )
 
-    outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
+    outputs = model.generate(
+        **inputs, max_new_tokens=max_new_tokens, temperature=temperature
+    )
 
     output = outputs[
         0

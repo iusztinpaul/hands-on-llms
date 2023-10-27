@@ -7,34 +7,34 @@ install:
 	@echo "Installing streaming pipeline..."
 	
 	poetry env use $(shell which python3.10) && \
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install
 
 install_dev: install
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --with dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --with dev
 
 install_only_dev:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry install --only dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --only dev
 
 add:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add $(package)
 
 add_dev:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add --group dev $(package)
 
 
 ### Run ###
 
 run_real_time:
-	export RUST_BACKTRACE=full; poetry run python -m bytewax.run tools.run_real_time:build_flow
+	RUST_BACKTRACE=full poetry run python -m bytewax.run tools.run_real_time:build_flow
 
 run_real_time_dev:
-	export RUST_BACKTRACE=full; poetry run python -m bytewax.run "tools.run_real_time:build_flow(debug=True)"
+	RUST_BACKTRACE=full poetry run python -m bytewax.run "tools.run_real_time:build_flow(debug=True)"
 
 run_batch:
-	export RUST_BACKTRACE=full; poetry run python -m bytewax.run -p4 "tools.run_batch:build_flow(latest_n_days=8)"
+	RUST_BACKTRACE=full poetry run python -m bytewax.run -p4 "tools.run_batch:build_flow(latest_n_days=8)"
 
 run_batch_dev:
-	export RUST_BACKTRACE=full; poetry run python -m bytewax.run "tools.run_batch:build_flow(latest_n_days=2, debug=True)"
+	RUST_BACKTRACE=full poetry run python -m bytewax.run "tools.run_batch:build_flow(latest_n_days=2, debug=True)"
 
 search:
 	poetry run python -m tools.search ${PARAMS}

@@ -25,14 +25,18 @@ class TrainingAPI:
         self,
         root_dataset_dir: Path,
         model_id: str,
+        template_name: str,
         training_arguments: TrainingArguments,
+        name: str = "training-api",
         max_seq_length: int = 1024,
         debug: bool = False,
-        model_cache_dir: Optional[Path] = None,
+        model_cache_dir: Path = constants.CACHE_DIR,
     ):
         self._root_dataset_dir = root_dataset_dir
         self._model_id = model_id
+        self._template_name = template_name
         self._training_arguments = training_arguments
+        self._name = name
         self._max_seq_length = max_seq_length
         self._debug = debug
         self._model_cache_dir = model_cache_dir
@@ -41,7 +45,7 @@ class TrainingAPI:
         self._model, self._tokenizer, self._peft_config = self.load_model()
 
     @property
-    def name(self) -> str:
+    def model_name(self) -> str:
         return f"financial_assistant/{self._model_id}"
 
     @classmethod
@@ -54,6 +58,7 @@ class TrainingAPI:
         return cls(
             root_dataset_dir=root_dataset_dir,
             model_id=config.model["id"],
+            template_name=config.model["template"],
             training_arguments=config.training,
             max_seq_length=config.model["max_seq_length"],
             debug=config.setup["debug"],
@@ -61,7 +66,7 @@ class TrainingAPI:
         )
 
     def load_data(self) -> Tuple[Dataset, Dataset]:
-        logger.info(f"Loading FinQA datasets from {self._root_dataset_dir=}")
+        logger.info(f"Loading QA datasets from {self._root_dataset_dir=}")
 
         if self._debug:
             logger.info("Debug mode enabled. Truncating datasets...")
@@ -75,11 +80,13 @@ class TrainingAPI:
 
         training_dataset = qa.FinanceDataset(
             data_path=self._root_dataset_dir / "training_data.json",
+            template=self._template_name,
             scope=constants.Scope.TRAINING,
             max_samples=training_max_samples,
         ).to_huggingface()
         validation_dataset = qa.FinanceDataset(
             data_path=self._root_dataset_dir / "testing_data.json",
+            template=self._template_name,
             scope=constants.Scope.TRAINING,
             max_samples=validation_max_samples,
         ).to_huggingface()
@@ -142,8 +149,8 @@ class TrainingAPI:
         ), f"Checkpoint directory {checkpoint_dir} does not exist"
 
         experiment = comet_ml.Experiment()
-        experiment.log_model(self.name, str(checkpoint_dir))
-        logger.debug(f"Logging model checkpoint @ {self.name}")
+        experiment.log_model(self.model_name, str(checkpoint_dir))
+        logger.debug(f"Logging model checkpoint @ {self.model_name}")
 
     def compute_metrics(self, eval_pred: EvalPrediction):
         return {"perplexity": metrics.compute_perplexity(eval_pred.predictions)}
