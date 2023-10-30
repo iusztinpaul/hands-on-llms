@@ -431,12 +431,12 @@ types-requests = "*"
 
 [[package]]
 name = "comet-ml"
-version = "3.33.10"
+version = "3.35.1"
 description = "Supercharging Machine Learning"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "comet_ml-3.33.10-py3-none-any.whl", hash = "sha256:b927fa3ba6398faf5ba0037d255944234af77d65f16233fc5697b8712bb71d7b"},
+    {file = "comet_ml-3.35.1-py3-none-any.whl", hash = "sha256:f5333c8fbaae0917266f4aedf8e1b0dab170483b8333b69ffea44e1f90d28bd1"},
 ]
 
 [package.dependencies]
@@ -3916,4 +3916,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "d0110b377c1c77b8c8db81d658c757078415b1b4f120c7b17b0d0990a98647df"
+content-hash = "c3f958988b2314cf71c1e1fd9c7c92045db99adb9687b4bfaf1ddcd318825994"

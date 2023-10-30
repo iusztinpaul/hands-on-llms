@@ -128,18 +128,12 @@ class InferenceAPI:
         duration_milliseconds = (end_time - start_time) * 1000
 
         if not self._debug:
-            payload_for_template = {
-                "user_context": infer_payload["about_me"],
-                "news_context": infer_payload["context"],
-                "question": infer_payload["question"],
-            }
-
             comet_llm.log_prompt(
                 project=f"{comet_project_name}-{self._name}-monitor-prompts",
                 prompt=infer_prompt,
                 output=answer,
                 prompt_template=self._prompt_template.infer_raw_template,
-                prompt_template_variables=payload_for_template,
+                prompt_template_variables=infer_payload,
                 # TODO: Count tokens instead of using len().
                 metadata={
                     "usage.prompt_tokens": len(infer_prompt),

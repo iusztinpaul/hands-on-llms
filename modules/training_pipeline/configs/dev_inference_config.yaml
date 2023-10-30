@@ -1,5 +1,5 @@
 peft_model:
-  id: iusztinpaul/fin-falcon-7b-lora:0.0.1
+  id: iusztinpaul/fin-falcon-7b-lora:0.0.2
 model:
   id: tiiuae/falcon-7b-instruct
   template_name: "falcon"

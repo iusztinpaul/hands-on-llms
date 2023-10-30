@@ -8,8 +8,6 @@ for inference and training by combining various context elements and user inputs
 import dataclasses
 from typing import Dict, List, Union
 
-from financial_bot import constants
-
 
 @dataclasses.dataclass
 class PromptTemplate:
@@ -104,7 +102,7 @@ register_llm_template(
     PromptTemplate(
         name="falcon",
         system_template=">>INTRODUCTION<< {system_message}",
-        system_message=constants.SYSTEM_MESSAGE,
+        system_message="You are a helpful assistant, with financial expertise.",
         context_template=">>DOMAIN<< {user_context}\n{news_context}",
         chat_history_template=">>SUMMARY<< {chat_history}",
         question_template=">>QUESTION<< {question}",

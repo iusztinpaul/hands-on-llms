@@ -11,10 +11,10 @@ from training_pipeline.prompt_templates.prompter import get_llm_template
 
 @dataclass(frozen=True)
 class DataSample:
-    about_me: str = field(repr=False)
-    context: str = ""
+    user_context: str = field(repr=False)
+    news_context: str = ""
     question: str = ""
-    response: str = ""
+    answer: str = ""
 
 
 class FinanceDataset:
@@ -42,18 +42,18 @@ class FinanceDataset:
         if self._scope == Scope.TRAINING:
             return [
                 DataSample(
-                    about_me=sample["about_me"],
-                    context=sample["context"],
+                    user_context=sample["about_me"],
+                    news_context=sample["context"],
                     question=sample["question"],
-                    response=sample["response"],
+                    answer=sample["response"],
                 )
                 for sample in data
             ]
         else:
             return [
                 DataSample(
-                    about_me=sample["about_me"],
-                    context=sample["context"],
+                    user_context=sample["about_me"],
+                    news_context=sample["context"],
                     question=sample["question"],
                 )
                 for sample in data

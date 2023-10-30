@@ -67,6 +67,9 @@ def build_qlora_model(
     if peft_pretrained_model_name_or_path:
         is_model_name = not os.path.isdir(peft_pretrained_model_name_or_path)
         if is_model_name:
+            logger.info(
+                f"Downloading {peft_pretrained_model_name_or_path} from CometML Model Registry:"
+            )
             peft_pretrained_model_name_or_path = download_from_model_registry(
                 model_id=peft_pretrained_model_name_or_path,
                 cache_dir=cache_dir,
@@ -108,12 +111,16 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
         cache_dir = constants.CACHE_DIR
     output_folder = cache_dir / "models" / model_id
 
-    workspace, model_id = model_id.split("/")
-    model_name, version = model_id.split(":")
+    already_downloaded = output_folder.exists()
+    if not already_downloaded:
+        workspace, model_id = model_id.split("/")
+        model_name, version = model_id.split(":")
 
-    api = API()
-    model = api.get_model(workspace=workspace, model_name=model_name)
-    model.download(version=version, output_folder=output_folder, expand=True)
+        api = API()
+        model = api.get_model(workspace=workspace, model_name=model_name)
+        model.download(version=version, output_folder=output_folder, expand=True)
+    else:
+        logger.info(f"Model {model_id=} already downloaded to: {output_folder}")
 
     subdirs = [d for d in output_folder.iterdir() if d.is_dir()]
     if len(subdirs) == 1:

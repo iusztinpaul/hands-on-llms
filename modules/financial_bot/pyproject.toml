@@ -10,7 +10,7 @@ packages = [{include = "financial_bot"}]
 python = ">=3.10,<3.12"
 qdrant-client = "1.1.1"
 langchain = "^0.0.285"
-comet-ml = "^3.33.7"
+comet-ml = "3.35.1"
 transformers = "^4.31.0"
 peft = "^0.4.0"
 accelerate = "^0.21.0"
