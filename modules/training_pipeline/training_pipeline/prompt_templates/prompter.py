@@ -68,6 +68,7 @@ class PromptTemplate:
             question=sample["question"],
             answer=sample["answer"],
         )
+
         return {"prompt": prompt, "payload": sample}
 
     def format_infer(self, sample: Dict[str, str]) -> Dict[str, Union[str, Dict]]:

@@ -176,7 +176,7 @@ cython_debug/
 
 # Artifacts
 results/
-output/
+output*/
 model_cache/
 output*
 user_data.sh

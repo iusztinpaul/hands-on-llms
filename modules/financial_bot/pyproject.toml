@@ -23,6 +23,7 @@ bitsandbytes = "^0.41.1"
 torch = "2.0.1"
 beam-sdk = "0.14.6"
 gradio = "^3.48.0"
+unstructured = "^0.10.28"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"

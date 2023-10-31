@@ -153,7 +153,7 @@ class InferenceAPI:
             self._dataset is not None
         ), "Dataset not loaded. Provide a dataset directory to the constructor: 'root_dataset_dir'."
 
-        question_and_answers = []
+        prompt_and_answers = []
         should_save_output = output_file is not None
         for sample in tqdm(self._dataset):
             answer = self.infer(
@@ -161,12 +161,12 @@ class InferenceAPI:
             )
 
             if should_save_output:
-                question_and_answers.append(
+                prompt_and_answers.append(
                     {
-                        "question": sample["prompt"],
+                        "prompt": sample["prompt"],
                         "answer": answer,
                     }
                 )
 
         if should_save_output:
-            utils.write_json(question_and_answers, output_file)
+            utils.write_json(prompt_and_answers, output_file)

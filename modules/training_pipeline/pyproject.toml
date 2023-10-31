@@ -14,7 +14,7 @@ peft = "^0.4.0"
 accelerate = "^0.21.0"
 datasets = "^2.14.2"
 trl = "^0.4.7"
-comet-ml = "^3.33.7"
+comet-ml = "3.35.1"
 python-dotenv = "^1.0.0"
 scipy = "^1.11.1"
 einops = "^0.6.1"
@@ -23,6 +23,7 @@ psutil = "^5.9.5"
 torch = "2.0.1"
 fire = "^0.5.0"
 comet-llm = "^1.1.0"
+unstructured = "^0.10.28"
 
 
 [tool.poetry.group.dev]

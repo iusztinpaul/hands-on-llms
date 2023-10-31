@@ -9,7 +9,7 @@ training:
   learning_rate: 2.e-4
   fp16: True
   max_grad_norm: 0.3
-  num_train_epochs: 25
+  num_train_epochs: 21
   warmup_ratio: 0.03
   lr_scheduler_type: constant
   evaluation_strategy: steps

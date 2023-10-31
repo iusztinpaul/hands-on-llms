@@ -68,7 +68,7 @@ def build_qlora_model(
         is_model_name = not os.path.isdir(peft_pretrained_model_name_or_path)
         if is_model_name:
             logger.info(
-                f"Downloading {peft_pretrained_model_name_or_path} from CometML Model Registry:"
+                f"Downloading {peft_pretrained_model_name_or_path} from Comet ML's model registry."
             )
             peft_pretrained_model_name_or_path = download_from_model_registry(
                 model_id=peft_pretrained_model_name_or_path,

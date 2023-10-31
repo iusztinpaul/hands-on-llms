@@ -1,8 +1,9 @@
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from datasets import Dataset
+from unstructured.cleaners.core import clean_extra_whitespace, group_broken_paragraphs
 
 from training_pipeline.constants import Scope
 from training_pipeline.data.utils import load_json
@@ -13,6 +14,7 @@ from training_pipeline.prompt_templates.prompter import get_llm_template
 class DataSample:
     user_context: str = field(repr=False)
     news_context: str = ""
+    chat_history: str = ""
     question: str = ""
     answer: str = ""
 
@@ -44,6 +46,7 @@ class FinanceDataset:
                 DataSample(
                     user_context=sample["about_me"],
                     news_context=sample["context"],
+                    chat_history=sample.get("chat_history", ""),
                     question=sample["question"],
                     answer=sample["response"],
                 )
@@ -54,6 +57,7 @@ class FinanceDataset:
                 DataSample(
                     user_context=sample["about_me"],
                     news_context=sample["context"],
+                    chat_history=sample.get("chat_history", ""),
                     question=sample["question"],
                 )
                 for sample in data
@@ -64,9 +68,21 @@ class FinanceDataset:
         data_as_dict = [asdict(sample) for sample in self._raw_data]
         dataset = Dataset.from_list(data_as_dict)
         if self._scope == Scope.TRAINING:
-            mapping_func = self._template.format_train
+            template_mapping_func = self._template.format_train
         else:
-            mapping_func = self._template.format_infer
-        dataset = dataset.map(mapping_func, remove_columns=dataset.column_names)
+            template_mapping_func = self._template.format_infer
+        
+        dataset = dataset.map(self.clean)
+        dataset = dataset.map(template_mapping_func, remove_columns=dataset.column_names)
 
         return dataset
+
+    def clean(self, samples: Dict[str, str]) -> Dict[str, str]:
+        for key, sample in samples.items():
+            cleaned_sample = clean_extra_whitespace(sample)
+            cleaned_sample = group_broken_paragraphs(cleaned_sample)
+            cleaned_sample = cleaned_sample.strip("\n_\\ ")
+            
+            samples[key] = cleaned_sample
+
+        return samples
