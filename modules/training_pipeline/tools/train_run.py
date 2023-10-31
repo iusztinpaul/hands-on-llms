@@ -15,7 +15,7 @@ training_app = App(
         image=Image(python_version="python3.10", python_packages="requirements.txt"),
     ),
     volumes=[
-        Volume(path="./dataset", name="qa_dataset"),
+        Volume(path="./qa_dataset", name="qa_dataset"),
         Volume(
             path="./output",
             name="train_qa_output",
