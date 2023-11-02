@@ -1,6 +1,6 @@
 .PHONY: help install install_dev add add_dev export_requirements dev_train_local train_local dev_train_beam train_beam dev_infer_local infer_local dev_infer_beam infer_beam lint_check lint_fix format_check format_fix
 
-### Install ###
+# === Install ===
 
 install:
 	@echo "Installing training pipeline..."
@@ -10,19 +10,19 @@ install:
 	poetry run pip install torch==2.0.1
 
 install_dev: install
-	poetry install --with dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --with dev
 
 install_only_dev:
-	poetry install --only dev
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --only dev
 
 add:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add $(package)
 
 add_dev:
-	export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring; poetry add --group dev $(package)
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add --group dev $(package)
 
 
-### Beam ###
+# === Beam ===
 
 export_requirements:
 	@echo "Exporting requirements..."
@@ -31,12 +31,10 @@ export_requirements:
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 upload_dataset_to_beam:
-	@echo "Pushing data to the qa_dataset volume on Beam..."
-
 	beam volume upload qa_dataset dataset
 
 
-### Training ###
+# === Training ===
 
 dev_train_local:
 	@echo "Running training pipeline locally using the development config..."
@@ -51,15 +49,15 @@ train_local:
 dev_train_beam:
 	@echo "Running training pipeline on Beam using the development config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 train_beam:
 	@echo "Running training pipeline on Beam using the production config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 
-### Inference ###
+# === Inference ===
 
 dev_infer_local:
 	@echo "Running inference pipeline locally using the production config..."
@@ -74,15 +72,15 @@ infer_local:
 dev_infer_beam:
 	@echo "Running inference pipeline on Beam using the development config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/inference_finqa.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 infer_beam:
 	@echo "Running inference pipeline on Beam using the production config..."
 
-	export BEAM_IGNORE_IMPORTS_OFF=true; beam run ./tools/inference_finqa.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 
-### PEP 8 ###
+# === PEP8 ===
 # Be sure to install the dev dependencies first #
 
 lint_check:

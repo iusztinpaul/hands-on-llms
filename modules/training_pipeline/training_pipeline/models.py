@@ -58,11 +58,18 @@ def build_qlora_model(
         truncation=True,
         cache_dir=str(cache_dir) if cache_dir else None,
     )
-    tokenizer.pad_token = tokenizer.eos_token
+    if tokenizer.pad_token_id is None:
+        tokenizer.add_special_tokens({"pad_token": "<|pad|>"})
+        with torch.no_grad():
+            model.resize_token_embeddings(len(tokenizer))
+        model.config.pad_token_id = tokenizer.pad_token_id
 
     if peft_pretrained_model_name_or_path:
         is_model_name = not os.path.isdir(peft_pretrained_model_name_or_path)
         if is_model_name:
+            logger.info(
+                f"Downloading {peft_pretrained_model_name_or_path} from Comet ML's model registry."
+            )
             peft_pretrained_model_name_or_path = download_from_model_registry(
                 model_id=peft_pretrained_model_name_or_path,
                 cache_dir=cache_dir,
@@ -104,12 +111,16 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
         cache_dir = constants.CACHE_DIR
     output_folder = cache_dir / "models" / model_id
 
-    workspace, model_id = model_id.split("/")
-    model_name, version = model_id.split(":")
+    already_downloaded = output_folder.exists()
+    if not already_downloaded:
+        workspace, model_id = model_id.split("/")
+        model_name, version = model_id.split(":")
 
-    api = API()
-    model = api.get_model(workspace=workspace, model_name=model_name)
-    model.download(version=version, output_folder=output_folder, expand=True)
+        api = API()
+        model = api.get_model(workspace=workspace, model_name=model_name)
+        model.download(version=version, output_folder=output_folder, expand=True)
+    else:
+        logger.info(f"Model {model_id=} already downloaded to: {output_folder}")
 
     subdirs = [d for d in output_folder.iterdir() if d.is_dir()]
     if len(subdirs) == 1:
@@ -130,6 +141,7 @@ def prompt(
     tokenizer,
     input_text: str,
     max_new_tokens: int = 40,
+    temperature: float = 1.0,
     device: str = "cuda:0",
     return_only_answer: bool = False,
 ):
@@ -137,7 +149,9 @@ def prompt(
         device
     )
 
-    outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
+    outputs = model.generate(
+        **inputs, max_new_tokens=max_new_tokens, temperature=temperature
+    )
 
     output = outputs[
         0

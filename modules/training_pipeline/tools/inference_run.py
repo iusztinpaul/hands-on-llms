@@ -22,7 +22,7 @@ inference_app = App(
 )
 
 
-@inference_app.task_queue(outputs=[Output(path="output.json")])
+@inference_app.task_queue(outputs=[Output(path="output-inference-api.json")])
 def infer(
     config_file: str,
     dataset_dir: str,
@@ -50,6 +50,8 @@ def infer(
     config_file = Path(config_file)
     root_dataset_dir = Path(dataset_dir)
     model_cache_dir = Path(model_cache_dir) if model_cache_dir else None
+    inference_output_dir = Path("output-inference")
+    inference_output_dir.mkdir(exist_ok=True, parents=True)
 
     inference_config = configs.InferenceConfig.from_yaml(config_file)
     inference_api = InferenceAPI.from_config(
@@ -57,7 +59,9 @@ def infer(
         root_dataset_dir=root_dataset_dir,
         model_cache_dir=model_cache_dir,
     )
-    inference_api.infer_all(output_file=Path("output.json"))
+    inference_api.infer_all(
+        output_file=inference_output_dir / "output-inference-api.json"
+    )
 
 
 if __name__ == "__main__":

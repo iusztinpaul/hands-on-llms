@@ -6,6 +6,13 @@ from langchain import chains
 from langchain.callbacks.manager import CallbackManagerForChainRun
 from langchain.chains.base import Chain
 from langchain.llms import HuggingFacePipeline
+from unstructured.cleaners.core import (
+    clean,
+    clean_extra_whitespace,
+    clean_non_ascii_chars,
+    group_broken_paragraphs,
+    replace_unicode_quotes,
+)
 
 from financial_bot.embeddings import EmbeddingModelSingleton
 from financial_bot.template import PromptTemplate
@@ -74,7 +81,11 @@ class ContextExtractorChain(Chain):
         _, quest_key = self.input_keys
         question_str = inputs[quest_key]
 
-        embeddings = self.embedding_model(question_str)
+        cleaned_question = self.clean(question_str)
+        # TODO: Chunk the question in 'max_input_length' chunks,
+        # pass them through the model and average the embeddings.
+        cleaned_question = cleaned_question[: self.embedding_model.max_input_length]
+        embeddings = self.embedding_model(cleaned_question)
 
         # TODO: Using the metadata filter the news from the latest week (or other timeline).
         matches = self.vector_store.search(
@@ -90,6 +101,13 @@ class ContextExtractorChain(Chain):
         return {
             "context": context,
         }
+
+    def clean(self, question: str) -> str:
+        question = clean(question)
+        question = replace_unicode_quotes(question)
+        question = clean_non_ascii_chars(question)
+
+        return question
 
 
 class FinancialBotQAChain(Chain):
@@ -111,12 +129,13 @@ class FinancialBotQAChain(Chain):
         inputs: Dict[str, Any],
         run_manager: Optional[CallbackManagerForChainRun] = None,
     ) -> Dict[str, Any]:
+        inputs = self.clean(inputs)
         prompt = self.template.format_infer(
             {
                 "user_context": inputs["about_me"],
-                "news_context": inputs["question"],
+                "news_context": inputs["context"],
                 "chat_history": inputs["chat_history"],
-                "question": inputs.get("context"),
+                "question": inputs["question"],
             }
         )
 
@@ -143,3 +162,12 @@ class FinancialBotQAChain(Chain):
             )
 
         return {"answer": response}
+
+    def clean(self, inputs: Dict[str, str]) -> Dict[str, str]:
+        for key, input in inputs.items():
+            cleaned_input = clean_extra_whitespace(input)
+            cleaned_input = group_broken_paragraphs(cleaned_input)
+
+            inputs[key] = cleaned_input
+
+        return inputs

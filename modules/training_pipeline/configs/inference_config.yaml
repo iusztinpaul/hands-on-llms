@@ -1,10 +1,12 @@
 peft_model:
-  id: iusztinpaul/falcon-7b-finqa:0.0.1
+  id: iusztinpaul/fin-falcon-7b-lora:0.0.5
 model:
   id: tiiuae/falcon-7b-instruct
-  max_new_tokens: 128
+  template_name: "falcon"
+  max_new_tokens: 500
+  temperature: 1.0
 setup:
   device: cuda:0
   debug: False
 dataset:
-  evaluation: "testing_data.json"
+  file: "testing_data.json"
