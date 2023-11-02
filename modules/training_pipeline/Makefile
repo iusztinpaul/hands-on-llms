@@ -49,12 +49,12 @@ train_local:
 dev_train_beam:
 	@echo "Running training pipeline on Beam using the development config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 train_beam:
 	@echo "Running training pipeline on Beam using the production config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 
 # === Inference ===

@@ -110,11 +110,20 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
 </div>
 
 
-### 4.1 Fine-tuning our open-source LLM
+### 4.1 Fine-tuning our open-source LLM (overview)
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=HcxwOYMmj40">
       <p>Click here to watch the video 🎬</p>
     <img src="media/youtube_thumbnails/01_fine_tuning_pipeline_overview.png" alt="Intro to the course" style="width:75%;">
+  </a>
+</div>
+
+### 4.2 Fine-tuning our open-source LLM (Hands-on!)
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=RS96R0dH0uE">
+      <p>Click here to watch the video 🎬</p>
+    <img src="media/youtube_thumbnails/02_fine_tuning_pipeline_hands_on.png" alt="Hands-on Fine Tuning an LLM" style="width:75%;">
   </a>
 </div>
