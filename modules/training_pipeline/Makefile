@@ -1,6 +1,6 @@
 .PHONY: help install install_dev add add_dev export_requirements dev_train_local train_local dev_train_beam train_beam dev_infer_local infer_local dev_infer_beam infer_beam lint_check lint_fix format_check format_fix
 
-### Install ###
+# === Install ===
 
 install:
 	@echo "Installing training pipeline..."
@@ -22,7 +22,7 @@ add_dev:
 	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry add --group dev $(package)
 
 
-### Beam ###
+# === Beam ===
 
 export_requirements:
 	@echo "Exporting requirements..."
@@ -34,7 +34,7 @@ upload_dataset_to_beam:
 	beam volume upload qa_dataset dataset
 
 
-### Training ###
+# === Training ===
 
 dev_train_local:
 	@echo "Running training pipeline locally using the development config..."
@@ -57,7 +57,7 @@ train_beam:
 	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 
-### Inference ###
+# === Inference ===
 
 dev_infer_local:
 	@echo "Running inference pipeline locally using the production config..."
@@ -80,7 +80,7 @@ infer_beam:
 	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
 
 
-### PEP 8 ###
+# === PEP8 ===
 # Be sure to install the dev dependencies first #
 
 lint_check:

@@ -84,7 +84,7 @@ class InferenceAPI:
         if self._debug:
             max_samples = 3
         else:
-            max_samples = 20
+            max_samples = None
 
         dataset = qa.FinanceDataset(
             data_path=self._root_dataset_dir / self._test_dataset_file,

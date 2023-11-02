@@ -20,7 +20,32 @@ from training_pipeline.data import qa
 logger = logging.getLogger(__name__)
 
 
-class TrainingAPI:
+class ToModelRegistryMixin:
+    def __init__(self, model_id: str):
+        self._model_id = model_id
+
+    @property
+    def model_name(self) -> str:
+        return f"financial_assistant/{self._model_id}"
+
+    def to_model_registry(self, checkpoint_dir: Path):
+        checkpoint_dir = checkpoint_dir.resolve()
+
+        assert (
+            checkpoint_dir.exists()
+        ), f"Checkpoint directory {checkpoint_dir} does not exist"
+
+        experiment = comet_ml.Experiment()
+        logger.debug(f"Starting logging model checkpoint @ {self.model_name}")
+        experiment.log_model(self.model_name, str(checkpoint_dir))
+        logger.debug(f"Finished logging model checkpoint @ {self.model_name}")
+
+
+class ModelRegistryAPI(ToModelRegistryMixin):
+    pass
+
+
+class TrainingAPI(ToModelRegistryMixin):
     def __init__(
         self,
         root_dataset_dir: Path,
@@ -32,6 +57,8 @@ class TrainingAPI:
         debug: bool = False,
         model_cache_dir: Path = constants.CACHE_DIR,
     ):
+        super().__init__(model_id=model_id)
+
         self._root_dataset_dir = root_dataset_dir
         self._model_id = model_id
         self._template_name = template_name
@@ -43,10 +70,6 @@ class TrainingAPI:
 
         self._training_dataset, self._validation_dataset = self.load_data()
         self._model, self._tokenizer, self._peft_config = self.load_model()
-
-    @property
-    def model_name(self) -> str:
-        return f"financial_assistant/{self._model_id}"
 
     @classmethod
     def from_config(
@@ -133,24 +156,13 @@ class TrainingAPI:
                 f"Logging best model from {best_model_checkpoint} to the model registry..."
             )
 
-            self.log_model(best_model_checkpoint)
+            self.to_model_registry(best_model_checkpoint)
         else:
             logger.warning(
                 "No best model checkpoint found. Skipping logging it to the model registry..."
             )
 
         return trainer
-
-    def log_model(self, checkpoint_dir: Path):
-        checkpoint_dir = checkpoint_dir.resolve()
-
-        assert (
-            checkpoint_dir.exists()
-        ), f"Checkpoint directory {checkpoint_dir} does not exist"
-
-        experiment = comet_ml.Experiment()
-        experiment.log_model(self.model_name, str(checkpoint_dir))
-        logger.debug(f"Logging model checkpoint @ {self.model_name}")
 
     def compute_metrics(self, eval_pred: EvalPrediction):
         return {"perplexity": metrics.compute_perplexity(eval_pred.predictions)}

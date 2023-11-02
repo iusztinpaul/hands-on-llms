@@ -71,9 +71,11 @@ class FinanceDataset:
             template_mapping_func = self._template.format_train
         else:
             template_mapping_func = self._template.format_infer
-        
+
         dataset = dataset.map(self.clean)
-        dataset = dataset.map(template_mapping_func, remove_columns=dataset.column_names)
+        dataset = dataset.map(
+            template_mapping_func, remove_columns=dataset.column_names
+        )
 
         return dataset
 
@@ -81,8 +83,7 @@ class FinanceDataset:
         for key, sample in samples.items():
             cleaned_sample = clean_extra_whitespace(sample)
             cleaned_sample = group_broken_paragraphs(cleaned_sample)
-            cleaned_sample = cleaned_sample.strip("\n_\\ ")
-            
+
             samples[key] = cleaned_sample
 
         return samples
