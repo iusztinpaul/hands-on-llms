@@ -21,5 +21,3 @@ model:
   id: tiiuae/falcon-7b-instruct
   template: falcon
   max_seq_length: 1024
-setup:
-  debug: False
