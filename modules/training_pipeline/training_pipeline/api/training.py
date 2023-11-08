@@ -23,7 +23,7 @@ from training_pipeline.data import qa
 logger = logging.getLogger(__name__)
 
 
-class ToModelRegistryCallback(TrainerCallback):
+class BestModelToModelRegistryCallback(TrainerCallback):
     def __init__(self, model_id: str):
         self._model_id = model_id
 
@@ -158,7 +158,7 @@ class TrainingAPI:
             args=self._training_arguments,
             packing=True,
             compute_metrics=self.compute_metrics,
-            callbacks=[ToModelRegistryCallback(model_id=self._model_id)],
+            callbacks=[BestModelToModelRegistryCallback(model_id=self._model_id)],
         )
         trainer.train()
 
