@@ -100,13 +100,15 @@ Deploy the bot under a RESTful API using Beam in dev mode:
 make deploy_beam_dev
 ```
 
-Make a request to the bot calling the RESTful API:
+To test the deployment, make a request to the bot calling the RESTful API, as follows:
 ```shell
-export BEAM_DEPLOYMENT_ID=<BEAM_DEPLOYMENT_ID>
-export BEAM_AUTH_TOKEN=<BEAM_AUTH_TOKEN>
+export BEAM_DEPLOYMENT_ID=<BEAM_DEPLOYMENT_ID> # e.g., <xxxxx> from https://<xxxxx>.apps.beam.cloud
+export BEAM_AUTH_TOKEN=<BEAM_AUTH_TOKEN> # e.g., <xxxxx> from Authorization: Basic <xxxxx>
 
 make call_restful_api DEPLOYMENT_ID=${BEAM_DEPLOYMENT_ID} TOKEN=${BEAM_AUTH_TOKEN} 
 ```
+
+**Note:** To find out `BEAM_DEPLOYMENT_ID` and `BEAM_AUTH_TOKEN` navigate to your `financial_bot` or `financial_bot_dev` Beam app.
 
 ## 3.3. Gradio UI
 

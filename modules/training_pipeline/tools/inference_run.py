@@ -10,11 +10,11 @@ inference_app = App(
     runtime=Runtime(
         cpu=4,
         memory="64Gi",
-        gpu="T4",
+        gpu="A10G",
         image=Image(python_version="python3.10", python_packages="requirements.txt"),
     ),
     volumes=[
-        Volume(path="./dataset", name="qa_dataset"),
+        Volume(path="./qa_dataset", name="qa_dataset"),
         Volume(
             path="./model_cache", name="model_cache", volume_type=VolumeType.Persistent
         ),
@@ -22,10 +22,13 @@ inference_app = App(
 )
 
 
-@inference_app.task_queue(outputs=[Output(path="output-inference-api.json")])
+@inference_app.task_queue(
+    outputs=[Output(path="output-inference/output-inference-api.json")]
+)
 def infer(
     config_file: str,
     dataset_dir: str,
+    output_dir: str = "output-inference",
     env_file_path: str = ".env",
     logging_config_path: str = "logging.yaml",
     model_cache_dir: str = None,
@@ -50,7 +53,7 @@ def infer(
     config_file = Path(config_file)
     root_dataset_dir = Path(dataset_dir)
     model_cache_dir = Path(model_cache_dir) if model_cache_dir else None
-    inference_output_dir = Path("output-inference")
+    inference_output_dir = Path(output_dir)
     inference_output_dir.mkdir(exist_ok=True, parents=True)
 
     inference_config = configs.InferenceConfig.from_yaml(config_file)

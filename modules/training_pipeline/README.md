@@ -51,12 +51,18 @@ cp .env.example .env
 ## 2.2. Beam
 `optional step in case you want to use Beam` 
 
--> [Create a Beam account & configure it.](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
+-> [Create a Beam account, install its CLI, and configure it.](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
 
-After you have to upload the dataset to a Beam volume:
+In addition to setting up Beam, you have to go to your [Beam account](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and create a volume, as follows:
+- go to the `Volumes` section
+- click create `New Volume` (in the top right corner)
+- choose `Volume Name = qa_dataset` and `Volume Type = Shared`
+
+After, run the following command to upload the Q&A dataset to the Beam volume you just created.
 ```shell
 make upload_dataset_to_beam
 ```
+Finally, check out that your [**qa_dataset** Beam volume](https://www.beam.cloud/dashboard/volumes/qa_dataset?utm_source=thepauls&utm_medium=partner&utm_content=github) contains the uploaded data. 
 
 # 3. Usage
 
