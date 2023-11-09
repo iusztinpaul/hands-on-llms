@@ -59,12 +59,20 @@ Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=par
 ### 2.4. Beam
 `cloud compute`
 
-Go to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and follow their quick setup/get started tutorial. You must install their CLI and configure your credentials on your local machine.
+Go to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and follow their quick setup/get started tutorial. You must create a FREE account, install their CLI and configure your credentials on your local machine.
 
-When using Poetry, we had issues locating the Beam CLI when using the Poetry virtual environment. To fix this, create a symlink using the following command - replace `<your-poetry-env-name>` with your Poetry env name:
+- [Introduction guide](https://docs.beam.cloud/getting-started/introduction?utm_source=thepauls&utm_medium=partner&utm_content=github)
+- [Installation guide](https://docs.beam.cloud/getting-started/installation?utm_source=thepauls&utm_medium=partner&utm_content=github)
+
+#### Troubleshooting
+
+When using Poetry, we had issues locating the Beam CLI when using it inside the Poetry virtual environment. To fix this, after installing Beam, create a symlink that points to Poetry's binaries, as follows:
  ```shell
- export POETRY_ENV_NAME=<your-poetry-env-name>
-  ln -s /usr/local/bin/beam ~/.cache/pypoetry/virtualenvs/${POETRY_ENV_NAME}/bin/beam
+  export COURSE_MODULE_PATH=<your-course-module-path> # e.g., modules/training_pipeline
+  cd $COURSE_MODULE_PATH
+  export POETRY_ENV_PATH=$(dirname $(dirname $(poetry run which python)))
+
+  ln -s /usr/local/bin/beam ${POETRY_ENV_PATH}/bin/beam
  ```
 
 

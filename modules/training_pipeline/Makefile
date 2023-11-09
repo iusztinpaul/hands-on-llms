@@ -31,6 +31,8 @@ export_requirements:
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 upload_dataset_to_beam:
+	@echo "Pushing data to the qa_dataset volume on Beam..."
+	
 	beam volume upload qa_dataset dataset
 
 
@@ -46,12 +48,12 @@ train_local:
 	
 	poetry run python -m tools.train_run --config_file configs/training_config.yaml --output_dir ./output --dataset_dir ./dataset
 
-dev_train_beam:
+dev_train_beam: export_requirements
 	@echo "Running training pipeline on Beam using the development config..."
 
 	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
-train_beam:
+train_beam: export_requirements
 	@echo "Running training pipeline on Beam using the production config..."
 
 	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
@@ -69,15 +71,15 @@ infer_local:
 
 	poetry run python -m tools.inference_run --config_file configs/inference_config.yaml --dataset_dir ./dataset
 
-dev_infer_beam:
+dev_infer_beam: export_requirements
 	@echo "Running inference pipeline on Beam using the development config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
-infer_beam:
+infer_beam: export_requirements
 	@echo "Running inference pipeline on Beam using the production config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./dataset/dataset", "env_file_path": "env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 
 # === PEP8 ===

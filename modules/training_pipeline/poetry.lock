@@ -358,13 +358,13 @@ files = [
 
 [[package]]
 name = "beam-sdk"
-version = "0.14.8"
+version = "0.15.9"
 description = ""
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "beam_sdk-0.14.8-py3-none-any.whl", hash = "sha256:ce75fc1b8703bbc230900be8e147e2acce0a4b619cc2afc46a5c4d3953fc245e"},
-    {file = "beam_sdk-0.14.8.tar.gz", hash = "sha256:291340bf28106e5ef7a7ae52cd187fa3a0b4baece22490c16a10907232b0776d"},
+    {file = "beam_sdk-0.15.9-py3-none-any.whl", hash = "sha256:42caa025113f5662c600072498ae7195fd8e829769cc3f3e5bf1e45d194b902b"},
+    {file = "beam_sdk-0.15.9.tar.gz", hash = "sha256:01c822e85b6e0414ef6e5166f2d464220f9a93db71001abb7f23dda8cef29a71"},
 ]
 
 [package.dependencies]
@@ -375,6 +375,7 @@ Jinja2 = ">=3.1.2,<4.0.0"
 marshmallow = "3.18.0"
 marshmallow-dataclass = ">=8.5.9,<9.0.0"
 typeguard = ">=2.13.3,<3.0.0"
+typing-extensions = ">=4.7.1,<5.0.0"
 validators = ">=0.20.0,<0.21.0"
 
 [[package]]
@@ -4568,4 +4569,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "bdbd7d5468ef165387dc7a10565657d7c0d7a3160d7d478c6c858e3e31fe4e18"
+content-hash = "dc9ed14e9d744f408707a2abf16f8798d33809ef470afe6b538861625c64682c"

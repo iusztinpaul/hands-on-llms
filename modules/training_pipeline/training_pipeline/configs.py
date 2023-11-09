@@ -15,7 +15,6 @@ class TrainingConfig:
 
     training: TrainingArguments
     model: Dict[str, Any]
-    setup: Dict[str, Any]
 
     @classmethod
     def from_yaml(cls, config_path: Path, output_dir: Path):
