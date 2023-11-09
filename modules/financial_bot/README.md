@@ -110,6 +110,8 @@ make call_restful_api DEPLOYMENT_ID=${BEAM_DEPLOYMENT_ID} TOKEN=${BEAM_AUTH_TOKE
 
 **Note:** To find out `BEAM_DEPLOYMENT_ID` and `BEAM_AUTH_TOKEN` navigate to your `financial_bot` or `financial_bot_dev` Beam app.
 
+**IMPORTANT:** After you finish testing your project, don't forget to stop your Beam deployment. 
+
 ## 3.3. Gradio UI
 
 Start the Gradio UI:
