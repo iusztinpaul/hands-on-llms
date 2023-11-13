@@ -45,7 +45,7 @@ search:
 build:
 	@echo "Build docker image"
 
-	docker build -t streaming_pipeline -f deploy/Dockerfile .
+	docker build -t streaming_pipeline:latest -f deploy/Dockerfile .
 
 run_docker: 
 	@echo "Run docker image"
@@ -57,7 +57,7 @@ run_docker:
 		-e QDRANT_API_KEY=${QDRANT_API_KEY} \
 		-e QDRANT_URL=${QDRANT_URL} \
 		--name streaming_pipeline \
-		streaming_pipeline
+		streaming_pipeline:latest
 
 run_docker_dev:
 	@echo "Run docker image"
@@ -66,7 +66,7 @@ run_docker_dev:
 		--env-file .env \
 		-e DEBUG=true \
 		--name streaming_pipeline \
-		streaming_pipeline
+		streaming_pipeline:latest
 
 
 ### Deploy AWS ###

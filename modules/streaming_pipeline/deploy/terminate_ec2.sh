@@ -1,5 +1,12 @@
 #!/bin/bash
 
+echo "Deleting roles & policies..."
+aws iam detach-role-policy --role-name "EC2_ECR_Access_Role" --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+aws iam remove-role-from-instance-profile --instance-profile-name "EC2_ECR_Access_Instance_Profile" --role-name "EC2_ECR_Access_Role"
+aws iam delete-role --role-name "EC2_ECR_Access_Role"
+aws iam delete-instance-profile --instance-profile-name "EC2_ECR_Access_Instance_Profile"
+echo "Successfully deleted roles & policies..."
+
 ### Terminate EC2 instances. ###
 EC2_INSTANCE_IDS=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=streaming-pipeline-server" | jq -r '.Reservations[].Instances[] | .InstanceId')
 aws ec2 terminate-instances --instance-ids ${EC2_INSTANCE_IDS} > /dev/null 2>&1
@@ -33,10 +40,9 @@ while true; do
   fi
 done
 
-
-### Delete key pair. ###
+echo "Deleting key pair..."
 aws ec2 delete-key-pair --key-name AWSHandsOnLLmsKey
-
+echo "Successfully deleted key pair..."
 
 ### Delete security groups. ###
 SECURITY_GROUP_IDS=$(aws ec2 describe-security-groups --query 'SecurityGroups[?GroupName==`hands-on-llms-sg`].GroupId' --output text)
