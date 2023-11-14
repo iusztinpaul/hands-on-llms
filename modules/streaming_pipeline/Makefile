@@ -1,3 +1,9 @@
+# Export env variables from .env file if it exists.
+ifneq (,$(wildcard .env))
+include .env
+export
+endif
+
 ### Install ###
 
 install-debian:
@@ -47,7 +53,7 @@ build:
 
 	docker build -t streaming_pipeline:latest -f deploy/Dockerfile .
 
-run_docker: 
+run_real_time_docker: 
 	@echo "Run docker image"
 	
 	docker run --rm \
@@ -57,7 +63,7 @@ run_docker:
 		-e QDRANT_API_KEY=${QDRANT_API_KEY} \
 		-e QDRANT_URL=${QDRANT_URL} \
 		--name streaming_pipeline \
-		streaming_pipeline:latest
+		994231256807.dkr.ecr.eu-central-1.amazonaws.com/streaming_pipeline:latest
 
 run_docker_dev:
 	@echo "Run docker image"

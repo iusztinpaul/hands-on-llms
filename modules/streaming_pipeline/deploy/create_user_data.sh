@@ -3,8 +3,14 @@
 # Source the environment variables
 source .env
 
+# Query the ECR registry URI.
+export ECR_REGISTRY_URI=$(aws ecr describe-repositories --repository-names ${AWS_ECR_REPO_NAME} --query "repositories[?repositoryName==\`${AWS_ECR_REPO_NAME}\`].repositoryUri" --output text --profile $AWS_PROFILE --region $AWS_REGION)
+
 # Extract all variables from the template
 variables=$(grep -oP '\$\{\K[^}]*' deploy/user_data_template.sh)
+
+# Define your list of strings
+allowed_variables=("ECR_REGISTRY_URI")
 
 # Flag to indicate if all variables are set
 all_set=true

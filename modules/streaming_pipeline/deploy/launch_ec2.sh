@@ -9,6 +9,12 @@ DEFAULT_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$DEFA
 # Define EC2 AMI Image ID
 AMI_IMAGE="ami-04e601abe3e1a910f"
 
+# Define EC2 IAM Role variables
+ROLE_NAME="EC2_ECR_Access_Role"
+INSTANCE_PROFILE_NAME="EC2_ECR_Access_Instance_Profile"
+TRUST_POLICY_FILE="trust_policy.json"
+POLICY_ARN="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+
 echo "Default VPC ID: $DEFAULT_VPC_ID"
 echo "First Subnet ID in Default VPC: $DEFAULT_SUBNET_ID"
 echo "AMI Image ID: $AMI_IMAGE"
@@ -67,7 +73,6 @@ fi
 
 echo "Launched EC2 instance with ID: $INSTANCE_ID"
 
-# Wait for the instance to be in the 'running' state
 echo "Waiting for the instance to be in the running state..."
 aws ec2 wait instance-running --instance-ids $INSTANCE_ID
 aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID
@@ -80,13 +85,10 @@ else
     exit 1
 fi
 
-# Create an IAM role with trust relationship for EC2 and ECR access
-ROLE_NAME="EC2_ECR_Access_Role"
-INSTANCE_PROFILE_NAME="EC2_ECR_Access_Instance_Profile"
-TRUST_POLICY_FILE="trust_policy.json"
-POLICY_ARN="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+# Create an IAM role that allows EC2 to pull images from ECR.
+echo "Attaching IAM role to EC2 instance..."
 
-# Trust policy that allows EC2 to assume this role
+# Create trust policy file.
 cat > ${TRUST_POLICY_FILE} <<- EOM
 {
   "Version": "2012-10-17",

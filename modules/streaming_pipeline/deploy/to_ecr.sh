@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Set variables
-ECR_REGISTRY_URI=994231256807.dkr.ecr.eu-central-1.amazonaws.com
 REPO_NAME=streaming_pipeline
 LOCAL_IMAGE_NAME=streaming_pipeline
 AWS_PROFILE=default
@@ -13,10 +12,16 @@ aws ecr describe-repositories --repository-names ${REPO_NAME} || aws ecr create-
   --profile $AWS_PROFILE \
   --region $AWS_REGION
 
+# Query the ECR registry URI.
+ECR_REGISTRY_URI=$(aws ecr describe-repositories --repository-names ${REPO_NAME} --query "repositories[?repositoryName==\`${REPO_NAME}\`].repositoryUri" --output text --profile $AWS_PROFILE --region $AWS_REGION)
+
 # Authenticate Docker to the ECR registry
 aws ecr get-login-password \
   --region $AWS_REGION \
   --profile $AWS_PROFILE | docker login --username AWS --password-stdin $ECR_REGISTRY_URI
+
+# Build the Docker image.
+docker build -t $LOCAL_IMAGE_NAME:latest -f deploy/Dockerfile .
 
 # Tag the local Docker image
 docker tag $LOCAL_IMAGE_NAME:latest $ECR_REGISTRY_URI/$REPO_NAME:latest
