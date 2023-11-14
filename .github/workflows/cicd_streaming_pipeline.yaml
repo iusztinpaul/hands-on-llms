@@ -36,8 +36,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build images & push to ECR
-        working-directory: ./modules/streaming_pipeline
         uses: docker/build-push-action@v4
+        working-directory: ./modules/streaming_pipeline
         env:
           COMMIT_TAG: ${{ env.REPO_NAME }}:commit-${{ github.sha }}
           LATEST_TAG: ${{ env.REPO_NAME }}:latest
