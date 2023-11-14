@@ -28,8 +28,9 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Create ECR Repository
-        run: |
-          aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
+        uses: int128/create-ecr-repository-action@v1
+        with:
+          repository: ${{ env.REPOSITORY_NAME }}
 
       - name: Login to Amazon ECR
         id: login-ecr
