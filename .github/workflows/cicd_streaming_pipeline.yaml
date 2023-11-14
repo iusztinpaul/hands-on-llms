@@ -10,7 +10,6 @@ env:
   AWS_REGION: eu-central-1
   REPOSITORY_NAME: streaming_pipeline
   LOCAL_IMAGE_NAME: streaming_pipeline
-  AWS_PROFILE: default
 
 jobs:
   build_and_push:
