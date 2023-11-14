@@ -1,5 +1,5 @@
 # Use the specified image as the base
-FROM python:3.10-slim-bullseye as base
+FROM python:3.10-slim-bullseye as release
 
 # Set environment variables for Poetry
 ENV POETRY_VERSION=1.6.1
