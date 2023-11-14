@@ -39,8 +39,8 @@ jobs:
       - name: Build images & push to ECR
         uses: docker/build-push-action@v4
         env:
-          COMMIT_TAG: ${{ env.REPO_NAME }}:commit-${{ github.sha }}
-          LATEST_TAG: ${{ env.REPO_NAME }}:latest
+          COMMIT_TAG: ${{ env.REPOSITORY_NAME }}:commit-${{ github.sha }}
+          LATEST_TAG: ${{ env.REPOSITORY_NAME }}:latest
         with:
           context: .
           file: ./modules/streaming_pipeline/deploy/Dockerfile
