@@ -27,14 +27,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Create ECR Repository
-        uses: int128/create-ecr-repository-action@v1
-        with:
-          repository: ${{ env.REPOSITORY_NAME }}
-
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Create ECR Repository
+        id: ecr-repository
+        uses: int128/create-ecr-repository-action@v1
+        with:
+          repository: ${{ env.REPOSITORY_NAME }}
 
       - name: Build images & push to ECR
         uses: docker/build-push-action@v4
