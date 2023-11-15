@@ -31,7 +31,7 @@ echo "Sleeping for 60 seconds to allow the instance to fully initialize..."
 sleep 60
 
 # Authenticate Docker to the ECR registry.
-aws ecr get-login-password --region "eu-central-1" | docker login --username AWS --password-stdin "994231256807.dkr.ecr.eu-central-1.amazonaws.com"
+aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URI}
 
 # Pull Docker image from ECR.
 echo "Pulling Docker image from ECR: ${ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"

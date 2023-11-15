@@ -90,63 +90,6 @@ undeploy_aws:
 	bash deploy/terminate_ec2.sh
 
 
-### Deploy AWS [Waxctl] ###
-
-NAME := streaming_pipeline_test
-
-# generate a tar file with project files to send to AWS EC2 instance
-deployment-files:
-	if [ -d test ]; then rm -rf test; fi
-
-	tar \
-	--exclude __pycache__ \
-	--exclude .ruff_cache \
-	--exclude logs \
-	--exclude .beamignore \
-	--exclude .env.example \
-	--exclude .env \
-	--exclude Makefile \
-	--exclude *.tar \
-	--exclude .DS_Store \
-	--exclude setup_ec2.sh \
-	--exclude README.md \
-	--exclude requirements.txt \
-	--exclude poetry.lock \
-	--exclude user-data \
-	--exclude tools \
-	--warning=no-file-changed \
-	-cvzf project-files.tar -C . .
-
-	mkdir test; cp project-files.tar test; cd test; tar -xvzf project-files.tar 
-
-deploy-waxctl: deployment-files
-	waxctl aws deploy project-files.tar \
-		--python-file-name streaming_pipeline/run.py \
-		--requirements-file-name requirements.txt \
-		--name ${NAME} \
-		--system-setup-file-name ./setup_ec2.sh \
-		--instance-type t2.small \
-		--region eu-central-1 \
-		--save-cloud-config \
-		--debug \
-		-E ALPACA_API_KEY=${ALPACA_API_KEY},ALPACA_API_SECRET=${ALPACA_API_SECRET},QDRANT_API_KEY=${QDRANT_API_KEY},QDRANT_URL=${QDRANT_URL}
-
-info:
-	waxctl aws ls --verbose --name ${NAME}
-
-undeploy-waxctl:
-	waxctl aws delete --name ${NAME} --yes
-
-clean_aws:
-	# https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_manage_delete.html
-	aws iam remove-role-from-instance-profile --instance-profile-name Waxctl-EC2-eu-central-1-streaming_pipeline-InstanceProfile --role-name Waxctl-EC2-eu-central-1-streaming_pipeline-Role
-	aws iam detach-role-policy --role-name Waxctl-EC2-eu-central-1-streaming_pipeline-Role --policy-arn arn:aws:iam::994231256807:policy/Waxctl-EC2-eu-central-1-streaming_pipeline-Policy
-	aws iam delete-role --role-name Waxctl-EC2-eu-central-1-streaming_pipeline-Role
-	aws iam delete-policy --policy-arn arn:aws:iam::994231256807:policy/Waxctl-EC2-eu-central-1-streaming_pipeline-Policy
-	aws iam delete-instance-profile --instance-profile-name Waxctl-EC2-eu-central-1-streaming_pipeline-InstanceProfile
-
-
-
 ### PEP 8 ###
 # Be sure to install the dev dependencies first #
 
