@@ -26,9 +26,9 @@ sudo systemctl enable docker
 sudo apt update
 sudo apt install awscli -y
 
-# Sleep for 60 seconds to allow the instance to fully initialize.
-echo "Sleeping for 60 seconds to allow the instance to fully initialize..."
-sleep 60
+# Sleep for 90 seconds to allow the instance to fully initialize.
+echo "Sleeping for 90 seconds to allow the instance to fully initialize..."
+sleep 90
 
 # Authenticate Docker to the ECR registry.
 aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${DOCKER_IMAGE_ECR_REGISTRY_URI}
