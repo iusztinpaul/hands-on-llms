@@ -1,0 +1,92 @@
+name: Continuous Deployment (CD) for the Streaming Pipeline
+
+on: [push, workflow_dispatch] # Or any other event that triggers this workflow
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REPOSITORY_NAME: streaming_pipeline
+
+jobs:
+  # build_and_push:
+  #   name: Build and Push Docker Image to ECR
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v2
+
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v1
+
+  #     - name: Create ECR Repository
+  #       id: ecr-repository
+  #       uses: int128/create-ecr-repository-action@v1
+  #       with:
+  #         repository: ${{ env.REPOSITORY_NAME }}
+
+  #     - name: Build images & push to ECR
+  #       uses: docker/build-push-action@v4
+  #       env:
+  #         COMMIT_TAG: ${{ env.REPOSITORY_NAME }}:commit-${{ github.sha }}
+  #         LATEST_TAG: ${{ env.REPOSITORY_NAME }}:latest
+  #       with:
+  #         context: ./modules/streaming_pipeline
+  #         file: ./modules/streaming_pipeline/deploy/Dockerfile
+  #         target: release
+  #         tags: |
+  #           ${{ steps.login-ecr.outputs.registry }}/${{ env.COMMIT_TAG }}
+  #           ${{ steps.login-ecr.outputs.registry }}/${{ env.LATEST_TAG }}
+  #         push: true
+
+  deploy:
+    name: Deploy & start the Docker image on an AWS EC2 Instance
+    runs-on: ubuntu-latest
+    needs: build_and_push
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Install GNU Make
+      id: install_make
+      run: sudo apt-get update && sudo apt-get install -y make
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Remove current deployment
+      id: undeploy_aws
+      working-directory: ./modules/streaming_pipeline
+      run: make undeploy_aws
+
+    - name: Deploy to AWS
+      id: deploy_aws
+      working-directory: ./modules/streaming_pipeline
+      run: make deploy_aws
+      env:
+        ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+        ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+        QDRANT_URL: ${{ secrets.QDRANT_URL }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_ECR_REPO_NAME: ${{ env.REPOSITORY_NAME }}
