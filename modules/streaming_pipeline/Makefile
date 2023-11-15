@@ -6,9 +6,6 @@ endif
 
 ### Install ###
 
-install-debian:
-	sudo apt-get install jq
-
 install:
 	@echo "Installing streaming pipeline..."
 	

@@ -15,49 +15,49 @@ env:
   REPOSITORY_NAME: streaming_pipeline
 
 jobs:
-  # build_and_push:
-  #   name: Build and Push Docker Image to ECR
-  #   runs-on: ubuntu-latest
+  build_and_push:
+    name: Build and Push Docker Image to ECR
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-  #     - name: Create ECR Repository
-  #       id: ecr-repository
-  #       uses: int128/create-ecr-repository-action@v1
-  #       with:
-  #         repository: ${{ env.REPOSITORY_NAME }}
+      - name: Create ECR Repository
+        id: ecr-repository
+        uses: int128/create-ecr-repository-action@v1
+        with:
+          repository: ${{ env.REPOSITORY_NAME }}
 
-  #     - name: Build images & push to ECR
-  #       uses: docker/build-push-action@v4
-  #       env:
-  #         COMMIT_TAG: ${{ env.REPOSITORY_NAME }}:commit-${{ github.sha }}
-  #         LATEST_TAG: ${{ env.REPOSITORY_NAME }}:latest
-  #       with:
-  #         context: ./modules/streaming_pipeline
-  #         file: ./modules/streaming_pipeline/deploy/Dockerfile
-  #         target: release
-  #         tags: |
-  #           ${{ steps.login-ecr.outputs.registry }}/${{ env.COMMIT_TAG }}
-  #           ${{ steps.login-ecr.outputs.registry }}/${{ env.LATEST_TAG }}
-  #         push: true
+      - name: Build images & push to ECR
+        uses: docker/build-push-action@v4
+        env:
+          COMMIT_TAG: ${{ env.REPOSITORY_NAME }}:commit-${{ github.sha }}
+          LATEST_TAG: ${{ env.REPOSITORY_NAME }}:latest
+        with:
+          context: ./modules/streaming_pipeline
+          file: ./modules/streaming_pipeline/deploy/Dockerfile
+          target: release
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.COMMIT_TAG }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.LATEST_TAG }}
+          push: true
 
   deploy:
     name: Deploy & start the Docker image on an AWS EC2 Instance
     runs-on: ubuntu-latest
-    # needs: build_and_push
+    needs: build_and_push
 
     steps:
     - name: Checkout Code
