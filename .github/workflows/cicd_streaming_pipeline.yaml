@@ -42,7 +42,7 @@ jobs:
           COMMIT_TAG: ${{ env.REPOSITORY_NAME }}:commit-${{ github.sha }}
           LATEST_TAG: ${{ env.REPOSITORY_NAME }}:latest
         with:
-          context: .
+          context: ./modules/streaming_pipeline
           file: ./modules/streaming_pipeline/deploy/Dockerfile
           target: release
           tags: |

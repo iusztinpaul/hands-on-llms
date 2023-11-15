@@ -119,7 +119,7 @@ make build
 
 Run the streaming pipeline in `real-time` mode inside the Docker image:
 ```shell
-source .env && make run_real_time_docker
+make run_real_time_docker
 ```
 
 

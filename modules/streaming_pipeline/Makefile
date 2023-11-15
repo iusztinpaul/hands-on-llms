@@ -63,7 +63,7 @@ run_real_time_docker:
 		-e QDRANT_API_KEY=${QDRANT_API_KEY} \
 		-e QDRANT_URL=${QDRANT_URL} \
 		--name streaming_pipeline \
-		994231256807.dkr.ecr.eu-central-1.amazonaws.com/streaming_pipeline:latest
+		streaming_pipeline:latest
 
 run_docker_dev:
 	@echo "Run docker image"
