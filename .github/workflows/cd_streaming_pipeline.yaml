@@ -57,7 +57,7 @@ jobs:
   deploy:
     name: Deploy & start the Docker image on an AWS EC2 Instance
     runs-on: ubuntu-latest
-    needs: build_and_push
+    # needs: build_and_push
 
     steps:
     - name: Checkout Code
