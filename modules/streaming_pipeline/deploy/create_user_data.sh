@@ -8,17 +8,19 @@ else
 fi
 
 # Query the ECR registry URI.
-export ECR_REGISTRY_URI=$(aws ecr describe-repositories --repository-names ${AWS_ECR_REPO_NAME} --query "repositories[?repositoryName==\`${AWS_ECR_REPO_NAME}\`].repositoryUri" --output text --region $AWS_REGION)
-if [ -z "$ECR_REGISTRY_URI" ]; then
-    echo "ECR_REGISTRY_URI is not set. Most probably because the AWS_ECR_REPO_NAME=${AWS_ECR_REPO_NAME} ECR repository does not exist. Exiting script."
+export DOCKER_IMAGE_ECR_REGISTRY_URI=$(aws ecr describe-repositories --repository-names ${AWS_ECR_REPO_NAME} --query "repositories[?repositoryName==\`${AWS_ECR_REPO_NAME}\`].repositoryUri" --output text --region $AWS_REGION)
+if [ -z "$DOCKER_IMAGE_ECR_REGISTRY_URI" ]; then
+    echo "DOCKER_IMAGE_ECR_REGISTRY_URI is not set. Most probably because the AWS_ECR_REPO_NAME=${AWS_ECR_REPO_NAME} ECR repository does not exist. Exiting script."
     exit 1
 fi
+
+echo "DOCKER_IMAGE_ECR_REGISTRY_URI=${DOCKER_IMAGE_ECR_REGISTRY_URI}"
 
 # Extract all variables from the template
 variables=$(grep -oP '\$\{\K[^}]*' deploy/user_data_template.sh)
 
 # Define your list of strings
-allowed_variables=("ECR_REGISTRY_URI")
+allowed_variables=("DOCKER_IMAGE_ECR_REGISTRY_URI")
 
 # Flag to indicate if all variables are set
 all_set=true

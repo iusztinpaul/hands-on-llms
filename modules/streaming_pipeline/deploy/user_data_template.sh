@@ -31,14 +31,14 @@ echo "Sleeping for 60 seconds to allow the instance to fully initialize..."
 sleep 60
 
 # Authenticate Docker to the ECR registry.
-aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URI}
+aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${DOCKER_IMAGE_ECR_REGISTRY_URI}
 
 # Pull Docker image from ECR.
-echo "Pulling Docker image from ECR: ${ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"
-docker pull ${ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest
+echo "Pulling Docker image from ECR: ${DOCKER_IMAGE_ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"
+docker pull ${DOCKER_IMAGE_ECR_REGISTRY_URI}:latest
 
 # Run Docker image.
-echo "Running Docker image: ${ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"
+echo "Running Docker image: ${DOCKER_IMAGE_ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"
 source /etc/environment && docker run --rm \
     -e BYTEWAX_PYTHON_FILE_PATH=tools.run_real_time:build_flow \
     -e ALPACA_API_KEY=${ALPACA_API_KEY} \
@@ -46,4 +46,4 @@ source /etc/environment && docker run --rm \
     -e QDRANT_API_KEY=${QDRANT_API_KEY} \
     -e QDRANT_URL=${QDRANT_URL} \
     --name streaming_pipeline \
-    ${ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest
+    ${DOCKER_IMAGE_ECR_REGISTRY_URI}:latest
