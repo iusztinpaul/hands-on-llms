@@ -51,6 +51,8 @@ aws ec2 authorize-security-group-ingress --group-id ${SECURITY_GROUP_ID} --proto
 
 # Create SSH key.
 KEY_NAME='AWSHandsOnLLmsKey'
+mkdir -p ~/.ssh
+
 aws ec2 create-key-pair --key-name ${KEY_NAME} --query 'KeyMaterial' --output text >  ~/.ssh/${KEY_NAME}.pem
 
 # Create EC2 instance.
