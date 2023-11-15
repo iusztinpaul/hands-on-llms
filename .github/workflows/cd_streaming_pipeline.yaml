@@ -85,7 +85,7 @@ jobs:
       run: make deploy_aws
       env:
         ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
-        ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        ALPACA_API_SECRET: ${{ secrets.ALPACA_API_SECRET }}
         QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
         QDRANT_URL: ${{ secrets.QDRANT_URL }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
