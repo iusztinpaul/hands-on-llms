@@ -1,11 +1,6 @@
 name: Continuous Deployment (CD) for the Streaming Pipeline
 
-on: [push, workflow_dispatch] # Or any other event that triggers this workflow
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
+on: [workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
