@@ -18,13 +18,32 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo usermod -aG docker ubuntu
 newgrp docker
 
-# Clone the repo.
-git clone -b sp-3-deploy-streaming-pipeline https://github.com/iusztinpaul/hands-on-llms.git /home/ubuntu/hands-on-llms
-cd /home/ubuntu/hands-on-llms/modules/streaming_pipeline
+# Restart Docker.
+sudo systemctl start docker
+sudo systemctl enable docker
 
-# Build & run the Docker image.
+# Install AWS CLI.
 sudo apt update
-sudo apt install build-essential make -y
+sudo apt install awscli -y
 
-make build
-source /etc/environment && make run_docker
+# Sleep for 90 seconds to allow the instance to fully initialize.
+echo "Sleeping for 90 seconds to allow the instance to fully initialize..."
+sleep 90
+
+# Authenticate Docker to the ECR registry.
+aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${DOCKER_IMAGE_ECR_REGISTRY_URI}
+
+# Pull Docker image from ECR.
+echo "Pulling Docker image from ECR: ${DOCKER_IMAGE_ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"
+docker pull ${DOCKER_IMAGE_ECR_REGISTRY_URI}:latest
+
+# Run Docker image.
+echo "Running Docker image: ${DOCKER_IMAGE_ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"
+source /etc/environment && docker run --rm \
+    -e BYTEWAX_PYTHON_FILE_PATH=tools.run_real_time:build_flow \
+    -e ALPACA_API_KEY=${ALPACA_API_KEY} \
+    -e ALPACA_API_SECRET=${ALPACA_API_SECRET} \
+    -e QDRANT_API_KEY=${QDRANT_API_KEY} \
+    -e QDRANT_URL=${QDRANT_URL} \
+    --name streaming_pipeline \
+    ${DOCKER_IMAGE_ECR_REGISTRY_URI}:latest

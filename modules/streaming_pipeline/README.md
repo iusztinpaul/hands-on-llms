@@ -119,7 +119,7 @@ make build
 
 Run the streaming pipeline in `real-time` mode inside the Docker image:
 ```shell
-source .env && make run_docker
+make run_real_time_docker
 ```
 
 
@@ -143,6 +143,10 @@ To remove the EC2 machine, run:
 make undeploy_aws
 ```
 
+Connect to your EC2 machine and run:
+```
+cat /var/log/cloud-init-output.log
+```
 
 ## 3.4. PEP8 Linting & Formatting
 

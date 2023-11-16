@@ -1,4 +1,4 @@
-name: pep8_streaming_pipeline
+name: Continuous Integration (CI) for the Financial Bot
 
 on: [push]
 
@@ -26,13 +26,13 @@ jobs:
           poetry-version: 1.5.1
 
       - name: Install packages
-        working-directory: ./modules/streaming_pipeline
+        working-directory: ./modules/financial_bot
         run: make install_only_dev
 
       - name: Run PEP8 linter
-        working-directory: ./modules/streaming_pipeline
+        working-directory: ./modules/financial_bot
         run: make lint_check
       
       - name: Run PEP8 format checker
-        working-directory: ./modules/streaming_pipeline
+        working-directory: ./modules/financial_bot
         run: make format_check
