@@ -52,8 +52,18 @@ def load_bot(
     """
     Load the financial assistant bot in production or development mode based on the `debug` flag
 
-    production: the embedding model runs on GPU and the fine-tuned LLM is used.
-    dev: the embedding model runs on CPU and the fine-tuned LLM is mocked.
+    In DEV mode the embedding model runs on CPU and the fine-tuned LLM is mocked.
+    Otherwise, the embedding model runs on GPU and the fine-tuned LLM is used.
+
+    Args:
+        env_file_path (str): Path to the environment file.
+        logging_config_path (str): Path to the logging configuration file.
+        model_cache_dir (str): Path to the directory where the model cache is stored.
+        embedding_model_device (str): Device to use for the embedding model.
+        debug (bool): Flag to indicate whether to run the bot in debug mode or not.
+
+    Returns:
+        FinancialBot: An instance of the FinancialBot class.
     """
 
     from financial_bot import initialize
@@ -83,7 +93,17 @@ def load_bot_dev(
     logging_config_path: str = "logging.yaml",
     model_cache_dir: str = "./model_cache",
 ):
-    """Load the Financial Assistant Bot in dev mode: the embedding model runs on CPU and the LLM is mocked."""
+    """
+    Load the Financial Assistant Bot in dev mode: the embedding model runs on CPU and the LLM is mocked.
+
+    Args:
+        env_file_path (str): Path to the environment file.
+        logging_config_path (str): Path to the logging configuration file.
+        model_cache_dir (str): Path to the directory where the model cache is stored.
+
+    Returns:
+        The loaded Financial Assistant Bot in dev mode.
+    """
 
     return load_bot(
         env_file_path=env_file_path,
@@ -99,7 +119,19 @@ def load_bot_dev(
 
 @financial_bot.rest_api(keep_warm_seconds=300, loader=load_bot)
 def run(**inputs):
-    """Run the bot under the Beam RESTful API endpoint."""
+    """
+    Run the bot under the Beam RESTful API endpoint.
+
+     Args:
+        inputs (dict): A dictionary containing the following keys:
+            - context: The bot instance.
+            - about_me (str): Information about the user.
+            - question (str): The user's question.
+            - history (list): A list of previous conversations (optional).
+
+    Returns:
+        str: The bot's response to the user's question.
+    """
 
     response = _run(**inputs)
 
@@ -108,7 +140,19 @@ def run(**inputs):
 
 @financial_bot_dev.rest_api(keep_warm_seconds=300, loader=load_bot_dev)
 def run_dev(**inputs):
-    """Run the bot under the Beam RESTful API endpoint [Dev Mode]."""
+    """
+    Run the bot under the Beam RESTful API endpoint [Dev Mode].
+
+     Args:
+        inputs (dict): A dictionary containing the following keys:
+            - context: The bot instance.
+            - about_me (str): Information about the user.
+            - question (str): The user's question.
+            - history (list): A list of previous conversations (optional).
+
+    Returns:
+        str: The bot's response to the user's question.
+    """
 
     response = _run(**inputs)
 
@@ -121,7 +165,19 @@ def run_local(
     history: List[Tuple[str, str]] = None,
     debug: bool = False,
 ):
-    """Run the bot locally in production or dev mode."""
+    """
+    Run the bot locally in production or dev mode.
+
+    Args:
+        about_me (str): A string containing information about the user.
+        question (str): A string containing the user's question.
+        history (List[Tuple[str, str]], optional): A list of tuples containing the user's previous questions
+            and the bot's responses. Defaults to None.
+        debug (bool, optional): A boolean indicating whether to run the bot in debug mode. Defaults to False.
+
+    Returns:
+        str: A string containing the bot's response to the user's question.
+    """
 
     if debug is True:
         bot = load_bot_dev(model_cache_dir=None)
@@ -141,7 +197,19 @@ def run_local(
 
 
 def _run(**inputs):
-    """Central function that calls the bot and returns the response"""
+    """
+    Central function that calls the bot and returns the response.
+
+    Args:
+        inputs (dict): A dictionary containing the following keys:
+            - context: The bot instance.
+            - about_me (str): Information about the user.
+            - question (str): The user's question.
+            - history (list): A list of previous conversations (optional).
+
+    Returns:
+        str: The bot's response to the user's question.
+    """
 
     from financial_bot import utils
 

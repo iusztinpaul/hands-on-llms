@@ -1,4 +1,4 @@
-name: Continuous Deployment (CD) for the Streaming Pipeline
+name: Continuous Deployment (CD) | Streaming Pipeline
 
 on: [workflow_dispatch]
 

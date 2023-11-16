@@ -36,6 +36,18 @@ def train(
     logging_config_path: str = "logging.yaml",
     model_cache_dir: str = None,
 ):
+    """
+    Trains a machine learning model using the specified configuration file and dataset.
+
+    Args:
+        config_file (str): The path to the configuration file for the training process.
+        output_dir (str): The directory where the trained model will be saved.
+        dataset_dir (str): The directory where the training dataset is located.
+        env_file_path (str, optional): The path to the environment variables file. Defaults to ".env".
+        logging_config_path (str, optional): The path to the logging configuration file. Defaults to "logging.yaml".
+        model_cache_dir (str, optional): The directory where the trained model will be cached. Defaults to None.
+    """
+
     import logging
 
     from training_pipeline import initialize

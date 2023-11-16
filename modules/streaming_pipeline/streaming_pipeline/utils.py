@@ -3,6 +3,16 @@ from typing import List, Tuple
 
 
 def read_requirements(file_path: str) -> List[str]:
+    """
+    Reads a file containing a list of requirements and returns them as a list of strings.
+
+    Args:
+        file_path (str): The path to the file containing the requirements.
+
+    Returns:
+        List[str]: A list of requirements as strings.
+    """
+
     with open(file_path, "r") as file:
         requirements = [line.strip() for line in file if line.strip()]
 

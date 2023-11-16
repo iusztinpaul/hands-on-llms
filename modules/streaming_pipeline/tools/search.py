@@ -10,6 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 def search(query_string: str):
+    """
+    Searches for the closest points to the given query string in the vector database.
+
+    Args:
+        query_string (str): The query string to search for.
+
+    Returns:
+        None
+    """
+
     initialize()
 
     client = build_qdrant_client()

@@ -1,4 +1,4 @@
-name: Continuous Integration (CI) for the Streaming Pipeline
+name: Continuous Integration (CI) | Streaming Pipeline
 
 on: [push]
 

@@ -10,6 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 def parseargs() -> argparse.Namespace:
+    """
+    Parses command line arguments for the Financial Assistant Bot.
+
+    Returns:
+        argparse.Namespace: An object containing the parsed arguments.
+    """
+
     parser = argparse.ArgumentParser(description="Financial Assistant Bot")
 
     parser.add_argument(
@@ -66,8 +73,18 @@ def load_bot(
     """
     Load the financial assistant bot in production or development mode based on the `debug` flag
 
-    production: the embedding model runs on GPU and the fine-tuned LLM is used.
-    dev: the embedding model runs on CPU and the fine-tuned LLM is mocked.
+    In DEV mode the embedding model runs on CPU and the fine-tuned LLM is mocked.
+    Otherwise, the embedding model runs on GPU and the fine-tuned LLM is used.
+
+    Args:
+        env_file_path (str): Path to the environment file.
+        logging_config_path (str): Path to the logging configuration file.
+        model_cache_dir (str): Path to the directory where the model cache is stored.
+        embedding_model_device (str): Device to use for the embedding model.
+        debug (bool): Flag to indicate whether to run the bot in debug mode or not.
+
+    Returns:
+        FinancialBot: An instance of the FinancialBot class.
     """
 
     from financial_bot import initialize
@@ -106,6 +123,18 @@ bot = load_bot(
 
 
 def predict(message: str, history: List[List[str]], about_me: str) -> str:
+    """
+    Predicts a response to a given message using the financial_bot Gradio UI.
+
+    Args:
+        message (str): The message to generate a response for.
+        history (List[List[str]]): A list of previous conversations.
+        about_me (str): A string describing the user.
+
+    Returns:
+        str: The generated response.
+    """
+
     generate_kwargs = {
         "about_me": about_me,
         "question": message,

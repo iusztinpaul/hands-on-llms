@@ -1,4 +1,4 @@
-name: Continuous Integration (CI) for the Training Pipeline
+name: Continuous Integration (CI) | Training Pipeline
 
 on: [push]
 

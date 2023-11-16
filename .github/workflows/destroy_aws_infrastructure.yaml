@@ -1,4 +1,4 @@
-name: Destroy the AWS infrastructure for the Streaming Pipeline
+name: Destroy AWS Infrastructure
 
 on: [workflow_dispatch]
 
