@@ -33,6 +33,18 @@ def infer(
     logging_config_path: str = "logging.yaml",
     model_cache_dir: str = None,
 ):
+    """
+    Run inference on a dataset using a trained model.
+
+    Args:
+        config_file (str): Path to the inference configuration file.
+        dataset_dir (str): Path to the root directory of the dataset.
+        output_dir (str, optional): Path to the output directory. Defaults to "output-inference".
+        env_file_path (str, optional): Path to the environment variables file. Defaults to ".env".
+        logging_config_path (str, optional): Path to the logging configuration file. Defaults to "logging.yaml".
+        model_cache_dir (str, optional): Path to the directory where the trained model is cached. Defaults to None.
+    """
+
     import logging
 
     from training_pipeline import initialize

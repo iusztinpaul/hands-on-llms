@@ -12,13 +12,16 @@ from streaming_pipeline.models import Document
 
 
 class QdrantVectorOutput(DynamicOutput):
-    """Qdrant.
+    """A class representing a Qdrant vector output.
 
-    Workers are the unit of parallelism.
+    This class is used to create a Qdrant vector output, which is a type of dynamic output that supports
+    at-least-once processing. Messages from the resume epoch will be duplicated right after resume.
 
-    Can support at-least-once processing. Messages from the resume
-    epoch will be duplicated right after resume.
-
+    Args:
+        vector_size (int): The size of the vector.
+        collection_name (str, optional): The name of the collection.
+            Defaults to constants.VECTOR_DB_OUTPUT_COLLECTION_NAME.
+        client (Optional[QdrantClient], optional): The Qdrant client. Defaults to None.
     """
 
     def __init__(
@@ -46,10 +49,37 @@ class QdrantVectorOutput(DynamicOutput):
             )
 
     def build(self, worker_index, worker_count):
+        """Builds a QdrantVectorSink object.
+
+        Args:
+            worker_index (int): The index of the worker.
+            worker_count (int): The total number of workers.
+
+        Returns:
+            QdrantVectorSink: A QdrantVectorSink object.
+        """
+
         return QdrantVectorSink(self.client, self._collection_name)
 
 
 def build_qdrant_client(url: Optional[str] = None, api_key: Optional[str] = None):
+    """
+    Builds a QdrantClient object with the given URL and API key.
+
+    Args:
+        url (Optional[str]): The URL of the Qdrant server. If not provided,
+            it will be read from the QDRANT_URL environment variable.
+        api_key (Optional[str]): The API key to use for authentication. If not provided,
+            it will be read from the QDRANT_API_KEY environment variable.
+
+    Raises:
+        KeyError: If the QDRANT_URL or QDRANT_API_KEY environment variables are not set
+            and no values are provided as arguments.
+
+    Returns:
+        QdrantClient: A QdrantClient object connected to the specified Qdrant server.
+    """
+
     if url is None:
         try:
             url = os.environ["QDRANT_URL"]
@@ -72,6 +102,15 @@ def build_qdrant_client(url: Optional[str] = None, api_key: Optional[str] = None
 
 
 class QdrantVectorSink(StatelessSink):
+    """
+    A sink that writes document embeddings to a Qdrant collection.
+
+    Args:
+        client (QdrantClient): The Qdrant client to use for writing.
+        collection_name (str, optional): The name of the collection to write to.
+            Defaults to constants.VECTOR_DB_OUTPUT_COLLECTION_NAME.
+    """
+
     def __init__(
         self,
         client: QdrantClient,

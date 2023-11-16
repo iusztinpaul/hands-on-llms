@@ -12,6 +12,20 @@ def build_flow(
     latest_n_days: int = 4,
     debug: bool = False,
 ):
+    """
+    Builds a Bytewax flow for batch processing of news data.
+
+    Args:
+        env_file_path (str): Path to the environment file.
+        logging_config_path (str): Path to the logging configuration file.
+        model_cache_dir (str): Path to the directory where the model cache is stored.
+        latest_n_days (int): Number of days to extract news from.
+        debug (bool): Whether to run the flow in debug mode.
+
+    Returns:
+        flow (prefect.Flow): The Bytewax flow for batch processing of news data.
+    """
+
     initialize(logging_config_path=logging_config_path, env_file_path=env_file_path)
 
     logger = logging.getLogger(__name__)

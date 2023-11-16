@@ -24,6 +24,20 @@ def build(
     model_cache_dir: Optional[Path] = None,
     debug: bool = False,
 ) -> Dataflow:
+    """
+    Builds a dataflow pipeline for processing news articles.
+
+    Args:
+        is_batch (bool): Whether the pipeline is processing a batch of articles or a stream.
+        from_datetime (Optional[datetime.datetime]): The start datetime for processing articles.
+        to_datetime (Optional[datetime.datetime]): The end datetime for processing articles.
+        model_cache_dir (Optional[Path]): The directory to cache the embedding model.
+        debug (bool): Whether to enable debug mode.
+
+    Returns:
+        Dataflow: The dataflow pipeline for processing news articles.
+    """
+
     model = EmbeddingModelSingleton(cache_dir=model_cache_dir)
     is_input_mocked = debug is True and is_batch is False
 
