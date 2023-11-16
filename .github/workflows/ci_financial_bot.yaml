@@ -1,4 +1,4 @@
-name: Continuous Integration (CI) for the Financial Bot
+name: Continuous Integration (CI) | Financial Bot
 
 on: [push]
 
