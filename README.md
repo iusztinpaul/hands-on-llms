@@ -149,7 +149,7 @@ This course is an open-source project released under the MIT license. Thus, as l
     <td><img src="https://github.com/Paulescu.png" width="100" style="border-radius:50%;"/></td>
     <td>
       <strong>Pau Labarta Bajo | Senior ML & MLOps Engineer </strong><br />
-      Main teacher. The guy from the video lessons.<br /><br />
+      <i>Main teacher. The guy from the video lessons.</i><br /><br />
       <a href="https://www.linkedin.com/in/pau-labarta-bajo-4432074b/">LinkedIn</a><br />
       <a href="https://twitter.com/paulabartabajo_">Twitter/X</a><br />
       <a href="https://www.realworldml.xyz/subscribe">Real-World ML Newsletter</a><br />
@@ -160,7 +160,7 @@ This course is an open-source project released under the MIT license. Thus, as l
     <td><img src="https://github.com/Joywalker.png" width="100" style="border-radius:50%;"/></td>
     <td>
       <strong>Alexandru Razvant | Senior ML Engineer </strong><br />
-      Second chef. The engineer behind the scenes.<br /><br />
+      <i>Second chef. The engineer behind the scenes.</i><br /><br />
       <a href="https://www.linkedin.com/in/arazvant/">LinkedIn</a><br />
       <a href="https://www.neuraleaps.com/">Neura Leaps</a>
     </td>
@@ -169,7 +169,7 @@ This course is an open-source project released under the MIT license. Thus, as l
     <td><img src="https://github.com/iusztinpaul.png" width="100" style="border-radius:50%;"/></td>
     <td>
       <strong>Paul Iusztin | Senior ML & MLOps Engineer </strong><br />
-      Main chef. The guys who randomly pop in the video lessons.<br /><br />
+      <i>Main chef. The guys who randomly pop in the video lessons.</i><br /><br />
       <a href="https://www.linkedin.com/in/pauliusztin/">LinkedIn</a><br />
       <a href="https://twitter.com/iusztinpaul">Twitter/X</a><br />
       <a href="https://pauliusztin.substack.com/">Decoding ML Newsletter</a><br />
