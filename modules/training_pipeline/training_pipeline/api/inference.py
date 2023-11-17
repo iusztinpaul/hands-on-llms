@@ -36,7 +36,8 @@ class InferenceAPI:
         name (str, optional): The name of the inference API. Defaults to "inference-api".
         max_new_tokens (int, optional): The maximum number of new tokens to generate. Defaults to 50.
         temperature (float, optional): The temperature to use when generating new tokens. Defaults to 1.0.
-        model_cache_dir (Path, optional): The directory to use for caching the LLM model. Defaults to constants.CACHE_DIR.
+        model_cache_dir (Path, optional): The directory to use for caching the LLM model.
+            Defaults to constants.CACHE_DIR.
         debug (bool, optional): Whether to run in debug mode. Defaults to False.
         device (str, optional): The device to use for inference. Defaults to "cuda:0".
 
@@ -141,7 +142,7 @@ class InferenceAPI:
         Loads the LLM model.
 
         Returns:
-            Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]: A tuple containing the loaded LLM model, tokenizer, 
+            Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]: A tuple containing the loaded LLM model, tokenizer,
                 and PEFT config.
 
         """

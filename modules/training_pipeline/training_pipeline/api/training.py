@@ -39,7 +39,7 @@ class BestModelToModelRegistryCallback(TrainerCallback):
         """
         Returns the name of the model to log to the model registry.
         """
-        
+
         return f"financial_assistant/{self._model_id}"
 
     def on_train_end(
@@ -94,6 +94,7 @@ class BestModelToModelRegistryCallback(TrainerCallback):
         experiment.end()
         logger.info(f"Finished logging model checkpoint @ {self.model_name}")
 
+
 class TrainingAPI:
     """
     A class for training a Qlora model.
@@ -147,7 +148,7 @@ class TrainingAPI:
         Returns:
             TrainingAPI: A TrainingAPI instance.
         """
-        
+
         return cls(
             root_dataset_dir=root_dataset_dir,
             model_id=config.model["id"],
@@ -164,7 +165,7 @@ class TrainingAPI:
         Returns:
             Tuple[Dataset, Dataset]: A tuple containing the training and validation datasets.
         """
-        
+
         logger.info(f"Loading QA datasets from {self._root_dataset_dir=}")
 
         training_dataset = qa.FinanceDataset(
@@ -188,9 +189,10 @@ class TrainingAPI:
         Loads the model.
 
         Returns:
-            Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]: A tuple containing the model, tokenizer, and PeftConfig.
+            Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]: A tuple containing the model, tokenizer,
+                and PeftConfig.
         """
-        
+
         logger.info(f"Loading model using {self._model_id=}")
         model, tokenizer, peft_config = models.build_qlora_model(
             pretrained_model_name_or_path=self._model_id,
@@ -207,7 +209,7 @@ class TrainingAPI:
         Returns:
             SFTTrainer: The trained model.
         """
-        
+
         logger.info("Training model...")
 
         # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
@@ -239,5 +241,5 @@ class TrainingAPI:
         Returns:
             dict: A dictionary containing the perplexity metric.
         """
-        
+
         return {"perplexity": metrics.compute_perplexity(eval_pred.predictions)}

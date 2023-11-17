@@ -178,7 +178,8 @@ def prompt(
         max_new_tokens (int, optional): The maximum number of new tokens to generate. Defaults to 40.
         temperature (float, optional): The temperature to use for text generation. Defaults to 1.0.
         device (str, optional): The device to use for text generation. Defaults to "cuda:0".
-        return_only_answer (bool, optional): Whether to return only the generated text or the entire generated sequence. Defaults to False.
+        return_only_answer (bool, optional): Whether to return only the generated text or the entire generated sequence.
+            Defaults to False.
 
     Returns:
         str: The generated text.
