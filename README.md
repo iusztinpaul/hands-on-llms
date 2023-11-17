@@ -1,5 +1,5 @@
 <div align="center">
-    <h2>Hands-on LLMs</h2>
+    <h2>Hands-on LLMs Course </h2>
     <h1>Train and Deploy a Real-Time Financial Advisor</h1>
     <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a> and <a href="https://github.com/Paulescu">Pau Labarta Bajo</a></i>
 </div>
@@ -140,6 +140,8 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
 
 ## 5. License
 
+This course is an open-source project released under the MIT license. Thus, as long you distribute our LICENSE and acknowledge our work, you can safely clone or fork this project and use it as a source of inspiration for whatever you want (e.g., university projects, college degree projects, etc.).
+
 ## 6. Contributors & Teachers
 
 <table>
@@ -147,6 +149,7 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
     <td><img src="https://github.com/Paulescu.png" width="100" style="border-radius:50%;"/></td>
     <td>
       <strong>Pau Labarta Bajo | Senior ML & MLOps Engineer </strong><br />
+      Main teacher. The guy from the video lessons.
       <a href="https://www.linkedin.com/in/pau-labarta-bajo-4432074b/">LinkedIn</a><br />
       <a href="https://twitter.com/paulabartabajo_">Twitter/X</a><br />
       <a href="https://www.realworldml.xyz/subscribe">Real-World ML Newsletter</a><br />
@@ -157,6 +160,7 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
     <td><img src="https://github.com/Joywalker.png" width="100" style="border-radius:50%;"/></td>
     <td>
       <strong>Alexandru Razvant | Senior ML Engineer </strong><br />
+      Second chef. The engineer behind the scenes.
       <a href="https://www.linkedin.com/in/arazvant/">LinkedIn</a><br />
       <a href="https://www.neuraleaps.com/">Neura Leaps</a>
     </td>
@@ -165,6 +169,7 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
     <td><img src="https://github.com/iusztinpaul.png" width="100" style="border-radius:50%;"/></td>
     <td>
       <strong>Paul Iusztin | Senior ML & MLOps Engineer </strong><br />
+      Main chef. The guys who randomly pop in the video lessons.
       <a href="https://www.linkedin.com/in/pauliusztin/">LinkedIn</a><br />
       <a href="https://twitter.com/iusztinpaul">Twitter/X</a><br />
       <a href="https://pauliusztin.substack.com/">Decoding ML Newsletter</a><br />
