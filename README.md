@@ -19,17 +19,24 @@
 ## 1. Building Blocks
 
 ### Training pipeline
-- [x] Fine-tune Falcon 7B using our own [Q&A generated dataset](/modules/q_and_a_dataset_generator/) containing investing questions and answers based on Alpaca News.
-    - It seems that 1 GPU is enough if we use [Lit-Parrot](https://lightning.ai/pages/blog/falcon-a-guide-to-finetune-and-inference/)
 
-### Real-time data pipeline
-- [x] Build real-time feature pipeline, that ingests data form Alpaca, computes embeddings, and stores them into a serverless Vector DB.
+Training pipeline that supports fine-tuning an LLM on a proprietary Q&A dataset and storing it in a model registry. 
+
+### Streaming real-time pipeline
+
+Real-time feature pipeline that:
+- ingests financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/)
+- transforms the news documents into embeddings in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github)
+- stores the embeddings into the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github)
 
 ### Inference pipeline
-- [ ] REST API for inference, that
-    1. receives a question (e.g. "Is it a good time to invest in renewable energy?"),
-    2. finds the most relevant documents in the VectorDB (aka context)
-    3. sends a prompt with question and context to our fine-tuned Falcon and return response.
+
+Inference pipeline that uses [LangChain](https://github.com/langchain-ai/langchain) to create a chain that:
+* downloads the fine-tuned model from [Comet's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) model registry
+* takes user questions as input
+* queries the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) and enhances the prompt with related financial news
+* calls the fine-tuned LLM for the final answer
+* persists the chat history into memory 
 
 <br/>
 
@@ -94,19 +101,6 @@ Thus, check out the README for every module individually to see how to install &
 2. [training_pipeline](/modules/training_pipeline/)
 3. [streaming_pipeline](/modules/streaming_pipeline/)
 4. [inference_pipeline](/modules/financial_bot/)
-
-
-### 3.1 Run Notebooks Server
-If you want to run a notebook server inside a virtual environment, follow the next steps.
-
-First, expose the virtual environment as a notebook kernel:
-```shell
-python -m ipykernel install --user --name hands-on-llms --display-name "hands-on-llms"
-```
-Now run the notebook server:
-```shell
-jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
-```
 
 ## 4. Video lectures
 
