@@ -146,8 +146,10 @@ This course is an open-source project released under the MIT license. Thus, as l
       <i>Main teacher. The guy from the video lessons.</i><br /><br />
       <a href="https://www.linkedin.com/in/pau-labarta-bajo-4432074b/">LinkedIn</a><br />
       <a href="https://twitter.com/paulabartabajo_">Twitter/X</a><br />
+      <a href="https://www.youtube.com/@realworldml">Youtube</a>
       <a href="https://www.realworldml.xyz/subscribe">Real-World ML Newsletter</a><br />
       <a href="https://www.realworldml.xyz/subscribe">Real-World ML Site</a>
+      
     </td>
   </tr>
   <tr>
