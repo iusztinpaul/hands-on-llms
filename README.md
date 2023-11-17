@@ -142,8 +142,29 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
 
 ## 6. Contributors & Teachers
 
-<p float="left">
-  <img src="https://github.com/Paulescu.png" width="100" style="border-radius:50%;" /> <p> Contributor One </p> <br/><br/>
-  <img src="https://github.com/Joywalker.png" width="100" style="border-radius:50%;" /> <p> Contributor Two </p> <br/><br/>
-  <img src="https://github.com/iusztinpaul.png" width="100" style="border-radius:50%;" /> <p> Contributor Three </p> <br/><br/>
-</p>
+<table>
+  <tr>
+    <td><img src="https://github.com/Paulescu.png" width="100" style="border-radius:50%;"/></td>
+    <td>
+      <strong>Pau Labarta Bajo</strong><br />
+      Description or sentences related to the first contributor.
+      Additional details can be added here over one or two lines.
+    </td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/Joywalker.png" width="100" style="border-radius:50%;"/></td>
+    <td>
+      <strong>Alexandru Razvant</strong><br />
+      Description or sentences related to the second contributor.
+      Additional details can be added here over one or two lines.
+    </td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/iusztinpaul.png" width="100" style="border-radius:50%;"/></td>
+    <td>
+      <strong>Paul Iusztin</strong><br />
+      Description or sentences related to the third contributor.
+      Additional details can be added here over one or two lines.
+    </td>
+  </tr>
+</table>
