@@ -1,5 +1,5 @@
 <div align="center">
-    <h2>Hands-on LLMOps</h2>
+    <h2>Hands-on LLMs</h2>
     <h1>Train and Deploy a Real-Time Financial Advisor</h1>
     <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a> and <a href="https://github.com/Paulescu">Pau Labarta Bajo</a></i>
 </div>
@@ -10,6 +10,8 @@
 - [2. Setup External Services](#2-setup-external-services)
 - [3. Install & Usage](#3-install--usage)
 - [4. Video lectures](#4-video-lectures)
+- [5. License](#5-license)
+- [6. Contributors & Teachers](#6-contributors--teachers)
 
 ------
 
@@ -135,3 +137,11 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
     <img src="media/youtube_thumbnails/02_fine_tuning_pipeline_hands_on.png" alt="Hands-on Fine Tuning an LLM" style="width:75%;">
   </a>
 </div>
+
+## 5. License
+
+## 6. Contributors & Teachers
+
+![Pau Labarta](https://github.com/Paulescu.png)
+![Alexandru Razvant](https://github.com/Joywalker.png)
+![Paul Iusztin](https://github.com/iusztinpaul.png)
