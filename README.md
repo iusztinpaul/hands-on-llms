@@ -143,10 +143,7 @@ jupyter notebook notebooks/ --ip 0.0.0.0 --port 8888
 ## 6. Contributors & Teachers
 
 <p float="left">
-  <img src="https://github.com/Paulescu.png" width="100" style="border-radius:50%;" /><br />
-  Contributor One
-  <img src="https://github.com/Joywalker.png" width="100" style="border-radius:50%;" /><br />
-  Contributor Two
-  <img src="https://github.com/iusztinpaul.png" width="100" style="border-radius:50%;" /><br />
-  Contributor Three
+  <img src="https://github.com/Paulescu.png" width="100" style="border-radius:50%;" /> <p> Contributor One </p> <br/><br/>
+  <img src="https://github.com/Joywalker.png" width="100" style="border-radius:50%;" /> <p> Contributor Two </p> <br/><br/>
+  <img src="https://github.com/iusztinpaul.png" width="100" style="border-radius:50%;" /> <p> Contributor Three </p> <br/><br/>
 </p>
