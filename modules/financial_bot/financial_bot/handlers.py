@@ -16,13 +16,6 @@ class CometLLMMonitoringHandler(BaseCallbackHandler):
         llm_qlora_model_id (str): The ID of the PEFT model to use for inference.
         llm_inference_max_new_tokens (int): The maximum number of new tokens to generate during inference.
         llm_inference_temperature (float): The temperature to use during inference.
-
-    Attributes:
-        _project_name (str): The name of the Comet.ml project to log to.
-        _llm_model_id (str): The ID of the LLM model to use for inference.
-        _llm_qlora_model_id (str): The ID of the PEFT model to use for inference.
-        _llm_inference_max_new_tokens (int): The maximum number of new tokens to generate during inference.
-        _llm_inference_temperature (float): The temperature to use during inference.
     """
 
     def __init__(

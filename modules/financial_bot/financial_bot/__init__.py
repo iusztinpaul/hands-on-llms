@@ -9,6 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 def initialize(logging_config_path: str = "logging.yaml", env_file_path: str = ".env"):
+    """
+    Initializes the logger and environment variables.
+
+    Args:
+        logging_config_path (str): The path to the logging configuration file. Defaults to "logging.yaml".
+        env_file_path (str): The path to the environment variables file. Defaults to ".env".
+    """
+
     logger.info("Initializing logger...")
     try:
         initialize_logger(config_path=logging_config_path)

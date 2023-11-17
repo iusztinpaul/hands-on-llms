@@ -33,11 +33,13 @@ class PromptTemplate:
 
     @property
     def input_variables(self) -> List[str]:
+        """Returns a list of input variables for the prompt template"""
+
         return ["user_context", "news_context", "chat_history", "question", "answer"]
 
     @property
     def train_raw_template(self):
-        """Training prompt template format"""
+        """Returns the training prompt template format"""
 
         system = self.system_template.format(system_message=self.system_message)
         context = f"{self.sep}{self.context_template}"
@@ -49,7 +51,7 @@ class PromptTemplate:
 
     @property
     def infer_raw_template(self):
-        """Inference prompt template format"""
+        """Returns the inference prompt template format"""
 
         system = self.system_template.format(system_message=self.system_message)
         context = f"{self.sep}{self.context_template}"
@@ -88,11 +90,13 @@ templates: Dict[str, PromptTemplate] = {}
 
 def register_llm_template(template: PromptTemplate):
     """Register a new template to the global templates registry"""
+
     templates[template.name] = template
 
 
 def get_llm_template(name: str) -> PromptTemplate:
     """Returns the template assigned to the given name"""
+
     return templates[name]
 
 

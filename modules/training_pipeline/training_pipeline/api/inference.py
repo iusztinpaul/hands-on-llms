@@ -20,11 +20,29 @@ try:
 except KeyError:
     raise RuntimeError("Please set the COMET_PROJECT_NAME environment variable.")
 
-
 logger = logging.getLogger(__name__)
 
 
 class InferenceAPI:
+    """
+    A class for performing inference using a trained LLM model.
+
+    Args:
+        peft_model_id (str): The ID of the PEFT model to use.
+        model_id (str): The ID of the LLM model to use.
+        template_name (str): The name of the LLM template to use.
+        root_dataset_dir (Path): The root directory of the dataset to use.
+        test_dataset_file (Path): The path to the test dataset file.
+        name (str, optional): The name of the inference API. Defaults to "inference-api".
+        max_new_tokens (int, optional): The maximum number of new tokens to generate. Defaults to 50.
+        temperature (float, optional): The temperature to use when generating new tokens. Defaults to 1.0.
+        model_cache_dir (Path, optional): The directory to use for caching the LLM model.
+            Defaults to constants.CACHE_DIR.
+        debug (bool, optional): Whether to run in debug mode. Defaults to False.
+        device (str, optional): The device to use for inference. Defaults to "cuda:0".
+
+    """
+
     def __init__(
         self,
         peft_model_id: str,
@@ -65,6 +83,20 @@ class InferenceAPI:
         root_dataset_dir: Path,
         model_cache_dir: Path = constants.CACHE_DIR,
     ):
+        """
+        Creates an instance of the InferenceAPI class from an InferenceConfig object.
+
+        Args:
+            config (InferenceConfig): The InferenceConfig object to use.
+            root_dataset_dir (Path): The root directory of the dataset to use.
+            model_cache_dir (Path, optional): The directory to use for caching the LLM model.
+                Defaults to constants.CACHE_DIR.
+
+        Returns:
+            InferenceAPI: An instance of the InferenceAPI class.
+
+        """
+
         return cls(
             peft_model_id=config.peft_model["id"],
             model_id=config.model["id"],
@@ -79,6 +111,14 @@ class InferenceAPI:
         )
 
     def load_data(self) -> Dataset:
+        """
+        Loads the QA dataset.
+
+        Returns:
+            Dataset: The loaded QA dataset.
+
+        """
+
         logger.info(f"Loading QA dataset from {self._root_dataset_dir=}")
 
         if self._debug:
@@ -98,6 +138,15 @@ class InferenceAPI:
         return dataset
 
     def load_model(self) -> Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
+        """
+        Loads the LLM model.
+
+        Returns:
+            Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]: A tuple containing the loaded LLM model, tokenizer,
+                and PEFT config.
+
+        """
+
         logger.info(f"Loading model using {self._model_id=} and {self._peft_model_id=}")
 
         model, tokenizer, peft_config = models.build_qlora_model(
@@ -111,6 +160,18 @@ class InferenceAPI:
         return model, tokenizer, peft_config
 
     def infer(self, infer_prompt: str, infer_payload: dict) -> str:
+        """
+        Performs inference using the loaded LLM model.
+
+        Args:
+            infer_prompt (str): The prompt to use for inference.
+            infer_payload (dict): The payload to use for inference.
+
+        Returns:
+            str: The generated answer.
+
+        """
+
         # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
         # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
 
@@ -149,6 +210,14 @@ class InferenceAPI:
         return answer
 
     def infer_all(self, output_file: Optional[Path] = None) -> None:
+        """
+        Performs inference on all samples in the loaded dataset.
+
+        Args:
+            output_file (Optional[Path], optional): The file to save the output to. Defaults to None.
+
+        """
+
         assert (
             self._dataset is not None
         ), "Dataset not loaded. Provide a dataset directory to the constructor: 'root_dataset_dir'."

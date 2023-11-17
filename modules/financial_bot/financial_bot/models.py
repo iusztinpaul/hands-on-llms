@@ -23,7 +23,21 @@ from financial_bot.utils import MockedPipeline
 logger = logging.getLogger(__name__)
 
 
-def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None):
+def download_from_model_registry(
+    model_id: str, cache_dir: Optional[Path] = None
+) -> Path:
+    """
+    Downloads a model from the Comet ML Learning model registry.
+
+    Args:
+        model_id (str): The ID of the model to download, in the format "workspace/model_name:version".
+        cache_dir (Optional[Path]): The directory to cache the downloaded model in. Defaults to the value of
+            `constants.CACHE_DIR`.
+
+    Returns:
+        Path: The path to the downloaded model directory.
+    """
+
     if cache_dir is None:
         cache_dir = constants.CACHE_DIR
     output_folder = cache_dir / "models" / model_id
@@ -54,6 +68,13 @@ def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None
 
 
 class StopOnTokens(StoppingCriteria):
+    """
+    A stopping criteria that stops generation when a specific token is generated.
+
+    Args:
+        stop_ids (List[int]): A list of token ids that will trigger the stopping criteria.
+    """
+
     def __init__(self, stop_ids: List[int]):
         super().__init__()
 
@@ -62,6 +83,17 @@ class StopOnTokens(StoppingCriteria):
     def __call__(
         self, input_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs
     ) -> bool:
+        """
+        Check if the last generated token is in the stop_ids list.
+
+        Args:
+            input_ids (torch.LongTensor): The input token ids.
+            scores (torch.FloatTensor): The scores of the generated tokens.
+
+        Returns:
+            bool: True if the last generated token is in the stop_ids list, False otherwise.
+        """
+
         for stop_id in self._stop_ids:
             if input_ids[0][-1] == stop_id:
                 return True
@@ -78,8 +110,24 @@ def build_huggingface_pipeline(
     use_streamer: bool = False,
     cache_dir: Optional[Path] = None,
     debug: bool = False,
-):
-    """Using our custom LLM + Finetuned checkpoint we create a HF pipeline"""
+) -> Tuple[HuggingFacePipeline, Optional[TextIteratorStreamer]]:
+    """
+    Builds a HuggingFace pipeline for text generation using a custom LLM + Finetuned checkpoint.
+
+    Args:
+        llm_model_id (str): The ID or path of the LLM model.
+        llm_lora_model_id (str): The ID or path of the LLM LoRA model.
+        max_new_tokens (int, optional): The maximum number of new tokens to generate. Defaults to 128.
+        temperature (float, optional): The temperature to use for sampling. Defaults to 0.7.
+        gradient_checkpointing (bool, optional): Whether to use gradient checkpointing. Defaults to False.
+        use_streamer (bool, optional): Whether to use a text iterator streamer. Defaults to False.
+        cache_dir (Optional[Path], optional): The directory to use for caching. Defaults to None.
+        debug (bool, optional): Whether to use a mocked pipeline for debugging. Defaults to False.
+
+    Returns:
+        Tuple[HuggingFacePipeline, Optional[TextIteratorStreamer]]: A tuple containing the HuggingFace pipeline
+            and the text iterator streamer (if used).
+    """
 
     if debug is True:
         return (
@@ -133,6 +181,16 @@ def build_qlora_model(
         2.   Download, load, and quantize on-the-fly Falcon-7b
         3.   Create and prepare the LoRa configuration
         4.   Load and configuration Falcon-7B's tokenizer
+
+    Args:
+        pretrained_model_name_or_path (str): The name or path of the pretrained model to use.
+        peft_pretrained_model_name_or_path (Optional[str]): The name or path of the PEFT pretrained model to use.
+        gradient_checkpointing (bool): Whether to use gradient checkpointing or not.
+        cache_dir (Optional[Path]): The directory to cache the downloaded models.
+
+    Returns:
+        Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
+            A tuple containing the QLoRA LLM model, tokenizer, and PEFT config.
     """
 
     bnb_config = BitsAndBytesConfig(

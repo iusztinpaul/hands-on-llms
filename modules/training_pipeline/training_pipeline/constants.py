@@ -3,6 +3,10 @@ from pathlib import Path
 
 
 class Scope(Enum):
+    """
+    Enum class representing the different scopes used in the training pipeline.
+    """
+
     TRAINING = "training"
     VALIDATION = "validation"
     TESTING = "test"

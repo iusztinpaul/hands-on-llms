@@ -24,11 +24,22 @@ logger = logging.getLogger(__name__)
 
 
 class BestModelToModelRegistryCallback(TrainerCallback):
+    """
+    Callback that logs the best model checkpoint to the Comet.ml model registry.
+
+    Args:
+        model_id (str): The ID of the model to log to the model registry.
+    """
+
     def __init__(self, model_id: str):
         self._model_id = model_id
 
     @property
     def model_name(self) -> str:
+        """
+        Returns the name of the model to log to the model registry.
+        """
+
         return f"financial_assistant/{self._model_id}"
 
     def on_train_end(
@@ -40,6 +51,8 @@ class BestModelToModelRegistryCallback(TrainerCallback):
     ):
         """
         Event called at the end of training.
+
+        Logs the best model checkpoint to the Comet.ml model registry.
         """
 
         best_model_checkpoint = state.best_model_checkpoint
@@ -57,6 +70,13 @@ class BestModelToModelRegistryCallback(TrainerCallback):
             )
 
     def to_model_registry(self, checkpoint_dir: Path):
+        """
+        Logs the given model checkpoint to the Comet.ml model registry.
+
+        Args:
+            checkpoint_dir (Path): The path to the directory containing the model checkpoint.
+        """
+
         checkpoint_dir = checkpoint_dir.resolve()
 
         assert (
@@ -76,6 +96,19 @@ class BestModelToModelRegistryCallback(TrainerCallback):
 
 
 class TrainingAPI:
+    """
+    A class for training a Qlora model.
+
+    Args:
+        root_dataset_dir (Path): The root directory of the dataset.
+        model_id (str): The ID of the model to be used.
+        template_name (str): The name of the template to be used.
+        training_arguments (TrainingArguments): The training arguments.
+        name (str, optional): The name of the training API. Defaults to "training-api".
+        max_seq_length (int, optional): The maximum sequence length. Defaults to 1024.
+        model_cache_dir (Path, optional): The directory to cache the model. Defaults to constants.CACHE_DIR.
+    """
+
     def __init__(
         self,
         root_dataset_dir: Path,
@@ -104,6 +137,18 @@ class TrainingAPI:
         root_dataset_dir: Path,
         model_cache_dir: Optional[Path] = None,
     ):
+        """
+        Creates a TrainingAPI instance from a TrainingConfig object.
+
+        Args:
+            config (TrainingConfig): The training configuration.
+            root_dataset_dir (Path): The root directory of the dataset.
+            model_cache_dir (Path, optional): The directory to cache the model. Defaults to None.
+
+        Returns:
+            TrainingAPI: A TrainingAPI instance.
+        """
+
         return cls(
             root_dataset_dir=root_dataset_dir,
             model_id=config.model["id"],
@@ -114,6 +159,13 @@ class TrainingAPI:
         )
 
     def load_data(self) -> Tuple[Dataset, Dataset]:
+        """
+        Loads the training and validation datasets.
+
+        Returns:
+            Tuple[Dataset, Dataset]: A tuple containing the training and validation datasets.
+        """
+
         logger.info(f"Loading QA datasets from {self._root_dataset_dir=}")
 
         training_dataset = qa.FinanceDataset(
@@ -133,6 +185,14 @@ class TrainingAPI:
         return training_dataset, validation_dataset
 
     def load_model(self) -> Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]:
+        """
+        Loads the model.
+
+        Returns:
+            Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]: A tuple containing the model, tokenizer,
+                and PeftConfig.
+        """
+
         logger.info(f"Loading model using {self._model_id=}")
         model, tokenizer, peft_config = models.build_qlora_model(
             pretrained_model_name_or_path=self._model_id,
@@ -143,6 +203,13 @@ class TrainingAPI:
         return model, tokenizer, peft_config
 
     def train(self) -> SFTTrainer:
+        """
+        Trains the model.
+
+        Returns:
+            SFTTrainer: The trained model.
+        """
+
         logger.info("Training model...")
 
         # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
@@ -165,4 +232,14 @@ class TrainingAPI:
         return trainer
 
     def compute_metrics(self, eval_pred: EvalPrediction):
+        """
+        Computes the perplexity metric.
+
+        Args:
+            eval_pred (EvalPrediction): The evaluation prediction.
+
+        Returns:
+            dict: A dictionary containing the perplexity metric.
+        """
+
         return {"perplexity": metrics.compute_perplexity(eval_pred.predictions)}

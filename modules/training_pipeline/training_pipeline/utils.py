@@ -9,6 +9,15 @@ logger = logging.getLogger(__name__)
 
 
 def log_available_gpu_memory():
+    """
+    Logs the available GPU memory for each available GPU device.
+
+    If no GPUs are available, logs "No GPUs available".
+
+    Returns:
+        None
+    """
+
     if torch.cuda.is_available():
         for i in range(torch.cuda.device_count()):
             memory_info = subprocess.check_output(
@@ -23,6 +32,13 @@ def log_available_gpu_memory():
 
 
 def log_available_ram():
+    """
+    Logs the amount of available RAM in gigabytes.
+
+    Returns:
+        None
+    """
+
     memory_info = psutil.virtual_memory()
 
     logger.info(
@@ -31,6 +47,16 @@ def log_available_ram():
 
 
 def read_requirements(file_path):
+    """
+    Reads a file containing a list of requirements and returns a list of stripped requirements.
+
+    Args:
+        file_path (str): The path to the file containing the requirements.
+
+    Returns:
+        list: A list of stripped requirements.
+    """
+
     with open(file_path, "r") as file:
         requirements = [line.strip() for line in file if line.strip()]
 
@@ -38,6 +64,16 @@ def read_requirements(file_path):
 
 
 def log_files_and_subdirs(directory_path: str):
+    """
+    Logs all files and subdirectories in the specified directory.
+
+    Args:
+        directory_path (str): The path to the directory to log.
+
+    Returns:
+        None
+    """
+
     # Check if the directory exists
     if os.path.exists(directory_path) and os.path.isdir(directory_path):
         for dirpath, dirnames, filenames in os.walk(directory_path):
