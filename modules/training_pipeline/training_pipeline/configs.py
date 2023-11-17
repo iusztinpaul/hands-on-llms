@@ -11,15 +11,34 @@ from training_pipeline.data.utils import load_yaml
 class TrainingConfig:
     """
     Training configuration class used to load and store the training configuration.
+
+    Attributes:
+    -----------
+    training : TrainingArguments
+        The training arguments used for training the model.
+    model : Dict[str, Any]
+        The dictionary containing the model configuration.
     """
 
     training: TrainingArguments
     model: Dict[str, Any]
 
     @classmethod
-    def from_yaml(cls, config_path: Path, output_dir: Path):
+    def from_yaml(cls, config_path: Path, output_dir: Path) -> "TrainingConfig":
         """
         Load a configuration file from the given path.
+
+        Parameters:
+        -----------
+        config_path : Path
+            The path to the configuration file.
+        output_dir : Path
+            The path to the output directory.
+
+        Returns:
+        --------
+        TrainingConfig
+            The training configuration object.
         """
 
         config = load_yaml(config_path)
@@ -36,6 +55,18 @@ class TrainingConfig:
     ) -> TrainingArguments:
         """
         Build a TrainingArguments object from a configuration dictionary.
+
+        Parameters:
+        -----------
+        training_config : dict
+            The dictionary containing the training configuration.
+        output_dir : Path
+            The path to the output directory.
+
+        Returns:
+        --------
+        TrainingArguments
+            The training arguments object.
         """
 
         return TrainingArguments(
@@ -65,7 +96,18 @@ class TrainingConfig:
 @dataclass
 class InferenceConfig:
     """
-    Inference configuration class used to load and store the inference configuration.
+    A class representing the configuration for inference.
+
+    Attributes:
+    -----------
+    model : Dict[str, Any]
+        A dictionary containing the model configuration.
+    peft_model : Dict[str, Any]
+        A dictionary containing the PEFT model configuration.
+    setup : Dict[str, Any]
+        A dictionary containing the setup configuration.
+    dataset : Dict[str, str]
+        A dictionary containing the dataset configuration.
     """
 
     model: Dict[str, Any]

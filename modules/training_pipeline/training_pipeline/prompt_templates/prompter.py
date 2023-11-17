@@ -13,31 +13,25 @@ from typing import Dict, List, Union
 class PromptTemplate:
     """A class that manages prompt templates"""
 
-    # The name of this template
     name: str
-    # The template of the system prompt
     system_template: str = "{system_message}"
-    # The template for the system context
     context_template: str = "{user_context}\n{news_context}"
-    # The template for the conversation history
     chat_history_template: str = "{chat_history}"
-    # The template of the user question
     question_template: str = "{question}"
-    # The template of the system answer
     answer_template: str = "{answer}"
-    # The system message
     system_message: str = ""
-    # Separator
     sep: str = "\n"
     eos: str = ""
 
     @property
     def input_variables(self) -> List[str]:
+        """Returns a list of input variables for the prompt template"""
+
         return ["user_context", "news_context", "chat_history", "question", "answer"]
 
     @property
     def train_raw_template(self):
-        """Training prompt template format"""
+        """Returns the training prompt template format"""
 
         system = self.system_template.format(system_message=self.system_message)
         context = f"{self.sep}{self.context_template}"
@@ -49,7 +43,7 @@ class PromptTemplate:
 
     @property
     def infer_raw_template(self):
-        """Inference prompt template format"""
+        """Returns the inference prompt template format"""
 
         system = self.system_template.format(system_message=self.system_message)
         context = f"{self.sep}{self.context_template}"
@@ -89,11 +83,13 @@ templates: Dict[str, PromptTemplate] = {}
 
 def register_llm_template(template: PromptTemplate):
     """Register a new template to the global templates registry"""
+
     templates[template.name] = template
 
 
 def get_llm_template(name: str) -> PromptTemplate:
     """Returns the template assigned to the given name"""
+
     return templates[name]
 
 

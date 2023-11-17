@@ -29,6 +29,17 @@ def build_qlora_model(
         2.   Download, load, and quantize on-the-fly Falcon-7b
         3.   Create and prepare the LoRa configuration
         4.   Load and configuration Falcon-7B's tokenizer
+
+    Args:
+        pretrained_model_name_or_path (str): The name or path of the pretrained model to use.
+        peft_pretrained_model_name_or_path (Optional[str]): The name or path of the pretrained model to use
+            for PeftModel.
+        gradient_checkpointing (bool): Whether to use gradient checkpointing or not.
+        cache_dir (Optional[Path]): The directory to cache the model in.
+
+    Returns:
+        Tuple[AutoModelForCausalLM, AutoTokenizer, PeftConfig]: A tuple containing the built model, tokenizer,
+            and PeftConfig.
     """
 
     bnb_config = BitsAndBytesConfig(
@@ -107,6 +118,18 @@ def build_qlora_model(
 
 
 def download_from_model_registry(model_id: str, cache_dir: Optional[Path] = None):
+    """
+    Downloads a model from the Comet ML Learning model registry.
+
+    Args:
+        model_id (str): The ID of the model to download, in the format "workspace/model_name:version".
+        cache_dir (Optional[Path]): The directory to cache the downloaded model in. Defaults to the value of
+            `constants.CACHE_DIR`.
+
+    Returns:
+        Path: The path to the downloaded model directory.
+    """
+
     if cache_dir is None:
         cache_dir = constants.CACHE_DIR
     output_folder = cache_dir / "models" / model_id
@@ -145,6 +168,22 @@ def prompt(
     device: str = "cuda:0",
     return_only_answer: bool = False,
 ):
+    """
+    Generates text based on the input text using the provided model and tokenizer.
+
+    Args:
+        model (transformers.PreTrainedModel): The model to use for text generation.
+        tokenizer (transformers.PreTrainedTokenizer): The tokenizer to use for text generation.
+        input_text (str): The input text to generate text from.
+        max_new_tokens (int, optional): The maximum number of new tokens to generate. Defaults to 40.
+        temperature (float, optional): The temperature to use for text generation. Defaults to 1.0.
+        device (str, optional): The device to use for text generation. Defaults to "cuda:0".
+        return_only_answer (bool, optional): Whether to return only the generated text or the entire generated sequence. Defaults to False.
+
+    Returns:
+        str: The generated text.
+    """
+
     inputs = tokenizer(input_text, return_tensors="pt", return_token_type_ids=False).to(
         device
     )
