@@ -31,6 +31,9 @@ To implement RAG at inference time, you need a vector DB always synced with the 
 
 The role of this streaming pipeline is to listen 24/7 to available financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/), process the news in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github), and store the news in the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) to make the information available for RAG.
 
+<br/>
+
+![architecture](../../media/feature_pipeline_architecture.png)
 
 # 2. Install
 

@@ -36,6 +36,8 @@ Thus, using [LangChain](https://github.com/langchain-ai/langchain), we will crea
 
 Also, the final step is to put the financial assistant to good use and deploy it as a serverless RESTful API using [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github). 
 
+![architecture](../../media/feature_pipeline_architecture.png)
+
 # 2. Install 
 
 ## 2.1. Dependencies

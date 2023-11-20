@@ -27,6 +27,10 @@ The best way to specialize an LLM on your specific task is to fine-tune it on a 
 
 In this case, we will use the finance dataset generated using the `q_and_a_dataset_generator` to specialize the LLM in responding to investing questions.
 
+<br/>
+
+![architecture](../../media/training_pipeline_architecture.png)
+
 
 # 2. Install
 
