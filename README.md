@@ -1,7 +1,7 @@
 <div align="center">
     <h2>Hands-on LLMs Course </h2>
     <h1>Train and Deploy a Real-Time Financial Advisor</h1>
-    <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a> and <a href="https://github.com/Paulescu">Pau Labarta Bajo</a></i>
+    <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a>, <a href="https://github.com/Paulescu">Pau Labarta Bajo</a> and <a href="https://github.com/Joywalker">Alexandru Razvant</a></i>
 </div>
 
 ## Table of Contents
@@ -62,37 +62,47 @@ The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/
 
 ## 2. Setup External Services
 
-Before diving into the modules, you have to set up a couple of additional tools for the course.
+Before diving into the modules, you have to set up a couple of additional external tools for the course.
 
 ### 2.1. Alpaca
 `financial news data source`
 
-Follow this [document](https://alpaca.markets/docs/market-data/getting-started/), showing you how to create a FREE account, generate the API Keys, and put them somewhere safe.
+Follow this [document](https://alpaca.markets/docs/market-data/getting-started/) to show you how to create a FREE account and generate the API Keys you will need within this course.
 
+**Note:** 1x Alpaca data connection is FREE.
 
 ### 2.2. Qdrant
-`vector DB`
+`serverless vector DB`
 
-Go to [Qdrant](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github), create a FREE account, and follow [this document](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github) on how to generate the API Keys.
+Go to [Qdrant](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) and create a FREE account.
 
+After, follow [this document](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github) on how to generate the API Keys you will need within this course.
+
+**Note:** We will use only Qdrant's freemium plan. 
 
 ### 2.3. Comet ML
-`ML platform`
+`serverless ML platform`
 
-Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github), create a FREE account, a project, and an API KEY. We will show you in every module how to add these credentials.
+Go to [Comet ML](https://www.comet.com/signup?utm_source=thepauls&utm_medium=partner&utm_content=github) and create a FREE account.
 
+After, [follow this guide](https://www.comet.com/docs/v2/guides/getting-started/quickstart/) to generate an API KEY and a new project, which you will need within the course.
+
+**Note:** We will use only Comet ML's freemium plan. 
 
 ### 2.4. Beam
-`cloud compute`
+`serverless GPU compute | training & inference pipelines`
 
-Go to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and follow their quick setup/get started tutorial. You must create a FREE account, install their CLI and configure your credentials on your local machine.
+Go to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and create a FREE account.
 
-- [Introduction guide](https://docs.beam.cloud/getting-started/introduction?utm_source=thepauls&utm_medium=partner&utm_content=github)
-- [Installation guide](https://docs.beam.cloud/getting-started/installation?utm_source=thepauls&utm_medium=partner&utm_content=github)
+After, you must follow their [installation guide](https://docs.beam.cloud/getting-started/installation?utm_source=thepauls&utm_medium=partner&utm_content=github) to install their CLI & configure it with your Beam credentials.
+
+To read more about Beam, here is an [introduction guide](https://docs.beam.cloud/getting-started/introduction?utm_source=thepauls&utm_medium=partner&utm_content=github).
+
+**Note:** You have ~10 free compute hours. Afterward, you pay only for what you use. If you have an Nvidia GPU >8 GB VRAM & don't want to deploy the training & inference pipelines, using Beam is optional. 
 
 #### Troubleshooting
 
-When using Poetry, we had issues locating the Beam CLI when using it inside the Poetry virtual environment. To fix this, after installing Beam, create a symlink that points to Poetry's binaries, as follows:
+When using Poetry, we had issues locating the Beam CLI inside a Poetry virtual environment. To fix this, after installing Beam, we create a symlink that points to Poetry's binaries, as follows:
  ```shell
   export COURSE_MODULE_PATH=<your-course-module-path> # e.g., modules/training_pipeline
   cd $COURSE_MODULE_PATH
@@ -103,11 +113,13 @@ When using Poetry, we had issues locating the Beam CLI when using it inside the 
 
 
  ### 2.5. AWS
- `cloud compute`
+ `cloud compute | feature pipeline`
 
  Go to [AWS](https://aws.amazon.com/console/), create an account, and generate a pair of credentials.
 
  After, download and install their [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [configure it](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) with your credentials.
+
+ **Note:** You will pay only for what you use. You will deploy only a `t2.small` EC2 VM, which is only `~$0.023` / hour. If you don't want to deploy the feature pipeline, using AWS is optional.
 
 
 ## 3. Install & Usage
