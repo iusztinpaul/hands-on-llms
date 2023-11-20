@@ -4,9 +4,11 @@ Inference pipeline that uses [LangChain](https://github.com/langchain-ai/langcha
 * downloads the fine-tuned model from [Comet's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) model registry
 * takes user questions as input
 * queries the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) and enhances the prompt with related financial news
-* calls the fine-tuned LLM for the final answer
+* calls the fine-tuned LLM for financial advice using the initial query, the context from the vector DB, and the chat history
 * persists the chat history into memory 
+* logs the prompt & answer into [Comet ML's](https://www.comet.com/site/products/llmops/?utm_source=thepauls&utm_medium=partner&utm_content=github) LLMOps monitoring feature
 
+The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/deployment/rest-api?utm_source=thepauls&utm_medium=partner&utm_content=github) as a serverless GPU infrastructure, as a RESTful API. Also, it is wrapped under a UI for demo purposes, implemented in [Gradio](https://www.gradio.app/).
 
 ## Table of Contents
 

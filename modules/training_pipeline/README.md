@@ -1,6 +1,12 @@
 # Training / Fine-tuning Pipeline 
 
-Training pipeline that supports fine-tuning an LLM on a proprietary Q&A dataset and storing it in a model registry. 
+Training pipeline that:
+- loads a proprietary Q&A dataset 
+- fine-tunes an open-source LLM using QLoRA
+- logs the training experiments on [Comet ML's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) experiment tracker & the inference results on [Comet ML's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) LLMOps dashboard
+- stores the best model on [Comet ML's](https://www.comet.com/site/products/llmops/?utm_source=thepauls&utm_medium=partner&utm_content=github) model registry
+
+The **training pipeline** is **deployed** using [Beam](https://docs.beam.cloud/getting-started/quickstart?utm_source=thepauls&utm_medium=partner&utm_content=github) as a serverless GPU infrastructure.
 
 ## Table of Contents
 
