@@ -59,7 +59,7 @@ cp .env.example .env
 
 
 ## 2.2. Beam
-`optional step in case you want to deploy the training pipeline to Beam` 
+`deploy the training pipeline to Beam [optional]` 
 
 **First**, you must set up Beam, as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section.
 
@@ -73,6 +73,8 @@ After, run the following command to upload the Q&A dataset to the Beam volume yo
 make upload_dataset_to_beam
 ```
 Finally, check out that your [**qa_dataset** Beam volume](https://www.beam.cloud/dashboard/volumes/qa_dataset?utm_source=thepauls&utm_medium=partner&utm_content=github) contains the uploaded data. 
+
+**IMPORTANT NOTE:** The training pipeline will work only on CUDA-enabled Nvidia GPUs. If you don't have one and wish to run the training pipeline, you must deploy it to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github). 
 
 # 3. Usage
 

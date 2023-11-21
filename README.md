@@ -64,6 +64,8 @@ The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/
 
 Before diving into the modules, you have to set up a couple of additional external tools for the course.
 
+**NOTE:** You can set them up as you go for every module, as we will point you in every module what you need.
+
 ### 2.1. Alpaca
 `financial news data source`
 
@@ -117,7 +119,7 @@ When using Poetry, we had issues locating the Beam CLI inside a Poetry virtual e
 
  Go to [AWS](https://aws.amazon.com/console/), create an account, and generate a pair of credentials.
 
- After, download and install their [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [configure it](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) with your credentials.
+ After, download and install their [AWS CLI v2.11.22](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [configure it](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) with your credentials.
 
  **Note:** You will pay only for what you use. You will deploy only a `t2.small` EC2 VM, which is only `~$0.023` / hour. If you don't want to deploy the feature pipeline, using AWS is optional.
 
