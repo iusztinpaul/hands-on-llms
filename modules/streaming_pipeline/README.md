@@ -2,24 +2,27 @@
 
 Real-time feature pipeline that:
 - ingests financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/)
-- transforms the news documents into embeddings in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github)
+- cleans & transforms the news documents into embeddings in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github)
 - stores the embeddings into the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github)
+
+The **streaming pipeline** is **automatically deployed** on an AWS EC2 machine using a CI/CD pipeline built in GitHub actions.
+
 
 ## Table of Contents
 
 - [1. Motivation](#1-motivation)
 - [2. Install](#2-install)
     - [2.1 Dependencies](#21-dependencies)
-    - [2.2. Alpaca](#22-alpaca)
-    - [2.3. Qdrant](#23-qdrant)
-    - [2.4. AWS CLI](#24-aws-cli)
+    - [2.2. Alpaca & Qdrant](#22-alpaca--qdrant)
+    - [2.3. AWS CLI](#23-aws-cli)
 - [3. Usage](#3-usage)
     - [3.1. Local](#31-local)
     - [3.2. Docker](#32-docker)
     - [3.3. Deploy to AWS](#33-deploy-to-aws)
-    - [3.4. PEP8 Linting & Formatting](#34-pep8-linting--formatting)
+    - [3.4. Linting & Formatting](#34-linting--formatting)
 
 ---
+
 
 # 1. Motivation
 
@@ -28,6 +31,10 @@ The best way to ingest real-time knowledge into an LLM without retraining the LL
 To implement RAG at inference time, you need a vector DB always synced with the latest available data.
 
 The role of this streaming pipeline is to listen 24/7 to available financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/), process the news in real-time using [Bytewax](https://github.com/bytewax/bytewax?utm_source=thepauls&utm_medium=partner&utm_content=github), and store the news in the [Qdrant Vector DB](https://qdrant.tech/?utm_source=thepauls&utm_medium=partner&utm_content=github) to make the information available for RAG.
+
+<br/>
+
+![architecture](../../media/feature_pipeline_architecture.png)
 
 
 # 2. Install
@@ -54,79 +61,72 @@ Prepare credentials:
 ```shell
 cp .env.example .env
 ```
---> and complete the `.env` file with your credentials. We will show you below how to generate the credentials for **Alpaca** and **Qdrant** ↓ . 
+--> and complete the `.env` file with your [external services credentials](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services).
 
 
-## 2.2. Alpaca
+## 2.2. Alpaca & Qdrant
 
-All you have to do for Alpaca is create a FREE account and generate the `ALPACA_API_KEY` and `ALPACA_API_SECRET` API Keys. After, be sure to add them to your `.env` file. 
-
--> [Check out this document for step-by-step instructions.](https://alpaca.markets/docs/market-data/getting-started/)
+Check out the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section to see how to create API keys for them.
 
 
-## 2.3. Qdrant
+## 2.3. AWS CLI
+`deploy the streaming pipeline to AWS [optional]` 
 
-Same as for Alpaca, you must create a FREE account in Qdrant and generate the `QDRANT_API_KEY` and `QDRANT_URL` environment variables. After, be sure to add them to your `.env` file.
-
--> [Check out this document to see how.](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github)
-
-
-## 2.4. AWS CLI
-`optional step in case you want to deploy the streaming pipeline to AWS`
-
-First, install [AWS CLI 2.11.22](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
-
-Secondly, configure the [credentials of your AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html). 
+You can deploy the streaming pipeline to AWS in 2 ways:
+1. **running Make commands**: install & configure your [AWS CLI 2.11.22](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section
+2. **using the GitHub Actions CI/CD pipeline**: only create an account and generate a pair of credentials as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section
 
 
 # 3. Usage
 
 ## 3.1. Local
 
-Run production streaming pipeline in `real-time` mode:
+Run the streaming pipeline in `real-time` and `production` modes:
 ```shell
 make run_real_time
 ```
 
-To populate the vector DB you can ingest historical data by running the streaming pipeline in `batch` mode:
+To populate the vector DB, you can ingest historical data from the latest 8 days by running the streaming pipeline in `batch` and `production` modes:
 ```shell
 make run_batch
 ```
 
-Run the streaming pipeline in `real-time` and `development` modes:
+For debugging & testing, run the streaming pipeline in `real-time` and `development` modes:
 ```shell
 make run_real_time_dev
 ```
 
-Run the streaming pipeline in `batch` and `development` modes:
+For debugging & testing, run the streaming pipeline in `batch` and `development` modes:
 ```shell
 make run_batch_dev
 ```
 
-Run a query in your vector DB:
+To query the Qdrant vector DB, run the following:
 ```shell
 make search PARAMS='--query_string "Should I invest in Tesla?"'
 ```
-You can replace the `--query_string` with any question you want.
-
+You can replace the `--query_string` with any question.
 
 ## 3.2. Docker
 
-Build the Docker image:
+First, build the Docker image:
 ```shell
 make build
 ```
 
-Run the streaming pipeline in `real-time` mode inside the Docker image:
+Then, run the streaming pipeline in `real-time` mode inside the Docker image, as follows:
 ```shell
 make run_real_time_docker
 ```
 
 
 ## 3.3. Deploy to AWS
-First, be sure that the `credentials` of your AWS CLI are configured.
 
-After, run the following to deploy the streaming pipeline to an AWS EC2 machine: 
+### 3.3.1. Running Make commands
+
+First, ensure you successfully configured your AWS CLI credentials.
+
+After, run the following to deploy the streaming pipeline to a `t2.small` AWS EC2 machine: 
 ```shell
 make deploy_aws
 ```
@@ -138,17 +138,42 @@ To check the state of the deployment, run:
 make info_aws
 ```
 
-To remove the EC2 machine, run:
+To destroy the EC2 machine, run:
 ```shell
 make undeploy_aws
 ```
 
-Connect to your EC2 machine and run:
+### 3.3.2. Using the GitHub Actions CI/CD pipeline
+
+Here, you only have to ensure you generate your AWS credentials.
+
+Afterward, you must fork the repository and add all the credentials within your `.env` file into the forked repository secrets section. 
+
+Go to your `forked repository -> Settings -> Secrets and variables -> Actions -> New repository secret`.
+
+Now, add all the secrets as in the image below. 
+
+![GitHub Actions Secrets](../../media/github_actions_secrets.png)
+
+Now, to deploy the streaming pipeline to AWS using GitHub Action's CI/CD pipeline, follow the next steps: `Actions Tab -> Continuous Deployment (CD) | Streaming Pipeline action (on the left) -> Press "Run workflow"`.
+
+![GitHub Actions CD](../../media/github_actions_cd.png)
+
+To automatically destroy all the AWS components created earlier, you have to call another GitHub Actions workflow as follows: `Actions Tab -> Destroy AWS Infrastructure -> Press "Run workflow"`
+
+----
+
+**In both scenarios,** to see if your EC2 initialized correctly, connect to your EC2 machine and run:
 ```
 cat /var/log/cloud-init-output.log
 ```
+Also, to see that the docker image is running:
+```
+docker ps
+```
+**Note:** You have to wait for ~5 minutes until everything is initialized fully.
 
-## 3.4. PEP8 Linting & Formatting
+## 3.4. Linting & Formatting
 
 **Check** the code for **linting** issues:
 ```shell
