@@ -17,7 +17,7 @@ The **training pipeline** is **deployed** using [Beam](https://docs.beam.cloud/g
 - [3. Usage](#3-usage)
     - [3.1. Train](#31-train)
     - [3.2. Inference](#32-inference)
-    - [3.3. PEP8 Linting & Formatting](#33-pep8-linting--formatting)
+    - [3.3. Linting & Formatting](#33-linting--formatting)
 
 -------
 
@@ -61,12 +61,12 @@ cp .env.example .env
 ## 2.2. Beam
 `optional step in case you want to deploy the training pipeline to Beam` 
 
-First, you must set up Beam, as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section.
+**First**, you must set up Beam, as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section.
 
 In addition to setting up Beam, you have to go to your [Beam account](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and create a volume, as follows:
-- go to the `Volumes` section
-- click create `New Volume` (in the top right corner)
-- choose `Volume Name = qa_dataset` and `Volume Type = Shared`
+1. go to the `Volumes` section
+2. click create `New Volume` (in the top right corner)
+3. choose `Volume Name = qa_dataset` and `Volume Type = Shared`
 
 After, run the following command to upload the Q&A dataset to the Beam volume you created:
 ```shell
