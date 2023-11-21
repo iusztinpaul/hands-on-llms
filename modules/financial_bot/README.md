@@ -123,6 +123,8 @@ Start the Gradio UI in debug mode while mocking the LLM:
 make run_ui_dev
 ```
 
+![Financial Bot Gradio UI](../../media/financial_bot_gradio_ui.png)
+
 **NOTE:** Running the commands from above will host the UI on your computer. To run them, **you need a CUDA-enabled Nvidia GPU with enough resources** (e.g., to run the inference using Falcon 7B, you need ~8 GB VRAM). If you don't have that available, you can deploy it to `Gradio Spaces` on HuggingFace. It is straightforward to do so. [Here are some docs to get you started](https://huggingface.co/docs/hub/spaces-sdks-gradio).
 
 ## 3.4. Linting & Formatting
