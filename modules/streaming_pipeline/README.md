@@ -73,8 +73,8 @@ Check out the [Setup External Services](https://github.com/iusztinpaul/hands-on-
 `deploy the streaming pipeline to AWS [optional]` 
 
 You can deploy the streaming pipeline to AWS in 2 ways:
-1. **running a Make command**: install & configure the [AWS CLI 2.11.22](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section
-2. **using the GitHub Actions CI/CD pipeline**: only create an account, and generate a pair of credentials as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section
+1. **running Make commands**: install & configure your [AWS CLI 2.11.22](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section
+2. **using the GitHub Actions CI/CD pipeline**: only create an account and generate a pair of credentials as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section
 
 
 # 3. Usage
@@ -122,7 +122,7 @@ make run_real_time_docker
 
 ## 3.3. Deploy to AWS
 
-### 3.3.1. Using a Make command
+### 3.3.1. Running Make commands
 
 First, ensure you successfully configured your AWS CLI credentials.
 

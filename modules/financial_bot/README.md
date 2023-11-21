@@ -15,8 +15,7 @@ The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/
 - [1. Motivation](#1-motivation)
 - [2. Install](#2-install)
     - [2.1. Dependencies](#21-dependencies)
-    - [2.2. Qdrant](#21-qdrant)
-    - [2.3. Beam](#21-beam)
+    - [2.2. Qdrant & Beam](#21-qdrant--beam)
 - [3. Usage](#3-usage)
     - [3.1. Local](#31-local)
     - [3.2. Deploy to Beam as a RESTful API](#32-deploy-to-beam)
@@ -47,12 +46,12 @@ Main dependencies you have to install yourself:
 * Poetry 1.5.1
 * GNU Make 4.3
 
-Install dependencies:
+Installing all the other dependencies is as easy as running:
 ```shell
 make install
 ```
 
-For developing run:
+When developing run:
 ```shell
 make install_dev
 ```
@@ -61,50 +60,43 @@ Prepare credentials:
 ```shell
 cp .env.example .env
 ```
---> and complete the `.env` file with your credentials.
+--> and complete the `.env` file with your [external services credentials](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services).
 
-## 2.2. Qdrant
+## 2.2. Qdrant & Beam
 
-You must create a FREE account in Qdrant and generate the `QDRANT_API_KEY` and `QDRANT_URL` environment variables. After, be sure to add them to your `.env` file.
-
--> [Check out this document to see how.](https://qdrant.tech/documentation/cloud/authentication/?utm_source=thepauls&utm_medium=partner&utm_content=github)
-
-
-## 2.3. Beam
-`optional step in case you want to use Beam` 
-
-Create and configure a free Beam account to deploy it as a serverless RESTful API and show it to your friends. You will pay only for what you use. 
-
--> [Create a Beam account & configure it.](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github)
+Check out the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section to see how to create API keys for them.
 
 
 # 3. Usage
 
 ## 3.1. Local
 
-Run bot locally:
+Run the bot locally with a predefined question:
 ```shell
 make run
 ```
 
-Run bot locally in dev mode:
+For debugging & testing, run the bot locally with a predefined question, while mocking the LLM:
 ```shell
 make run_dev
 ```
 
-## 3.2. Deploy to Beam as a RESTful API
+## 3.2. Beam | RESTful API
+`deploy the financial bot as a RESTful API to Beam [optional]` 
+
+**First**, you must set up Beam, as explained in the [Setup External Services](https://github.com/iusztinpaul/hands-on-llms/tree/main#2-setup-external-services) section.
 
 Deploy the bot under a RESTful API using Beam:
 ```shell
 make deploy_beam
 ```
 
-Deploy the bot under a RESTful API using Beam in dev mode:
+For debugging & testing, deploy the bot under a RESTful API using Beam while mocking the LLM:
 ```shell
 make deploy_beam_dev
 ```
 
-To test the deployment, make a request to the bot calling the RESTful API, as follows:
+To test the deployment, make a request to the bot calling the RESTful API as follows (the first request will take a while as the LLM needs to load):
 ```shell
 export BEAM_DEPLOYMENT_ID=<BEAM_DEPLOYMENT_ID> # e.g., <xxxxx> from https://<xxxxx>.apps.beam.cloud
 export BEAM_AUTH_TOKEN=<BEAM_AUTH_TOKEN> # e.g., <xxxxx> from Authorization: Basic <xxxxx>
@@ -112,23 +104,26 @@ export BEAM_AUTH_TOKEN=<BEAM_AUTH_TOKEN> # e.g., <xxxxx> from Authorization: Bas
 make call_restful_api DEPLOYMENT_ID=${BEAM_DEPLOYMENT_ID} TOKEN=${BEAM_AUTH_TOKEN} 
 ```
 
-**Note:** To find out `BEAM_DEPLOYMENT_ID` and `BEAM_AUTH_TOKEN` navigate to your `financial_bot` or `financial_bot_dev` Beam app.
+**Note:** To find out `BEAM_DEPLOYMENT_ID` and `BEAM_AUTH_TOKEN` navigate to your `financial_bot` or `financial_bot_dev` [Beam app](https://www.beam.cloud/dashboard/apps?utm_source=thepauls&utm_medium=partner&utm_content=github).
 
-**IMPORTANT:** After you finish testing your project, don't forget to stop your Beam deployment. 
+**IMPORTANT NOTE 1:** After you finish testing your project, don't forget to stop your Beam deployment. 
+**IMPORTANT NOTE 2:** The financial bot will work only on CUDA-enabled Nvidia GPUs with ~8 GB VRAM. If you don't have one and wish to run the code, you must deploy it to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github). 
 
 ## 3.3. Gradio UI
+
+To test out & play with the financial bot, you can run it locally under a Gradio UI.
 
 Start the Gradio UI:
 ```shell
 make run_ui
 ```
 
-Start the Gradio UI in dev mode:
+Start the Gradio UI in debug mode while mocking the LLM:
 ```shell
 make run_ui_dev
 ```
 
-**NOTE:** Running the commands from above will host the UI on your computer. To run them, **you need an Nvidia GPU with enough resources** (e.g., to run the inference using Falcon 7B, you need ~8 GB VRAM). If you don't have that available, you can deploy it to `Gradio Spaces` on HuggingFace. It is pretty straightforward to do so. [Here are some docs to get you started](https://huggingface.co/docs/hub/spaces-sdks-gradio).
+**NOTE:** Running the commands from above will host the UI on your computer. To run them, **you need a CUDA-enabled Nvidia GPU with enough resources** (e.g., to run the inference using Falcon 7B, you need ~8 GB VRAM). If you don't have that available, you can deploy it to `Gradio Spaces` on HuggingFace. It is straightforward to do so. [Here are some docs to get you started](https://huggingface.co/docs/hub/spaces-sdks-gradio).
 
 ## 3.4. Linting & Formatting
 
