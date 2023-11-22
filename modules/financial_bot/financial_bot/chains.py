@@ -113,12 +113,13 @@ class ContextExtractorChain(Chain):
         question_str = inputs[quest_key]
 
         cleaned_question = self.clean(question_str)
-        # TODO: Chunk the question in 'max_input_length' chunks,
+        # TODO: Instead of cutting the question at 'max_input_length', chunk the question in 'max_input_length' chunks,
         # pass them through the model and average the embeddings.
         cleaned_question = cleaned_question[: self.embedding_model.max_input_length]
         embeddings = self.embedding_model(cleaned_question)
 
-        # TODO: Using the metadata filter the news from the latest week (or other timeline).
+        # TODO: Using the metadata, use the filter to take into consideration only the news from the last 24 hours
+        # (or other time frame).
         matches = self.vector_store.search(
             query_vector=embeddings,
             k=self.top_k,

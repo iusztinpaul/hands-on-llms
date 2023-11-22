@@ -59,10 +59,6 @@ def build_qlora_model(
         cache_dir=str(cache_dir) if cache_dir else None,
     )
 
-    # TODO: Should we also enable kbit training? Check out what it does.
-    # from peft import prepare_model_for_kbit_training
-    # model = prepare_model_for_kbit_training(model)
-
     tokenizer = AutoTokenizer.from_pretrained(
         pretrained_model_name_or_path,
         trust_remote_code=False,

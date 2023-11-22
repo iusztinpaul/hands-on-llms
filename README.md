@@ -8,6 +8,11 @@
 
 - [1. Building Blocks](#1-building-blocks)
 - [2. Setup External Services](#2-setup-external-services)
+    - [2.1. Alpaca](#21-alpaca)
+    - [2.2. Qdrant](#22-qdrant)
+    - [2.3. Comet ML](#23-comet-ml)
+    - [2.4. Beam](#24-beam)
+    - [2.5. AWS](#25-aws)
 - [3. Install & Usage](#3-install--usage)
 - [4. Video lectures](#4-video-lectures)
 - [5. License](#5-license)

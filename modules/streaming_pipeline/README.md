@@ -155,11 +155,15 @@ Now, add all the secrets as in the image below.
 
 ![GitHub Actions Secrets](../../media/github_actions_secrets.png)
 
-Now, to deploy the streaming pipeline to AWS using GitHub Action's CI/CD pipeline, follow the next steps: `Actions Tab -> Continuous Deployment (CD) | Streaming Pipeline action (on the left) -> Press "Run workflow"`.
+<br/>
+
+Now, to **automatically deploy** the streaming pipeline to AWS using the GitHub Action's CI/CD pipeline, follow the next steps: `Actions Tab -> Continuous Deployment (CD) | Streaming Pipeline action (on the left) -> Press "Run workflow"`.
 
 ![GitHub Actions CD](../../media/github_actions_cd.png)
 
-To automatically destroy all the AWS components created earlier, you have to call another GitHub Actions workflow as follows: `Actions Tab -> Destroy AWS Infrastructure -> Press "Run workflow"`
+<br/>
+
+To **automatically destroy** all the AWS components created earlier, you have to call another GitHub Actions workflow as follows: `Actions Tab -> Destroy AWS Infrastructure -> Press "Run workflow"`
 
 ----
 
@@ -167,10 +171,12 @@ To automatically destroy all the AWS components created earlier, you have to cal
 ```
 cat /var/log/cloud-init-output.log
 ```
-Also, to see that the docker image is running:
+Also, to see that the streaming pipeline Docker container is running, run the following:
 ```
 docker ps
 ```
+You should see the `streaming_pipeline` docker container listed.
+
 **Note:** You have to wait for ~5 minutes until everything is initialized fully.
 
 ## 3.4. Linting & Formatting
