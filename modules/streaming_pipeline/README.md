@@ -155,9 +155,13 @@ Now, add all the secrets as in the image below.
 
 ![GitHub Actions Secrets](../../media/github_actions_secrets.png)
 
+<br/>
+
 Now, to deploy the streaming pipeline to AWS using GitHub Action's CI/CD pipeline, follow the next steps: `Actions Tab -> Continuous Deployment (CD) | Streaming Pipeline action (on the left) -> Press "Run workflow"`.
 
 ![GitHub Actions CD](../../media/github_actions_cd.png)
+
+<br/>
 
 To automatically destroy all the AWS components created earlier, you have to call another GitHub Actions workflow as follows: `Actions Tab -> Destroy AWS Infrastructure -> Press "Run workflow"`
 
