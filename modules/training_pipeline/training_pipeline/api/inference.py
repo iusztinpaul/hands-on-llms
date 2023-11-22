@@ -172,9 +172,6 @@ class InferenceAPI:
 
         """
 
-        # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
-        # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
-
         start_time = time.time()
         answer = models.prompt(
             model=self._model,

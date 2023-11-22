@@ -212,8 +212,6 @@ class TrainingAPI:
 
         logger.info("Training model...")
 
-        # TODO: Handle this error: "Token indices sequence length is longer than the specified maximum sequence length
-        # for this model (2302 > 2048). Running this sequence through the model will result in indexing errors"
         trainer = SFTTrainer(
             model=self._model,
             train_dataset=self._training_dataset,
