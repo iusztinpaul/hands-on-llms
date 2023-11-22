@@ -1,6 +1,23 @@
 {
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+            "source.organizeImports.ruff": true
+        }
     },
-    "python.formatting.provider": "none"
+    "python.formatting.provider": "black",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportUndefinedVariable": "error",
+        "reportImportCycles": "error",
+        "reportMissingImports": "error",
+        "reportMissingModuleSource": "error",
+    },
+    "python.linting.flake8CategorySeverity.F": "Warning",
+    "python.linting.flake8CategorySeverity.E": "Information",
+    "python.linting.flake8CategorySeverity.W": "Information",
+    "python.linting.mypyCategorySeverity.note": "Information",
+    "python.linting.mypyCategorySeverity.error": "Information",
+    "python.linting.pycodestyleCategorySeverity.E": "Information",
 }

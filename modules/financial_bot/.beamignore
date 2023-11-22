@@ -1,0 +1,6 @@
+model_cache/*
+results/*
+output/*
+logs/*
+.ruff_cache/*
+__pycache__/**

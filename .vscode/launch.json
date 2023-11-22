@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Python: Current File",
             "type": "python",
@@ -14,26 +15,10 @@
             "cwd": "${workspaceFolder}/modules",
         },
         {
-            "name": "Dev Train Local",
+            "name": "Training Pipeline",
             "type": "python",
             "request": "launch",
-            "module": "tools.train_finqa",
-            "justMyCode": false,
-            "cwd": "${workspaceFolder}/modules/training_pipeline",
-            "args": [
-                "--config_file",
-                "configs/dev_training_config.yaml",
-                "--output_dir",
-                "./output",
-                "--dataset_dir",
-                "./dataset"
-            ]
-        },
-        {
-            "name": "Train Local",
-            "type": "python",
-            "request": "launch",
-            "module": "tools.train_finqa",
+            "module": "tools.train_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
@@ -46,15 +31,15 @@
             ]
         },
         {
-            "name": "Dev Inference Local",
+            "name": "Training Pipeline [Dev]",
             "type": "python",
             "request": "launch",
-            "module": "tools.inference_finqa",
+            "module": "tools.train_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
                 "--config_file",
-                "configs/dev_inference_config.yaml",
+                "configs/dev_training_config.yaml",
                 "--output_dir",
                 "./output",
                 "--dataset_dir",
@@ -62,20 +47,133 @@
             ]
         },
         {
-            "name": "Inference Local",
+            "name": "Training Pipeline [Inference]",
             "type": "python",
             "request": "launch",
-            "module": "tools.inference_finqa",
+            "module": "tools.inference_run",
             "justMyCode": false,
             "cwd": "${workspaceFolder}/modules/training_pipeline",
             "args": [
                 "--config_file",
                 "configs/inference_config.yaml",
-                "--output_dir",
-                "./output",
                 "--dataset_dir",
                 "./dataset"
             ]
-        }
+        },
+        {
+            "name": "Training Pipeline [Inference Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.inference_run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/training_pipeline",
+            "args": [
+                "--config_file",
+                "configs/dev_inference_config.yaml",
+                "--dataset_dir",
+                "./dataset"
+            ]
+        },
+        {
+            "name": "Streaming Pipeline [Real-Time]",
+            "type": "python",
+            "request": "launch",
+            "module": "bytewax.run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+                "tools.run_real_time:build_flow"
+            ]
+        },
+        {
+            "name": "Streaming Pipeline [Real-Time Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "bytewax.run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+                "tools.run_real_time:build_flow(debug=True)"
+            ]
+        },
+        {
+            "name": "Streaming Pipeline [Batch]",
+            "type": "python",
+            "request": "launch",
+            "module": "bytewax.run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+                "-p4",
+                "tools.run_batch:build_flow(latest_n_days=8)"
+            ]
+        },
+        {
+            "name": "Streaming Pipeline [Batch Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "bytewax.run",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/streaming_pipeline",
+            "args": [
+                "tools.run_batch:build_flow(latest_n_days=2, debug=True)"
+            ]
+        },
+        {
+            "name": "Financial Bot",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.bot",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": [
+                "--about_me",
+                "I am a student and I have some money that I want to invest.",
+                "--question",
+                "Should I consider investing in stocks from the Tech Sector?",
+                "--history",
+                "[[\"What is your opinion on investing in startup companies?\", \"Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing.\"]]",
+                "--debug",
+                "False"
+            ]
+        },
+        {
+            "name": "Financial Bot [Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.bot",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": [
+                "--about_me",
+                "I am a student and I have some money that I want to invest.",
+                "--question",
+                "Should I consider investing in stocks from the Tech Sector?",
+                "--history",
+                "[[\"What is your opinion on investing in startup companies?\", \"Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing.\"]]",
+                "--debug",
+                "True"
+            ]
+        },
+        {
+            "name": "Financial Bot UI",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.ui",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": []
+        },
+        {
+            "name": "Financial Bot UI [Dev]",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.ui",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/financial_bot",
+            "args": [
+                "--debug"
+            ]
+        },
     ]
 }

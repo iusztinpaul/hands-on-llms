@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.ruff_cache/
 
 # C extensions
 *.so
@@ -175,7 +176,13 @@ cython_debug/
 
 # Artifacts
 results/
-output/
+output*/
 model_cache/
-logs/
+output*
+user_data.sh
+
 set_env_variables.sh
+logs/
+.DS_Store
+gradio_cached_examples
+trust_policy.json

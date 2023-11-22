@@ -1,8 +1,7 @@
-# Training artifacts
 model_cache/*
 results/*
 output/*
 logs/*
-
-# Datasets
+.ruff_cache/*
 dataset/*
+__pycache__/**

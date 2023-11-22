@@ -4,21 +4,20 @@ training:
   per_device_eval_batch_size: 1
   eval_accumulation_steps: 1
   optim: paged_adamw_32bit
-  save_steps: 250
-  logging_steps: 50
+  save_steps: 5
+  logging_steps: 2
   learning_rate: 2.e-4
   fp16: True
   max_grad_norm: 0.3
-  num_train_epochs: 1
+  num_train_epochs: 8
   warmup_ratio: 0.03
   lr_scheduler_type: constant
   evaluation_strategy: steps
-  eval_steps: 250
+  eval_steps: 5
   report_to: comet_ml
   seed: 42
   load_best_model_at_end: True
 model:
   id: tiiuae/falcon-7b-instruct
+  template: falcon
   max_seq_length: 1024
-setup:
-  debug: False
