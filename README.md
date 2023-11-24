@@ -168,6 +168,15 @@ Thus, check out the README for every module individually to see how to install &
   </a>
 </div>
 
+### 4.3 Real-time text embedding pipeline
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=5gX5XRZpb6E">
+      <p>Click here to watch the video 🎬</p>
+    <img src="media/youtube_thumbnails/03_real_time_embeddings.png" alt="Real-time text embedding pipeline" style="width:75%;">
+  </a>
+</div>
+
 ## 5. License
 
 This course is an open-source project released under the MIT license. Thus, as long you distribute our LICENSE and acknowledge our work, you can safely clone or fork this project and use it as a source of inspiration for whatever you want (e.g., university projects, college degree projects, etc.).
