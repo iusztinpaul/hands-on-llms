@@ -27,7 +27,7 @@
 
 ## 1. Building Blocks
 
-*This is what you will learn within this course* ↓
+*Using the 3-pipeline design, this is what you will learn to build within this course* ↓
 
 ### 1.1. Training Pipeline 
 
