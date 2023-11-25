@@ -65,6 +65,15 @@ The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/
 ![architecture](media/architecture.png)
 
 
+#### 1.4. Financial Q&A dataset
+
+We used `GPT3.5` to generate a financial Q&A dataset to fine-tune our open-source LLM to specialize in using financial terms and answering financial questions. Using a large LLM, such as `GPT3.5` to generate a dataset that trains a smaller LLM (e.g., Falcon 7B) is known as **fine-tuning with distillation**. 
+
+→ To understand how we generated the financial Q&A dataset, [check out this article](https://open.substack.com/pub/paulabartabajo/p/how-to-generate-financial-q-and-a?r=1ttoeh&utm_campaign=post&utm_medium=web) written by [Pau Labarta](https://github.com/Paulescu).
+
+→ To see a complete analysis of the financial Q&A dataset, check out the [dataset_analysis](https://github.com/iusztinpaul/hands-on-llms/blob/main/dataset_analysis/prompts_eda.ipynb) subsection of the course written by [Alexandru Razvant](https://github.com/Joywalker).
+
+
 ## 2. Setup External Services
 
 Before diving into the modules, you have to set up a couple of additional external tools for the course.
