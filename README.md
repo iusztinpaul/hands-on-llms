@@ -27,7 +27,7 @@
 
 ## 1. Building Blocks
 
-This is what you will learn within this course ↓
+*This is what you will learn within this course* ↓
 
 ### 1.1. Training Pipeline 
 
