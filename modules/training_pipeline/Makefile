@@ -6,8 +6,8 @@ install:
 	@echo "Installing training pipeline..."
 	
 	poetry env use $(shell which python3.10) && \
-	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install && \
-	poetry run pip install torch==2.0.1
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install
+	# poetry run pip install torch==2.0.1
 
 install_dev: install
 	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --with dev

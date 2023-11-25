@@ -3,6 +3,7 @@ import logging.config
 import os
 from pathlib import Path
 
+import nvidia.cudnn
 import yaml
 from dotenv import find_dotenv, load_dotenv
 
@@ -60,3 +61,32 @@ def initialize_logger(
     config["disable_existing_loggers"] = False
 
     logging.config.dictConfig(config)
+
+
+def initialize_cuda():
+    print("##################### INITIALIZING CUDA #####################")
+    """Initialize CUDA if available."""
+
+    # Get the grandparent directory of the cudnn file path
+    cudnn_file_path = nvidia.cudnn.__file__
+    d_path = Path(cudnn_file_path).parent.parent
+
+    # Start with the current LD_LIBRARY_PATH
+    ld_library_path = os.environ.get("LD_LIBRARY_PATH", "")
+
+    # Loop through each item in directory D
+    for item in d_path.iterdir():
+        if item.is_dir():
+            lib_path = item / "lib"
+            if lib_path.exists():
+                # Append the lib subdirectory of the item to LD_LIBRARY_PATH
+                ld_library_path += f":{lib_path}"
+
+    # Update the LD_LIBRARY_PATH environment variable
+    os.environ["LD_LIBRARY_PATH"] = ld_library_path
+
+    # Optional: Print the updated LD_LIBRARY_PATH
+    logger.info("Updated LD_LIBRARY_PATH:", ld_library_path)
+
+
+initialize_cuda()
