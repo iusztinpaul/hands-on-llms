@@ -1,4 +1,4 @@
-## Exploratory Data Analysis of Finetuning Q&A Dataset
+## Exploratory Data Analysis of the Finetuning Q&A Dataset
 
 As in any ML problem, data used to train models is indispensable to the model's performance and value. The same principle applies to Generative AI tasks. More precisely, in finetuning Large Language Models, one of the critical components in this course.
 
@@ -39,7 +39,7 @@ Here are the key steps of our EDA (Exploratory Data Analysis) on the prompts of 
 - Helps limit the input prompt to a specific size, allowing the completion sentence to be longer.
 
 
-![EDA_KEYPOINTS](../media/eda_prompts_dataset.png)
+![EDA](../media/eda_prompts_dataset.png)
 
-### Get Started 
-↳ Check out the EDA notebook at [dataset_analysis/prompts_eda.ipynb](https://github.com/iusztinpaul/hands-on-llms/blob/main/dataset_analysis/prompts_eda.ipynb) to see the complete analysis.  
+### Learn More
+→ Check out the EDA notebook at [dataset_analysis/prompts_eda.ipynb](https://github.com/iusztinpaul/hands-on-llms/blob/main/dataset_analysis/prompts_eda.ipynb) to see the complete analysis.  
