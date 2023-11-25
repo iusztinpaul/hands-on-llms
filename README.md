@@ -1,6 +1,6 @@
 <div align="center">
     <h2>Hands-on LLMs Course </h2>
-    <h1>Train and Deploy a Real-Time Financial Advisor</h1>
+    <h1>Learn to Train and Deploy a Real-Time Financial Advisor</h1>
     <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a>, <a href="https://github.com/Paulescu">Pau Labarta Bajo</a> and <a href="https://github.com/Joywalker">Alexandru Razvant</a></i>
 </div>
 
