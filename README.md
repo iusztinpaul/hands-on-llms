@@ -10,7 +10,7 @@
     - [1.1. Training Pipeline](#11-training-pipeline)
     - [1.2. Streaming Real-time Pipeline](#12-streaming-real-time-pipeline)
     - [1.3. Inference Pipeline](#13-inference-pipeline)
-    - [1.4. Financial Q&A Dataset](#14-financial-q&a-dataset)
+    - [1.4. Financial Q&A Dataset](#14-financial-qa-dataset)
 - [2. Setup External Services](#2-setup-external-services)
     - [2.1. Alpaca](#21-alpaca)
     - [2.2. Qdrant](#22-qdrant)
