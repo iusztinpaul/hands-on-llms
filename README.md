@@ -75,7 +75,7 @@ We used `GPT3.5` to generate a financial Q&A dataset to fine-tune our open-sourc
 
 → To understand how we generated the financial Q&A dataset, [check out this article](https://open.substack.com/pub/paulabartabajo/p/how-to-generate-financial-q-and-a?r=1ttoeh&utm_campaign=post&utm_medium=web) written by [Pau Labarta](https://github.com/Paulescu).
 
-→ To see a complete analysis of the financial Q&A dataset, check out the [dataset_analysis](https://github.com/iusztinpaul/hands-on-llms/blob/main/dataset_analysis/prompts_eda.ipynb) subsection of the course written by [Alexandru Razvant](https://github.com/Joywalker).
+→ To see a complete analysis of the financial Q&A dataset, check out the [dataset_analysis](https://github.com/iusztinpaul/hands-on-llms/blob/main/dataset_analysis) subsection of the course written by [Alexandru Razvant](https://github.com/Joywalker).
 
 ![EDA](./media/eda_prompts_dataset.png)
 
