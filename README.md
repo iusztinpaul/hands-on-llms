@@ -27,7 +27,7 @@
 
 ## 1. Building Blocks
 
-### 1.1. Training Pipeline 🖋️ 
+### 1.1. Training Pipeline 
 
 Training pipeline that:
 - loads a proprietary Q&A dataset 
@@ -39,7 +39,7 @@ The **training pipeline** is **deployed** using [Beam](https://docs.beam.cloud/g
 
 -> Found under the `modules/training_pipeline` directory.
 
-### 1.2. Streaming Real-time Pipeline 🚰
+### 1.2. Streaming Real-time Pipeline
 
 Real-time feature pipeline that:
 - ingests financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/)
@@ -50,7 +50,7 @@ The **streaming pipeline** is **automatically deployed** on an AWS EC2 machine u
 
 -> Found under the `modules/streaming_pipeline` directory.
 
-### 1.3. Inference Pipeline 🤖
+### 1.3. Inference Pipeline
 
 Inference pipeline that uses [LangChain](https://github.com/langchain-ai/langchain) to create a chain that:
 * downloads the fine-tuned model from [Comet's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) model registry
