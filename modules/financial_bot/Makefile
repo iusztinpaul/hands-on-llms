@@ -71,10 +71,10 @@ deploy_beam_dev: export_requirements
 
 call_restful_api:
 	curl -X POST  \
-	--compressed 'https://${DEPLOYMENT_ID}.apps.beam.cloud' \
+	--compressed 'https://${BEAM_DEPLOYMENT_ID}.apps.beam.cloud' \
 	-H 'Accept: */*' \
 	-H 'Accept-Encoding: gzip, deflate' \
-	-H 'Authorization: Basic ${TOKEN}' \
+	-H 'Authorization: Basic ${BEAM_AUTH_TOKEN}' \
 	-H 'Connection: keep-alive' \
 	-H 'Content-Type: application/json' \
 	-d '{"about_me": "I am a student and I have some money that I want to invest.", "question": "Should I consider investing in stocks from the Tech Sector?", "history": [["What is your opinion on investing in startup companies?", "Startup investments can be very lucrative, but they also come with a high degree of risk. It is important to do your due diligence and research the company thoroughly before investing."]]}'
