@@ -41,7 +41,7 @@ The **training pipeline** is **deployed** using [Beam](https://docs.beam.cloud/g
 
 -> Found under the `modules/training_pipeline` directory.
 
-#### Minimum Hardware Requirements
+#### 💻 Minimum Hardware Requirements
 * CPU: 4 Cores
 * RAM: 14 GiB
 * VRAM: 10 GiB (mandatory CUDA-enabled Nvidia GPU)
@@ -59,7 +59,7 @@ The **streaming pipeline** is **automatically deployed** on an AWS EC2 machine u
 
 -> Found under the `modules/streaming_pipeline` directory.
 
-#### Minimum Hardware Requirements
+#### 💻 Minimum Hardware Requirements
 * CPU: 1 Core
 * RAM: 2 GiB
 * VRAM: -
@@ -78,7 +78,7 @@ The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/
 
 -> Found under the `modules/financial_bot` directory.
 
-#### Minimum Hardware Requirements
+#### 💻 Minimum Hardware Requirements
 * CPU: 4 Cores
 * RAM: 14 GiB
 * VRAM: 8 GiB (mandatory CUDA-enabled Nvidia GPU)
