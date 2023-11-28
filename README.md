@@ -41,6 +41,13 @@ The **training pipeline** is **deployed** using [Beam](https://docs.beam.cloud/g
 
 -> Found under the `modules/training_pipeline` directory.
 
+#### 💻 Minimum Hardware Requirements
+* CPU: 4 Cores
+* RAM: 14 GiB
+* VRAM: 10 GiB (mandatory CUDA-enabled Nvidia GPU)
+
+**Note:** Do not worry if you don't have the minimum hardware requirements. We will show you how to deploy the training pipeline to [Beam's](https://docs.beam.cloud/getting-started/quickstart?utm_source=thepauls&utm_medium=partner&utm_content=github) serverless infrastructure and train the LLM there.
+
 ### 1.2. Streaming Real-time Pipeline
 
 Real-time feature pipeline that:
@@ -51,6 +58,11 @@ Real-time feature pipeline that:
 The **streaming pipeline** is **automatically deployed** on an AWS EC2 machine using a CI/CD pipeline built in GitHub actions.
 
 -> Found under the `modules/streaming_pipeline` directory.
+
+#### 💻 Minimum Hardware Requirements
+* CPU: 1 Core
+* RAM: 2 GiB
+* VRAM: -
 
 ### 1.3. Inference Pipeline
 
@@ -65,6 +77,13 @@ Inference pipeline that uses [LangChain](https://github.com/langchain-ai/langcha
 The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/deployment/rest-api?utm_source=thepauls&utm_medium=partner&utm_content=github) as a serverless GPU infrastructure, as a RESTful API. Also, it is wrapped under a UI for demo purposes, implemented in [Gradio](https://www.gradio.app/).
 
 -> Found under the `modules/financial_bot` directory.
+
+#### 💻 Minimum Hardware Requirements
+* CPU: 4 Cores
+* RAM: 14 GiB
+* VRAM: 8 GiB (mandatory CUDA-enabled Nvidia GPU)
+
+**Note:** Do not worry if you don't have the minimum hardware requirements. We will show you how to deploy the inference pipeline to [Beam's](https://docs.beam.cloud/getting-started/quickstart?utm_source=thepauls&utm_medium=partner&utm_content=github) serverless infrastructure and call the LLM from there.
 
 <br/>
 
