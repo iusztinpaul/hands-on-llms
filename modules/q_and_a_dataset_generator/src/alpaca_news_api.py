@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 import requests
-
 from src.logger import get_console_logger
 from src.paths import DATA_DIR
 

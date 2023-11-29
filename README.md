@@ -1,12 +1,16 @@
 <div align="center">
     <h2>Hands-on LLMs Course </h2>
-    <h1>Train and Deploy a Real-Time Financial Advisor</h1>
+    <h1>Learn to Train and Deploy a Real-Time Financial Advisor</h1>
     <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a>, <a href="https://github.com/Paulescu">Pau Labarta Bajo</a> and <a href="https://github.com/Joywalker">Alexandru Razvant</a></i>
 </div>
 
 ## Table of Contents
 
 - [1. Building Blocks](#1-building-blocks)
+    - [1.1. Training Pipeline](#11-training-pipeline)
+    - [1.2. Streaming Real-time Pipeline](#12-streaming-real-time-pipeline)
+    - [1.3. Inference Pipeline](#13-inference-pipeline)
+    - [1.4. Financial Q&A Dataset](#14-financial-qa-dataset)
 - [2. Setup External Services](#2-setup-external-services)
     - [2.1. Alpaca](#21-alpaca)
     - [2.2. Qdrant](#22-qdrant)
@@ -23,7 +27,9 @@
 
 ## 1. Building Blocks
 
-### 1.1. Training pipeline 🖋️ 
+*Using the 3-pipeline design, this is what you will learn to build within this course* ↓
+
+### 1.1. Training Pipeline 
 
 Training pipeline that:
 - loads a proprietary Q&A dataset 
@@ -35,7 +41,14 @@ The **training pipeline** is **deployed** using [Beam](https://docs.beam.cloud/g
 
 -> Found under the `modules/training_pipeline` directory.
 
-### 1.2. Streaming real-time pipeline 🚰
+#### 💻 Minimum Hardware Requirements
+* CPU: 4 Cores
+* RAM: 14 GiB
+* VRAM: 10 GiB (mandatory CUDA-enabled Nvidia GPU)
+
+**Note:** Do not worry if you don't have the minimum hardware requirements. We will show you how to deploy the training pipeline to [Beam's](https://docs.beam.cloud/getting-started/quickstart?utm_source=thepauls&utm_medium=partner&utm_content=github) serverless infrastructure and train the LLM there.
+
+### 1.2. Streaming Real-time Pipeline
 
 Real-time feature pipeline that:
 - ingests financial news from [Alpaca](https://alpaca.markets/docs/api-references/market-data-api/news-data/)
@@ -46,7 +59,12 @@ The **streaming pipeline** is **automatically deployed** on an AWS EC2 machine u
 
 -> Found under the `modules/streaming_pipeline` directory.
 
-### 1.3. Inference pipeline 🤖
+#### 💻 Minimum Hardware Requirements
+* CPU: 1 Core
+* RAM: 2 GiB
+* VRAM: -
+
+### 1.3. Inference Pipeline
 
 Inference pipeline that uses [LangChain](https://github.com/langchain-ai/langchain) to create a chain that:
 * downloads the fine-tuned model from [Comet's](https://www.comet.com?utm_source=thepauls&utm_medium=partner&utm_content=github) model registry
@@ -60,9 +78,27 @@ The **inference pipeline** is **deployed** using [Beam](https://docs.beam.cloud/
 
 -> Found under the `modules/financial_bot` directory.
 
+#### 💻 Minimum Hardware Requirements
+* CPU: 4 Cores
+* RAM: 14 GiB
+* VRAM: 8 GiB (mandatory CUDA-enabled Nvidia GPU)
+
+**Note:** Do not worry if you don't have the minimum hardware requirements. We will show you how to deploy the inference pipeline to [Beam's](https://docs.beam.cloud/getting-started/quickstart?utm_source=thepauls&utm_medium=partner&utm_content=github) serverless infrastructure and call the LLM from there.
+
 <br/>
 
 ![architecture](media/architecture.png)
+
+
+#### 1.4. Financial Q&A Dataset
+
+We used `GPT3.5` to generate a financial Q&A dataset to fine-tune our open-source LLM to specialize in using financial terms and answering financial questions. Using a large LLM, such as `GPT3.5` to generate a dataset that trains a smaller LLM (e.g., Falcon 7B) is known as **fine-tuning with distillation**. 
+
+→ To understand how we generated the financial Q&A dataset, [check out this article](https://open.substack.com/pub/paulabartabajo/p/how-to-generate-financial-q-and-a?r=1ttoeh&utm_campaign=post&utm_medium=web) written by [Pau Labarta](https://github.com/Paulescu).
+
+→ To see a complete analysis of the financial Q&A dataset, check out the [dataset_analysis](https://github.com/iusztinpaul/hands-on-llms/blob/main/dataset_analysis) subsection of the course written by [Alexandru Razvant](https://github.com/Joywalker).
+
+![EDA](./media/eda_prompts_dataset.png)
 
 
 ## 2. Setup External Services
@@ -165,6 +201,15 @@ Thus, check out the README for every module individually to see how to install &
   <a href="https://www.youtube.com/watch?v=RS96R0dH0uE">
       <p>Click here to watch the video 🎬</p>
     <img src="media/youtube_thumbnails/02_fine_tuning_pipeline_hands_on.png" alt="Hands-on Fine Tuning an LLM" style="width:75%;">
+  </a>
+</div>
+
+### 4.3 Real-time text embedding pipeline
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=5gX5XRZpb6E">
+      <p>Click here to watch the video 🎬</p>
+    <img src="media/youtube_thumbnails/03_real_time_embeddings.png" alt="Real-time text embedding pipeline" style="width:75%;">
   </a>
 </div>
 
