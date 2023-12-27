@@ -123,7 +123,7 @@ Start the Gradio UI in debug mode while mocking the LLM:
 make run_ui_dev
 ```
 
-You can access the Gradio UI at: `http://localhost:7860/`
+After starting the Gradio UI, you can access it at: `http://localhost:7860/`
 
 ![Financial Bot Gradio UI](../../media/financial_bot_gradio_ui.png)
 
