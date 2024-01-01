@@ -139,7 +139,6 @@ def embed_news_into_qdrant(news_data: List[Dict], n_processes: int = 1) -> None:
                                 desc="Processing",
                                 unit="news"))
 
-    breakpoint()
 
 if __name__ == '__main__':
     """"""
