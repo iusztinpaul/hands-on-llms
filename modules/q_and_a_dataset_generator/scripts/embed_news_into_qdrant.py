@@ -84,18 +84,21 @@ def embedding(document: Document) -> Document:
 
 def build_payloads(doc: Document) -> List:
     payloads = []
+    ids = []
     for chunk in doc.chunks:
         payload = doc.metadata
-        payload.update({"text":chunk})
+        payload.update({"text": chunk})
+        chunk_id = hashlib.md5(chunk.encode()).hexdigest()
+        ids.append(chunk_id)
         payloads.append(payload)
-    return payloads
+    return ids, payloads
 
 
 def push_document_to_qdrant(doc: Document) -> None:
 
     from qdrant_client.models import PointStruct
 
-    _payloads = build_payloads(doc)
+    ids, _payloads = build_payloads(doc)
 
     qdrant_client.upsert(
         collection_name=QDRANT_COLLECTION_NAME,
@@ -105,8 +108,7 @@ def push_document_to_qdrant(doc: Document) -> None:
                 vector=vector,
                 payload=_payload
             )
-            for idx, (vector, _payload) in enumerate(zip(doc.embeddings, _payloads))
-        ]
+            for idx, vector, _payload in zip(ids, doc.embeddings, _payloads)        ]
     )
 
 def process_one_document(_data: Dict) -> None:
