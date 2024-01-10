@@ -62,7 +62,7 @@ train_beam: export_requirements
 # === Inference ===
 
 dev_infer_local:
-	@echo "Running inference pipeline locally using the production config..."
+	@echo "Running inference pipeline locally using the development config..."
 
 	poetry run python -m tools.inference_run --config_file configs/dev_inference_config.yaml --dataset_dir ./dataset
 
