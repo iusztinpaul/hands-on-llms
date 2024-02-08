@@ -226,7 +226,7 @@ Thus, check out the README for every module individually to see how to install &
 
 ## 5. Articles
 
-To understand the entire code step-by-step, check out our articles ↓
+`To understand the entire code step-by-step, check out our articles` ↓
 
 ### System design
 - [Lesson 1: The LLMs Kit: Build a Production-Ready Real-Time Financial Advisor System Using Streaming Pipelines, RAG, and LLMOps](https://medium.com/decodingml/the-llms-kit-build-a-production-ready-real-time-financial-advisor-system-using-streaming-ffdcb2b50714)
