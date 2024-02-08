@@ -228,14 +228,21 @@ Thus, check out the README for every module individually to see how to install &
 
 To understand the entire code step-by-step, check out our articles ↓
 
-- [Lesson 1 | System Design: The LLMs Kit: Build a Production-Ready Real-Time Financial Advisor System Using Streaming Pipelines, RAG, and LLMOps](https://medium.com/decodingml/the-llms-kit-build-a-production-ready-real-time-financial-advisor-system-using-streaming-ffdcb2b50714)
-- [Lesson 2 | Feature pipeline: Why you must choose streaming over batch pipelines when doing RAG in LLM applications](https://medium.com/decoding-ml/why-you-must-choose-streaming-over-batch-pipelines-when-doing-rag-in-llm-applications-3b6fd32a93ff)
-- [Lesson 3 | Feature pipeline: This is how you can build & deploy a streaming pipeline to populate a vector DB for real-time RAG](https://medium.com/decodingml/this-is-how-you-can-build-deploy-a-streaming-pipeline-to-populate-a-vector-db-for-real-time-rag-c92cfbbd4d62)
-- [Lesson 4 | Training pipeline: 5 concepts that must be in your LLM fine-tuning kit](https://medium.com/decodingml/5-concepts-that-must-be-in-your-llm-fine-tuning-kit-59183c7ce60e)
-- [Lesson 5 | Training pipeline: The secret of writing generic code to fine-tune any LLM using QLoRA](https://medium.com/decodingml/the-secret-of-writing-generic-code-to-fine-tune-any-llm-using-qlora-9b1822f3c6a4)
-- [Lesson 6 | Training pipeline: From LLM development to continuous training pipelines using LLMOps](https://medium.com/decodingml/from-llm-development-to-continuous-training-pipelines-using-llmops-a3792b05061c)
-- [Lesson 7 | Inference pipeline: Design a RAG LangChain application leveraging the 3-pipeline architecture](https://medium.com/decodingml/design-a-rag-langchain-application-leveraging-the-3-pipeline-architecture-46bcc3cb3500)
-- [Lesson 8 | Inference pipeline: Prepare your RAG LangChain application for production](https://medium.com/decodingml/prepare-your-rag-langchain-application-for-production-5f75021cd381)
+### System design
+- [Lesson 1: The LLMs Kit: Build a Production-Ready Real-Time Financial Advisor System Using Streaming Pipelines, RAG, and LLMOps](https://medium.com/decodingml/the-llms-kit-build-a-production-ready-real-time-financial-advisor-system-using-streaming-ffdcb2b50714)
+
+### Feature pipeline
+- [Lesson 2: Why you must choose streaming over batch pipelines when doing RAG in LLM applications](https://medium.com/decoding-ml/why-you-must-choose-streaming-over-batch-pipelines-when-doing-rag-in-llm-applications-3b6fd32a93ff)
+- [Lesson 3: This is how you can build & deploy a streaming pipeline to populate a vector DB for real-time RAG](https://medium.com/decodingml/this-is-how-you-can-build-deploy-a-streaming-pipeline-to-populate-a-vector-db-for-real-time-rag-c92cfbbd4d62)
+
+### Training pipeline
+- [Lesson 4: 5 concepts that must be in your LLM fine-tuning kit](https://medium.com/decodingml/5-concepts-that-must-be-in-your-llm-fine-tuning-kit-59183c7ce60e)
+- [Lesson 5: The secret of writing generic code to fine-tune any LLM using QLoRA](https://medium.com/decodingml/the-secret-of-writing-generic-code-to-fine-tune-any-llm-using-qlora-9b1822f3c6a4)
+- [Lesson 6: From LLM development to continuous training pipelines using LLMOps](https://medium.com/decodingml/from-llm-development-to-continuous-training-pipelines-using-llmops-a3792b05061c)
+
+### Inference pipeline
+- [Lesson 7: Design a RAG LangChain application leveraging the 3-pipeline architecture](https://medium.com/decodingml/design-a-rag-langchain-application-leveraging-the-3-pipeline-architecture-46bcc3cb3500)
+- [Lesson 8: Prepare your RAG LangChain application for production](https://medium.com/decodingml/prepare-your-rag-langchain-application-for-production-5f75021cd381)
 
 
 ## 6. License
