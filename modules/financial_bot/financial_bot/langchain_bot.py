@@ -6,6 +6,10 @@ from typing import Iterable, List, Tuple
 from langchain import chains
 from langchain.memory import ConversationBufferWindowMemory
 
+logger = logging.getLogger(__name__)
+
+
+
 from financial_bot import constants
 from financial_bot.chains import (
     ContextExtractorChain,
