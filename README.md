@@ -18,10 +18,13 @@
     - [2.4. Beam](#24-beam)
     - [2.5. AWS](#25-aws)
 - [3. Install & Usage](#3-install--usage)
-- [4. Video lectures](#4-video-lectures)
-- [5. Articles](#5-articles)
-- [6. License](#6-license)
-- [7. Contributors & Teachers](#7-contributors--teachers)
+- [4. Lectures](#4-lectures)
+    - [4.1. Costs](#41-costs)
+    - [4.2. Ask Questions](#42-ask-questions)
+    - [4.3. Video lectures](#43-video-lectures)
+    - [4.4. Articles](#44-articles)
+- [5. License](#6-license)
+- [6. Contributors & Teachers](#7-contributors--teachers)
 
 ------
 
@@ -175,9 +178,31 @@ Thus, check out the README for every module individually to see how to install &
 3. [streaming_pipeline](/modules/streaming_pipeline/)
 4. [inference_pipeline](/modules/financial_bot/)
 
-## 4. Video lectures
+## 4. Lectures
 
-### 4.0 Intro to the course
+We strongly encourage you to clone this repository and replicate everything we've done to get the most out of this course.
+
+In each module's video lectures, articles, and README documentation, you will find step-by-step instructions.
+
+Happy learning! 🙏
+
+### 4.1. Costs
+
+The GitHub code (released under the MIT license) and video lectures (released on YouTube) are entirely free of charge. Always will be.
+
+The Medium lessons are released under Medium's paid wall. If you already have it, then they are free. Otherwise, you must pay a $5 monthly fee to read the articles.
+
+### 4.2. Ask Questions
+
+If you have any questions or issues during the course, we encourage you to create an [issue](https://github.com/iusztinpaul/hands-on-llms/issues) in this repository where you can explain everything you need in depth. 
+
+Otherwise, you can also contact the teachers on LinkedIn:
+- [Paul Iusztin](https://www.linkedin.com/in/pauliusztin/)
+- [Pau Labarta](https://www.linkedin.com/in/pau-labarta-bajo-4432074b/)
+
+### 4.3. Video Lectures
+
+#### 4.3.1. Intro to the course
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=l4HTEf0_s70">
@@ -187,7 +212,7 @@ Thus, check out the README for every module individually to see how to install &
 </div>
 
 
-### 4.1 Fine-tuning our open-source LLM (overview)
+#### 4.3.2. Fine-tuning our open-source LLM (overview)
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=HcxwOYMmj40">
@@ -196,7 +221,7 @@ Thus, check out the README for every module individually to see how to install &
   </a>
 </div>
 
-### 4.2 Fine-tuning our open-source LLM (Hands-on!)
+#### 4.3.3. Fine-tuning our open-source LLM (Hands-on!)
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=RS96R0dH0uE">
@@ -205,7 +230,7 @@ Thus, check out the README for every module individually to see how to install &
   </a>
 </div>
 
-### 4.3 Real-time text embedding pipeline
+#### 4.3.4. Real-time text embedding pipeline
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=5gX5XRZpb6E">
@@ -214,7 +239,7 @@ Thus, check out the README for every module individually to see how to install &
   </a>
 </div>
 
-### 4.4 Inference pipeline
+#### 4.3.5. Inference pipeline
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=lXLv0zNdbgE">
@@ -224,7 +249,7 @@ Thus, check out the README for every module individually to see how to install &
 </div>
 
 
-## 5. Articles
+### 4.4. Articles
 
 `To understand the entire code step-by-step, check out our articles` ↓
 
@@ -245,11 +270,11 @@ Thus, check out the README for every module individually to see how to install &
 - [Lesson 8: Prepare your RAG LangChain application for production](https://medium.com/decodingml/prepare-your-rag-langchain-application-for-production-5f75021cd381)
 
 
-## 6. License
+## 5. License
 
 This course is an open-source project released under the MIT license. Thus, as long you distribute our LICENSE and acknowledge our work, you can safely clone or fork this project and use it as a source of inspiration for whatever you want (e.g., university projects, college degree projects, etc.).
 
-## 7. Contributors & Teachers
+## 6. Contributors & Teachers
 
 <table>
   <tr>
