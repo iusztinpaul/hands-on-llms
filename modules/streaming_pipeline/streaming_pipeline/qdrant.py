@@ -46,7 +46,7 @@ class QdrantVectorOutput(DynamicOutput):
                 vectors_config=VectorParams(
                     size=self._vector_size, distance=Distance.COSINE
                 ),
-                # Manuall add this optimizers_config to address issue: https://github.com/iusztinpaul/hands-on-llms/issues/72
+                # Manually add this optimizers_config to address issue: https://github.com/iusztinpaul/hands-on-llms/issues/72
                 # qdrant_client.http.exceptions.ResponseHandlingException: 1 validation error for ParsingModel[InlineResponse2005] (for parse_as_type)
                 # obj -> result -> config -> optimizer_config -> max_optimization_threads
                 # none is not an allowed value (type=type_error.none.not_allowed)
