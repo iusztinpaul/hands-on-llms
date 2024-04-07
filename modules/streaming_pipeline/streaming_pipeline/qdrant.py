@@ -4,7 +4,7 @@ from typing import Optional
 from bytewax.outputs import DynamicOutput, StatelessSink
 from qdrant_client import QdrantClient
 from qdrant_client.http.api_client import UnexpectedResponse
-from qdrant_client.http.models import Distance, VectorParams
+from qdrant_client.http.models import Distance, VectorParams, OptimizersConfigDiff
 from qdrant_client.models import PointStruct
 
 from streaming_pipeline import constants
@@ -46,6 +46,11 @@ class QdrantVectorOutput(DynamicOutput):
                 vectors_config=VectorParams(
                     size=self._vector_size, distance=Distance.COSINE
                 ),
+                # Manuall add this optimizers_config to address issue: https://github.com/iusztinpaul/hands-on-llms/issues/72
+                # qdrant_client.http.exceptions.ResponseHandlingException: 1 validation error for ParsingModel[InlineResponse2005] (for parse_as_type)
+                # obj -> result -> config -> optimizer_config -> max_optimization_threads
+                # none is not an allowed value (type=type_error.none.not_allowed)
+                optimizers_config=OptimizersConfigDiff(max_optimization_threads=1),
             )
 
     def build(self, worker_index, worker_count):
