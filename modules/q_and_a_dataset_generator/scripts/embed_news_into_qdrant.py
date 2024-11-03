@@ -86,7 +86,8 @@ def build_payloads(doc: Document) -> List:
     payloads = []
     ids = []
     for chunk in doc.chunks:
-        payload = doc.metadata
+        # Make a copy of the metadata to avoid modifying doc.metadata
+        payload = doc.metadata.copy()
         payload.update({"text": chunk})
         chunk_id = hashlib.md5(chunk.encode()).hexdigest()
         ids.append(chunk_id)
