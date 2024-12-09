@@ -4,6 +4,14 @@
     <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a>, <a href="https://github.com/Paulescu">Pau Labarta Bajo</a> and <a href="https://github.com/Joywalker">Alexandru Razvant</a></i>
 </div>
 
+## 🚨 Moved Course 
+
+As the world of GenAI and LLMs moves fast, too fast for educational content, we had to archive this course. 
+
+Check out our new [LLM Twin open-source course](https://github.com/decodingml/llm-twin-course) for an improved experience on the same production-ready GenAI, RAG, and LLMs topic.
+
+------
+
 ## Table of Contents
 
 - [1. Building Blocks](#1-building-blocks)
