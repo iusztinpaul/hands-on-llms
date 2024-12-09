@@ -1,3 +1,14 @@
+## 🚨 Remastered Course 🚨
+
+As the world of GenAI and LLMs moves fast, too fast for educational content, it was easier to archive this course and create a new one from scratch.
+
+Check out our new [LLM Twin open-source course](https://github.com/decodingml/llm-twin-course) for an improved experience in learning to build a production-ready LLM and RAG system.
+
+## 🚨 Remastered Course 🚨
+
+------
+
+
 <div align="center">
     <h2>Hands-on LLMs Course </h2>
     <h1>Learn to Train and Deploy a Real-Time Financial Advisor</h1>
