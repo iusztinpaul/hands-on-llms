@@ -4,6 +4,8 @@ As the world of GenAI and LLMs moves fast, too fast for educational content, we 
 
 Check out our new [LLM Twin open-source course](https://github.com/decodingml/llm-twin-course) for an improved experience on the same production-ready GenAI, RAG, and LLMs topic.
 
+## 🚨 Moved Course 
+
 ------
 
 
