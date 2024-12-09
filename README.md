@@ -1,10 +1,10 @@
-## 🚨 Moved Course 
+## 🚨 Remastered Course 🚨
 
-As the world of GenAI and LLMs moves fast, too fast for educational content, we had to archive this course. 
+As the world of GenAI and LLMs moves fast, too fast for educational content, it was easier to archive this course and create a new one from scratch.
 
-Check out our new [LLM Twin open-source course](https://github.com/decodingml/llm-twin-course) for an improved experience on the same production-ready GenAI, RAG, and LLMs topic.
+Check out our new [LLM Twin open-source course](https://github.com/decodingml/llm-twin-course) for an improved experience in learning to build a production-ready LLM and RAG system.
 
-## 🚨 Moved Course 
+## 🚨 Remastered Course 🚨
 
 ------
 
